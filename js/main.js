@@ -84,4 +84,43 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // --- Contact Modal ---
+  const modalOverlay = document.getElementById('contact-modal');
+  if (modalOverlay) {
+    const modalClose = modalOverlay.querySelector('.modal-close');
+    let formLoaded = false;
+
+    function openContactModal(e) {
+      e.preventDefault();
+      modalOverlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      if (!formLoaded && typeof hbspt !== 'undefined') {
+        hbspt.forms.create({
+          portalId: "26711031",
+          formId: "bf0ec0ee-29b2-41f1-b629-6438c0ca57d3",
+          region: "eu1",
+          target: "#hubspot-form-container"
+        });
+        formLoaded = true;
+      }
+    }
+
+    function closeContactModal() {
+      modalOverlay.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    modalClose.addEventListener('click', closeContactModal);
+    modalOverlay.addEventListener('click', (e) => {
+      if (e.target === modalOverlay) closeContactModal();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modalOverlay.classList.contains('active')) closeContactModal();
+    });
+
+    document.querySelectorAll('[data-contact-modal]').forEach(btn => {
+      btn.addEventListener('click', openContactModal);
+    });
+  }
+
 });
