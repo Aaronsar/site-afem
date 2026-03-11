@@ -99,21 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
           portalId: "26711031",
           formId: "bf0ec0ee-29b2-41f1-b629-6438c0ca57d3",
           region: "eu1",
-          target: "#hubspot-form-container",
-          cssRequired: '',
-          onFormReady: function($form) {
-            var style = document.createElement('style');
-            style.textContent = [
-              '.hs-button { background: #65bd7d !important; border-color: #65bd7d !important; border-radius: 10px !important; font-family: Inter, sans-serif !important; font-weight: 600 !important; padding: 14px 32px !important; font-size: 1rem !important; transition: background 0.3s ease !important; }',
-              '.hs-button:hover { background: #479143 !important; border-color: #479143 !important; }',
-              '.hs-input, select { border-radius: 10px !important; font-family: Inter, sans-serif !important; }',
-              '.hs-input:focus, select:focus { border-color: #65bd7d !important; box-shadow: 0 0 0 3px rgba(101,189,125,0.15) !important; outline: none !important; }'
-            ].join('');
-            if ($form[0]) {
-              var doc = $form[0].ownerDocument || document;
-              doc.head.appendChild(style);
-            }
-          }
+          target: "#hubspot-form-container"
         });
         formLoaded = true;
       }
