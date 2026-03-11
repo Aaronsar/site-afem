@@ -49,8 +49,8 @@ document.addEventListener('DOMContentLoaded', () => {
       id: 'ville_residence',
       title: 'Dans quelle ville habitez-vous ?',
       subtitle: 'Pour évaluer la proximité des facultés.',
-      type: 'select',
-      placeholder: 'Sélectionnez votre ville',
+      type: 'autocomplete',
+      placeholder: 'Tapez votre ville...',
       options: CITIES.map(c => ({ value: c, label: c }))
     },
     {
@@ -221,6 +221,12 @@ document.addEventListener('DOMContentLoaded', () => {
         </button>`;
       });
       html += '</div>';
+    } else if (q.type === 'autocomplete') {
+      const currentVal = answers[q.id] || '';
+      html += `<div class="quiz-autocomplete-wrapper">
+        <input type="text" class="quiz-autocomplete-input" placeholder="${q.placeholder}" value="${currentVal}" autocomplete="off" />
+        <div class="quiz-autocomplete-list"></div>
+      </div>`;
     } else if (q.type === 'select') {
       const currentVal = answers[q.id] || '';
       html += `<div class="quiz-select-wrapper">
@@ -264,6 +270,82 @@ document.addEventListener('DOMContentLoaded', () => {
           updateNav();
         });
       });
+    } else if (q.type === 'autocomplete') {
+      const input = questionContainer.querySelector('.quiz-autocomplete-input');
+      const list = questionContainer.querySelector('.quiz-autocomplete-list');
+      let selectedIndex = -1;
+
+      function showSuggestions(query) {
+        const filtered = query.length > 0
+          ? q.options.filter(o => o.label.toLowerCase().startsWith(query.toLowerCase()))
+          : [];
+        selectedIndex = -1;
+        if (filtered.length === 0) {
+          list.innerHTML = '';
+          list.classList.remove('visible');
+          return;
+        }
+        list.innerHTML = filtered.map((o, i) =>
+          `<div class="quiz-autocomplete-item" data-value="${o.value}" data-index="${i}">${o.label}</div>`
+        ).join('');
+        list.classList.add('visible');
+
+        list.querySelectorAll('.quiz-autocomplete-item').forEach(item => {
+          item.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            input.value = item.dataset.value;
+            answers[q.id] = item.dataset.value;
+            list.innerHTML = '';
+            list.classList.remove('visible');
+            updateNav();
+          });
+        });
+      }
+
+      input.addEventListener('input', () => {
+        showSuggestions(input.value);
+        // Clear answer if text doesn't match any option
+        const match = q.options.find(o => o.label.toLowerCase() === input.value.toLowerCase());
+        if (match) {
+          answers[q.id] = match.value;
+        } else {
+          delete answers[q.id];
+        }
+        updateNav();
+      });
+
+      input.addEventListener('focus', () => {
+        if (input.value.length > 0) showSuggestions(input.value);
+      });
+
+      input.addEventListener('blur', () => {
+        setTimeout(() => { list.innerHTML = ''; list.classList.remove('visible'); }, 150);
+      });
+
+      input.addEventListener('keydown', (e) => {
+        const items = list.querySelectorAll('.quiz-autocomplete-item');
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
+          items.forEach((it, i) => it.classList.toggle('highlighted', i === selectedIndex));
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          selectedIndex = Math.max(selectedIndex - 1, 0);
+          items.forEach((it, i) => it.classList.toggle('highlighted', i === selectedIndex));
+        } else if (e.key === 'Enter' && selectedIndex >= 0 && items[selectedIndex]) {
+          e.preventDefault();
+          e.stopPropagation();
+          const item = items[selectedIndex];
+          input.value = item.dataset.value;
+          answers[q.id] = item.dataset.value;
+          list.innerHTML = '';
+          list.classList.remove('visible');
+          updateNav();
+        }
+      });
+
+      // Auto-focus the input
+      setTimeout(() => input.focus(), 100);
     } else if (q.type === 'select') {
       const select = questionContainer.querySelector('.quiz-select');
       select.addEventListener('change', () => {
@@ -322,6 +404,16 @@ document.addEventListener('DOMContentLoaded', () => {
         formId: "4ad4b96f-94b4-4657-b81f-56f4f16e65f2",
         region: "eu1",
         target: "#quiz-hubspot-form",
+        onFormReady: function($form) {
+          // Pre-fill Zone / Localité with the user's city
+          const city = answers.ville_residence || '';
+          if (city) {
+            const cityField = $form.find('input[name="zone___localite"]');
+            if (cityField.length) {
+              cityField.val(city).change();
+            }
+          }
+        },
         onFormSubmitted: function() {
           showResults();
         }
