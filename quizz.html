@@ -42,99 +42,133 @@
     </div>
   </section>
 
-  <!-- Description -->
-  <section class="content-section">
-    <div class="container">
-      <div class="content-grid">
-        <div class="content-text fade-up">
-          <h2>Trouvez votre <span class="gradient">fac idéale</span></h2>
-          <p>Chaque faculté de médecine a ses particularités : modalités d'examen, ambiance, spécialités proposées, taux de réussite... Notre quizz de compatibilité analyse vos préférences pour vous recommander les facultés les plus adaptées.</p>
-          <p>En quelques minutes, obtenez un classement personnalisé basé sur vos critères : localisation, type d'examen préféré, environnement de travail et bien plus.</p>
-          <a href="#" class="btn btn-primary" style="margin-top: 16px;">Faire le quizz →</a>
-        </div>
-        <div class="content-visual fade-up">
-          <div class="about-image-card">
-            <div class="big-icon">🎓</div>
+  <!-- Intro sections (hidden when quiz starts) -->
+  <div id="quiz-intro">
+    <!-- Description -->
+    <section class="content-section">
+      <div class="container">
+        <div class="content-grid">
+          <div class="content-text fade-up">
+            <h2>Trouvez votre <span class="gradient">fac idéale</span></h2>
+            <p>Chaque faculté de médecine a ses particularités : modalités d'examen, ambiance, spécialités proposées, taux de réussite... Notre quizz de compatibilité analyse vos préférences pour vous recommander les facultés les plus adaptées.</p>
+            <p>En quelques minutes, obtenez un classement personnalisé basé sur vos critères : localisation, type d'examen préféré, environnement de travail et bien plus.</p>
+            <a href="#" class="btn btn-primary" style="margin-top: 16px;" data-start-quiz>Faire le quizz →</a>
+          </div>
+          <div class="content-visual fade-up">
+            <div class="about-image-card">
+              <div class="big-icon">🎓</div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- Ce que le quizz évalue -->
-  <section class="content-section" style="padding-top: 0;">
-    <div class="container">
-      <div style="text-align: center;" class="fade-up">
-        <span class="section-label" style="justify-content: center;">Critères analysés</span>
-        <h2 class="section-title">Ce que le quizz <span class="gradient">évalue</span></h2>
+    <!-- Ce que le quizz évalue -->
+    <section class="content-section" style="padding-top: 0;">
+      <div class="container">
+        <div style="text-align: center;" class="fade-up">
+          <span class="section-label" style="justify-content: center;">Critères analysés</span>
+          <h2 class="section-title">Ce que le quizz <span class="gradient">évalue</span></h2>
+        </div>
+        <div class="feature-list">
+          <div class="glass-card feature-item fade-up">
+            <div class="feature-icon green" style="background: rgba(101,189,125,0.15); color: var(--green);">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </div>
+            <h3>Localisation</h3>
+            <p>Vos préférences géographiques, mobilité, et académie de rattachement pour optimiser vos choix.</p>
+          </div>
+          <div class="glass-card feature-item fade-up">
+            <div class="feature-icon blue" style="background: rgba(58,138,82,0.15); color: var(--green-dark);">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            </div>
+            <h3>Type d'examen</h3>
+            <p>QCM, rédactionnel, oral... Chaque fac a ses modalités. Trouvez celle qui vous correspond.</p>
+          </div>
+          <div class="glass-card feature-item fade-up">
+            <div class="feature-icon green" style="background: rgba(101,189,125,0.15); color: var(--green);">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <h3>Environnement</h3>
+            <p>Taille de la promotion, vie étudiante, tutorat disponible et ambiance générale de la faculté.</p>
+          </div>
+        </div>
       </div>
-      <div class="feature-list">
-        <div class="glass-card feature-item fade-up">
-          <div class="feature-icon green" style="background: rgba(101,189,125,0.15); color: var(--green);">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-          </div>
-          <h3>Localisation</h3>
-          <p>Vos préférences géographiques, mobilité, et académie de rattachement pour optimiser vos choix.</p>
-        </div>
-        <div class="glass-card feature-item fade-up">
-          <div class="feature-icon blue" style="background: rgba(58,138,82,0.15); color: var(--green-dark);">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-          </div>
-          <h3>Type d'examen</h3>
-          <p>QCM, rédactionnel, oral... Chaque fac a ses modalités. Trouvez celle qui vous correspond.</p>
-        </div>
-        <div class="glass-card feature-item fade-up">
-          <div class="feature-icon green" style="background: rgba(101,189,125,0.15); color: var(--green);">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          </div>
-          <h3>Environnement</h3>
-          <p>Taille de la promotion, vie étudiante, tutorat disponible et ambiance générale de la faculté.</p>
-        </div>
-      </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- Étapes -->
-  <section class="content-section" style="padding-top: 0;">
-    <div class="container">
-      <div style="text-align: center;" class="fade-up">
-        <span class="section-label" style="justify-content: center;">Mode d'emploi</span>
-        <h2 class="section-title">Comment ça <span class="gradient">marche</span> ?</h2>
+    <!-- Étapes -->
+    <section class="content-section" style="padding-top: 0;">
+      <div class="container">
+        <div style="text-align: center;" class="fade-up">
+          <span class="section-label" style="justify-content: center;">Mode d'emploi</span>
+          <h2 class="section-title">Comment ça <span class="gradient">marche</span> ?</h2>
+        </div>
+        <div class="steps-list">
+          <div class="glass-card step-item fade-up">
+            <div class="step-number">1</div>
+            <div class="step-content">
+              <h3>Répondez aux questions</h3>
+              <p>Un questionnaire court sur vos préférences, vos habitudes de travail et vos critères prioritaires.</p>
+            </div>
+          </div>
+          <div class="glass-card step-item fade-up">
+            <div class="step-number">2</div>
+            <div class="step-content">
+              <h3>Analyse de compatibilité</h3>
+              <p>Notre algorithme compare vos réponses aux caractéristiques de chaque faculté référencée.</p>
+            </div>
+          </div>
+          <div class="glass-card step-item fade-up">
+            <div class="step-number">3</div>
+            <div class="step-content">
+              <h3>Découvrez votre classement</h3>
+              <p>Obtenez un top des facultés les plus compatibles avec votre profil, avec des fiches détaillées.</p>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="steps-list">
-        <div class="glass-card step-item fade-up">
-          <div class="step-number">1</div>
-          <div class="step-content">
-            <h3>Répondez aux questions</h3>
-            <p>Un questionnaire court sur vos préférences, vos habitudes de travail et vos critères prioritaires.</p>
-          </div>
-        </div>
-        <div class="glass-card step-item fade-up">
-          <div class="step-number">2</div>
-          <div class="step-content">
-            <h3>Analyse de compatibilité</h3>
-            <p>Notre algorithme compare vos réponses aux caractéristiques de chaque faculté référencée.</p>
-          </div>
-        </div>
-        <div class="glass-card step-item fade-up">
-          <div class="step-number">3</div>
-          <div class="step-content">
-            <h3>Découvrez votre classement</h3>
-            <p>Obtenez un top des facultés les plus compatibles avec votre profil, avec des fiches détaillées.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- CTA -->
-  <section class="cta-section">
-    <div class="container">
-      <div class="cta-box fade-up">
-        <h2>Quelle fac est faite pour <span class="gradient">vous</span> ?</h2>
-        <p>Répondez à notre quizz en quelques minutes et découvrez les facultés qui matchent avec votre profil.</p>
-        <a href="#" class="btn btn-primary btn-lg">Commencer le quizz →</a>
+    <!-- CTA -->
+    <section class="cta-section">
+      <div class="container">
+        <div class="cta-box fade-up">
+          <h2>Quelle fac est faite pour <span class="gradient">vous</span> ?</h2>
+          <p>Répondez à notre quizz en quelques minutes et découvrez les facultés qui matchent avec votre profil.</p>
+          <a href="#" class="btn btn-primary btn-lg" data-start-quiz>Commencer le quizz →</a>
+        </div>
       </div>
+    </section>
+  </div>
+
+  <!-- Quiz Container (hidden by default) -->
+  <section class="quiz-container" id="quiz-container" style="display: none;">
+    <div class="container">
+      <div class="quiz-progress">
+        <div class="quiz-progress-bar">
+          <div class="quiz-progress-fill" id="quiz-progress-fill"></div>
+        </div>
+      </div>
+      <p class="quiz-step" id="quiz-step">Question 1 sur 13</p>
+
+      <div id="quiz-question-area"></div>
+
+      <div class="quiz-nav">
+        <button class="btn btn-secondary" id="quiz-prev" style="display: none;">← Précédent</button>
+        <button class="btn btn-primary" id="quiz-next" disabled>Suivant →</button>
+      </div>
+
+      <!-- Lead form (shown after last question) -->
+      <div id="quiz-lead-form" class="quiz-lead-form" style="display: none;">
+        <div class="glass-card" style="padding: 40px; text-align: center;">
+          <h2>Encore une étape pour voir vos <span class="gradient">résultats</span></h2>
+          <p style="margin-bottom: 24px;">Entrez vos coordonnées pour découvrir votre classement personnalisé.</p>
+          <div id="quiz-hubspot-form"></div>
+        </div>
+      </div>
+
+      <!-- Results (shown after form submission) -->
+      <div id="quiz-results" style="display: none;"></div>
     </div>
   </section>
 
@@ -186,5 +220,7 @@
 
   <script charset="utf-8" type="text/javascript" src="//js-eu1.hsforms.net/forms/embed/v2.js"></script>
   <script src="js/main.js"></script>
+  <script src="js/facs-data.js"></script>
+  <script src="js/quizz.js"></script>
 </body>
 </html>
