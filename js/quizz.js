@@ -20,15 +20,36 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentStep = 0;
   let answers = {};
 
-  // --- Cities list (for dropdowns) ---
-  const CITIES = [
-    "Paris", "Lyon", "Marseille", "Toulouse", "Montpellier", "Lille", "Bordeaux",
-    "Nantes", "Rennes", "Grenoble", "Rouen", "Nancy", "Clermont-Ferrand",
-    "Besançon", "Dijon", "Saint-Étienne", "Limoges", "Tours", "Amiens",
-    "Angers", "Orléans", "Brest", "Pointe-à-Pitre", "Saint-Denis (Réunion)",
-    "Cayenne", "Corte", "Saclay", "Versailles", "Bobigny", "Créteil",
-    "Nice", "Strasbourg", "Reims", "Caen", "Poitiers"
-  ].sort();
+  // --- Départements français (101) ---
+  const DEPARTEMENTS = [
+    "Ain (01)", "Aisne (02)", "Allier (03)", "Alpes-de-Haute-Provence (04)",
+    "Hautes-Alpes (05)", "Alpes-Maritimes (06)", "Ardèche (07)", "Ardennes (08)",
+    "Ariège (09)", "Aube (10)", "Aude (11)", "Aveyron (12)",
+    "Bouches-du-Rhône (13)", "Calvados (14)", "Cantal (15)", "Charente (16)",
+    "Charente-Maritime (17)", "Cher (18)", "Corrèze (19)", "Corse-du-Sud (2A)",
+    "Haute-Corse (2B)", "Côte-d'Or (21)", "Côtes-d'Armor (22)", "Creuse (23)",
+    "Dordogne (24)", "Doubs (25)", "Drôme (26)", "Eure (27)",
+    "Eure-et-Loir (28)", "Finistère (29)", "Gard (30)", "Haute-Garonne (31)",
+    "Gers (32)", "Gironde (33)", "Hérault (34)", "Ille-et-Vilaine (35)",
+    "Indre (36)", "Indre-et-Loire (37)", "Isère (38)", "Jura (39)",
+    "Landes (40)", "Loir-et-Cher (41)", "Loire (42)", "Haute-Loire (43)",
+    "Loire-Atlantique (44)", "Loiret (45)", "Lot (46)", "Lot-et-Garonne (47)",
+    "Lozère (48)", "Maine-et-Loire (49)", "Manche (50)", "Marne (51)",
+    "Haute-Marne (52)", "Mayenne (53)", "Meurthe-et-Moselle (54)", "Meuse (55)",
+    "Morbihan (56)", "Moselle (57)", "Nièvre (58)", "Nord (59)",
+    "Oise (60)", "Orne (61)", "Pas-de-Calais (62)", "Puy-de-Dôme (63)",
+    "Pyrénées-Atlantiques (64)", "Hautes-Pyrénées (65)", "Pyrénées-Orientales (66)",
+    "Bas-Rhin (67)", "Haut-Rhin (68)", "Rhône (69)", "Haute-Saône (70)",
+    "Saône-et-Loire (71)", "Sarthe (72)", "Savoie (73)", "Haute-Savoie (74)",
+    "Paris (75)", "Seine-Maritime (76)", "Seine-et-Marne (77)", "Yvelines (78)",
+    "Deux-Sèvres (79)", "Somme (80)", "Tarn (81)", "Tarn-et-Garonne (82)",
+    "Var (83)", "Vaucluse (84)", "Vendée (85)", "Vienne (86)",
+    "Haute-Vienne (87)", "Vosges (88)", "Yonne (89)", "Territoire de Belfort (90)",
+    "Essonne (91)", "Hauts-de-Seine (92)", "Seine-Saint-Denis (93)",
+    "Val-de-Marne (94)", "Val-d'Oise (95)",
+    "Guadeloupe (971)", "Martinique (972)", "Guyane (973)",
+    "La Réunion (974)", "Mayotte (976)"
+  ];
 
   const FAC_CITIES = [...new Set(window.FACS_DATA.map(f => f.city))].sort();
 
@@ -46,12 +67,12 @@ document.addEventListener('DOMContentLoaded', () => {
       ]
     },
     {
-      id: 'ville_residence',
-      title: 'Dans quelle ville habitez-vous ?',
+      id: 'departement',
+      title: 'Dans quel département habitez-vous ?',
       subtitle: 'Pour évaluer la proximité des facultés.',
       type: 'autocomplete',
-      placeholder: 'Tapez votre ville...',
-      options: CITIES.map(c => ({ value: c, label: c }))
+      placeholder: 'Tapez votre département...',
+      options: DEPARTEMENTS.map(d => ({ value: d, label: d }))
     },
     {
       id: 'specialites',
@@ -405,12 +426,12 @@ document.addEventListener('DOMContentLoaded', () => {
         region: "eu1",
         target: "#quiz-hubspot-form",
         onFormReady: function($form) {
-          // Pre-fill Zone / Localité with the user's city
-          const city = answers.ville_residence || '';
-          if (city) {
-            const cityField = $form.find('input[name="zone___localite"]');
-            if (cityField.length) {
-              cityField.val(city).change();
+          // Pre-fill Zone / Localité with the user's département
+          const dept = answers.departement || '';
+          if (dept) {
+            const field = $form.find('input[name="zone___localite"]');
+            if (field.length) {
+              field.val(dept).change();
             }
           }
         },
@@ -465,10 +486,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // 3. Localisation (15%)
       const villeEtudes = answers.ville_etudes;
-      const villeResidence = answers.ville_residence;
-      if (villeEtudes === 'rester' && villeResidence) {
-        if (fac.city === villeResidence) score += 15;
-        else if (fac.region === getRegionForCity(villeResidence)) score += 10;
+      const departement = answers.departement;
+      const userRegion = getRegionForDepartement(departement);
+      if (villeEtudes === 'rester' && userRegion) {
+        if (fac.region === userRegion) score += 15;
         else score += 2;
       } else if (villeEtudes && villeEtudes !== 'peu-importe') {
         if (fac.city === villeEtudes) score += 15;
@@ -533,13 +554,13 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       // Mobilité adjustment
-      if (answers.mobilite === 'local' && villeResidence) {
-        if (fac.city !== villeResidence && fac.region !== getRegionForCity(villeResidence)) {
+      if (answers.mobilite === 'local' && userRegion) {
+        if (fac.region !== userRegion) {
           score *= 0.7; // Penalize distant facs
         }
-      } else if (answers.mobilite === 'loin' && villeResidence) {
-        if (fac.city === villeResidence) {
-          score *= 0.85; // Slightly penalize home city
+      } else if (answers.mobilite === 'loin' && userRegion) {
+        if (fac.region === userRegion) {
+          score *= 0.85; // Slightly penalize home region
         }
       }
 
@@ -559,26 +580,55 @@ document.addEventListener('DOMContentLoaded', () => {
     return map[grade] || 12;
   }
 
-  function getRegionForCity(city) {
+  // Map département number to region
+  function getRegionForDepartement(dept) {
+    if (!dept) return '';
+    const match = dept.match(/\((\d+[AB]?)\)/);
+    if (!match) return '';
+    const num = match[1];
     const regionMap = {
-      'Paris': 'Île-de-France', 'Saclay': 'Île-de-France', 'Versailles': 'Île-de-France',
-      'Bobigny': 'Île-de-France', 'Créteil': 'Île-de-France',
-      'Lyon': 'Auvergne-Rhône-Alpes', 'Grenoble': 'Auvergne-Rhône-Alpes',
-      'Saint-Étienne': 'Auvergne-Rhône-Alpes', 'Clermont-Ferrand': 'Auvergne-Rhône-Alpes',
-      'Marseille': 'Provence-Alpes-Côte d\'Azur', 'Nice': 'Provence-Alpes-Côte d\'Azur',
-      'Toulouse': 'Occitanie', 'Montpellier': 'Occitanie',
-      'Lille': 'Hauts-de-France', 'Amiens': 'Hauts-de-France',
-      'Bordeaux': 'Nouvelle-Aquitaine', 'Limoges': 'Nouvelle-Aquitaine', 'Poitiers': 'Nouvelle-Aquitaine',
-      'Nantes': 'Pays de la Loire', 'Angers': 'Pays de la Loire',
-      'Rennes': 'Bretagne', 'Brest': 'Bretagne',
-      'Rouen': 'Normandie', 'Caen': 'Normandie',
-      'Nancy': 'Grand Est', 'Strasbourg': 'Grand Est', 'Reims': 'Grand Est',
-      'Besançon': 'Bourgogne-Franche-Comté', 'Dijon': 'Bourgogne-Franche-Comté',
-      'Tours': 'Centre-Val de Loire', 'Orléans': 'Centre-Val de Loire',
-      'Corte': 'Corse',
-      'Pointe-à-Pitre': 'DOM-TOM', 'Saint-Denis (Réunion)': 'DOM-TOM', 'Cayenne': 'DOM-TOM'
+      '75': 'Île-de-France', '77': 'Île-de-France', '78': 'Île-de-France',
+      '91': 'Île-de-France', '92': 'Île-de-France', '93': 'Île-de-France',
+      '94': 'Île-de-France', '95': 'Île-de-France',
+      '01': 'Auvergne-Rhône-Alpes', '03': 'Auvergne-Rhône-Alpes', '07': 'Auvergne-Rhône-Alpes',
+      '15': 'Auvergne-Rhône-Alpes', '26': 'Auvergne-Rhône-Alpes', '38': 'Auvergne-Rhône-Alpes',
+      '42': 'Auvergne-Rhône-Alpes', '43': 'Auvergne-Rhône-Alpes', '63': 'Auvergne-Rhône-Alpes',
+      '69': 'Auvergne-Rhône-Alpes', '73': 'Auvergne-Rhône-Alpes', '74': 'Auvergne-Rhône-Alpes',
+      '04': "Provence-Alpes-Côte d'Azur", '05': "Provence-Alpes-Côte d'Azur",
+      '06': "Provence-Alpes-Côte d'Azur", '13': "Provence-Alpes-Côte d'Azur",
+      '83': "Provence-Alpes-Côte d'Azur", '84': "Provence-Alpes-Côte d'Azur",
+      '09': 'Occitanie', '11': 'Occitanie', '12': 'Occitanie', '30': 'Occitanie',
+      '31': 'Occitanie', '32': 'Occitanie', '34': 'Occitanie', '46': 'Occitanie',
+      '48': 'Occitanie', '65': 'Occitanie', '66': 'Occitanie', '81': 'Occitanie', '82': 'Occitanie',
+      '16': 'Nouvelle-Aquitaine', '17': 'Nouvelle-Aquitaine', '19': 'Nouvelle-Aquitaine',
+      '23': 'Nouvelle-Aquitaine', '24': 'Nouvelle-Aquitaine', '33': 'Nouvelle-Aquitaine',
+      '40': 'Nouvelle-Aquitaine', '47': 'Nouvelle-Aquitaine', '64': 'Nouvelle-Aquitaine',
+      '79': 'Nouvelle-Aquitaine', '86': 'Nouvelle-Aquitaine', '87': 'Nouvelle-Aquitaine',
+      '44': 'Pays de la Loire', '49': 'Pays de la Loire', '53': 'Pays de la Loire',
+      '72': 'Pays de la Loire', '85': 'Pays de la Loire',
+      '22': 'Bretagne', '29': 'Bretagne', '35': 'Bretagne', '56': 'Bretagne',
+      '14': 'Normandie', '27': 'Normandie', '50': 'Normandie', '61': 'Normandie', '76': 'Normandie',
+      '02': 'Hauts-de-France', '59': 'Hauts-de-France', '60': 'Hauts-de-France',
+      '62': 'Hauts-de-France', '80': 'Hauts-de-France',
+      '08': 'Grand Est', '10': 'Grand Est', '51': 'Grand Est', '52': 'Grand Est',
+      '54': 'Grand Est', '55': 'Grand Est', '57': 'Grand Est',
+      '67': 'Grand Est', '68': 'Grand Est', '88': 'Grand Est',
+      '21': 'Bourgogne-Franche-Comté', '25': 'Bourgogne-Franche-Comté',
+      '39': 'Bourgogne-Franche-Comté', '58': 'Bourgogne-Franche-Comté',
+      '70': 'Bourgogne-Franche-Comté', '71': 'Bourgogne-Franche-Comté',
+      '89': 'Bourgogne-Franche-Comté', '90': 'Bourgogne-Franche-Comté',
+      '18': 'Centre-Val de Loire', '28': 'Centre-Val de Loire', '36': 'Centre-Val de Loire',
+      '37': 'Centre-Val de Loire', '41': 'Centre-Val de Loire', '45': 'Centre-Val de Loire',
+      '2A': 'Corse', '2B': 'Corse',
+      '971': 'DOM-TOM', '972': 'DOM-TOM', '973': 'DOM-TOM', '974': 'DOM-TOM', '976': 'DOM-TOM'
     };
-    return regionMap[city] || '';
+    return regionMap[num] || '';
+  }
+
+  // Keep city-to-region for ville_etudes question
+  function getRegionForCity(city) {
+    const fac = window.FACS_DATA.find(f => f.city === city);
+    return fac ? fac.region : '';
   }
 
   // --- Show results ---
