@@ -3344,3 +3344,287 @@ section {
     flex-wrap: wrap;
   }
 }
+
+/* ===== PREPAS MEDECINE - INDEX ===== */
+.prepa-index-hero {
+  text-align: center;
+  padding: 80px 0 48px;
+}
+
+.prepa-index-hero h1 {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -1.5px;
+  line-height: 1.1;
+  margin-bottom: 12px;
+}
+
+.prepa-index-hero p {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  max-width: 550px;
+  margin: 0 auto;
+}
+
+.prepa-city-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin: 40px 0 60px;
+}
+
+.prepa-city-card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 24px;
+  text-decoration: none;
+  color: var(--dark);
+  transition: all var(--transition);
+  display: block;
+}
+
+.prepa-city-card:hover {
+  background: var(--glass-hover);
+  border-color: var(--green-dark);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+}
+
+.prepa-city-card h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.prepa-city-card .city-title {
+  font-size: 0.82rem;
+  color: var(--dark);
+  line-height: 1.45;
+  margin: 6px 0 10px;
+  font-weight: 400;
+}
+.prepa-city-card .city-fac {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+@media (max-width: 768px) {
+  .prepa-city-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .prepa-city-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ===== PREPAS MEDECINE - PAGES VILLE ===== */
+.prepa-card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 28px;
+  margin-bottom: 20px;
+  transition: all var(--transition);
+}
+
+.prepa-card:hover {
+  background: var(--glass-hover);
+  border-color: rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+}
+
+.prepa-card h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 8px;
+}
+
+.prepa-card .prepa-type {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 50px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: rgba(101, 189, 125, 0.12);
+  color: var(--green-dark);
+  margin-bottom: 10px;
+}
+
+.prepa-card .prepa-type.online {
+  background: rgba(99, 102, 241, 0.1);
+  color: #6366f1;
+}
+
+.prepa-card p {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--text);
+  margin-bottom: 12px;
+}
+
+.prepa-card .prepa-points {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 12px;
+}
+
+.prepa-card .prepa-points li {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  padding: 3px 0 3px 20px;
+  position: relative;
+}
+
+.prepa-card .prepa-points li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--green-dark);
+  font-weight: 700;
+}
+
+.prepa-card .prepa-tarif {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--green-dark);
+}
+
+.prepa-coup-de-coeur {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(139, 92, 246, 0.05));
+  border: 2px solid rgba(99, 102, 241, 0.2);
+  border-radius: var(--radius);
+  padding: 32px;
+  margin: 40px 0;
+  position: relative;
+}
+
+.prepa-coup-de-coeur .coup-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 5px 14px;
+  border-radius: 20px;
+  margin-bottom: 16px;
+}
+
+.prepa-coup-de-coeur h3 {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--dark);
+  margin-bottom: 8px;
+}
+
+.prepa-coup-de-coeur p {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--text);
+  margin-bottom: 12px;
+}
+
+.prepa-coup-de-coeur .coup-stats {
+  display: flex;
+  gap: 20px;
+  margin: 16px 0;
+  flex-wrap: wrap;
+}
+
+.prepa-coup-de-coeur .coup-stat {
+  text-align: center;
+}
+
+.prepa-coup-de-coeur .coup-stat-value {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #6366f1;
+  display: block;
+}
+
+.prepa-coup-de-coeur .coup-stat-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.prepa-coup-de-coeur .btn-coup {
+  display: inline-block;
+  margin-top: 16px;
+  padding: 12px 28px;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.prepa-coup-de-coeur .btn-coup:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(99, 102, 241, 0.25);
+}
+
+.prepa-comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 24px 0;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--glass-border);
+}
+
+.prepa-comparison-table thead {
+  background: var(--green-dark);
+  color: #fff;
+}
+
+.prepa-comparison-table th {
+  padding: 14px 18px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: left;
+  letter-spacing: 0.3px;
+}
+
+.prepa-comparison-table td {
+  padding: 14px 18px;
+  font-size: 0.92rem;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.prepa-comparison-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.prepa-comparison-table tbody tr:nth-child(even) {
+  background: rgba(0,0,0,0.02);
+}
+
+@media (max-width: 768px) {
+  .prepa-comparison-table {
+    font-size: 0.82rem;
+  }
+  .prepa-comparison-table th, .prepa-comparison-table td {
+    padding: 10px 12px;
+  }
+  .prepa-coup-de-coeur .coup-stats {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
