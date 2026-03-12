@@ -2180,7 +2180,8 @@ section {
 }
 
 .blog-container {
-  max-width: 760px;
+  max-width: 900px;
+  padding: 0 20px;
 }
 
 .blog-article .blog-category {
