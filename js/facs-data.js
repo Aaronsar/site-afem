@@ -40,27 +40,27 @@ window.FACS_DATA = [
     region: "Île-de-France",
     pass: {
       etudiants: 490,
-      places_mmopk: 374,
-      taux_reussite: 76.3,
-      places_med: 220,
-      places_pharma: 79,
-      places_kine: 49,
-      places_odonto: 15,
-      places_sage_femme: 11,
+      places_mmopk: 161,
+      taux_reussite: 32.9,
+      places_med: 110,
+      places_pharma: 39,
+      places_kine: 0,
+      places_odonto: 7,
+      places_sage_femme: 5,
       voeux_parcoursup: 71785,
       pct_admission: 0.68
     },
     las: {
       etudiants: 295,
-      places_mmopk: 37,
-      taux_reussite: 12.5,
-      places_med: 25,
-      places_pharma: 10,
+      places_mmopk: 164,
+      taux_reussite: 55.6,
+      places_med: 110,
+      places_pharma: 40,
       places_kine: 0,
-      places_odonto: 0,
-      places_sage_femme: 2
+      places_odonto: 8,
+      places_sage_femme: 6
     },
-    recommended_path: "PASS"
+    recommended_path: "IDEM"
   },
   {
     id: "lyon-1",
