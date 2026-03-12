@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Facultés de Médecine en France — AFEM</title>
+  <meta name="description" content="Découvrez les 30 facultés de médecine en France : PASS, LAS, taux de réussite, nombre de places et statistiques détaillées pour chaque université.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="bg-blobs">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <nav class="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo"><img src="assets/logo.png" alt="AFEM"></a>
+      <div class="nav-links">
+        <a href="index.html">Accueil</a>
+        <a href="qui-sommes-nous.html">Qui sommes-nous</a>
+        <div class="nav-dropdown">
+          <button class="nav-dropdown-toggle">Nos outils <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
+          <div class="nav-dropdown-menu">
+            <a href="simulateur.html">Simulateur Parcoursup</a>
+            <a href="quizz.html">Quizz x Fac</a>
+            <a href="coaching.html">Coaching</a>
+            <a href="cours.html">Cours PASS/LAS</a>
+          </div>
+        </div>
+        <a href="blog.html">Blog</a>
+        <a href="facultes.html">Facultés</a>
+        <a href="simulateur.html" class="nav-cta">Accéder au Simulateur Parcoursup →</a>
+      </div>
+      <div class="nav-burger"><span></span><span></span><span></span></div>
+    </div>
+  </nav>
+
+  <section class="page-header" style="padding-bottom: 32px;">
+    <div class="container">
+      <span class="section-label" style="justify-content: center;">Ressources</span>
+      <h1>Facultés de <span class="gradient">Médecine</span></h1>
+      <p>Découvrez les 30 facultés de médecine en France : PASS, LAS, taux de réussite et nombre de places</p>
+    </div>
+  </section>
+
+  <section style="padding-top: 0;">
+    <div class="container">
+      <!-- Barre de recherche -->
+      <div class="fac-search-wrapper">
+        <svg class="fac-search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" class="fac-search" placeholder="Rechercher une faculté ou une ville...">
+      </div>
+
+      <!-- Filtres par région -->
+      <div class="fac-filters">
+        <button class="fac-filter-btn active" data-filter="all">Toutes</button>
+        <button class="fac-filter-btn" data-filter="ile-de-france">Île-de-France</button>
+        <button class="fac-filter-btn" data-filter="auvergne-rhone-alpes">Auvergne-Rhône-Alpes</button>
+        <button class="fac-filter-btn" data-filter="occitanie">Occitanie</button>
+        <button class="fac-filter-btn" data-filter="paca">PACA</button>
+        <button class="fac-filter-btn" data-filter="hauts-de-france">Hauts-de-France</button>
+        <button class="fac-filter-btn" data-filter="nouvelle-aquitaine">Nouvelle-Aquitaine</button>
+        <button class="fac-filter-btn" data-filter="pays-de-la-loire">Pays de la Loire</button>
+        <button class="fac-filter-btn" data-filter="bretagne">Bretagne</button>
+        <button class="fac-filter-btn" data-filter="grand-est">Grand Est</button>
+        <button class="fac-filter-btn" data-filter="bourgogne-franche-comte">Bourgogne-Franche-Comté</button>
+        <button class="fac-filter-btn" data-filter="normandie">Normandie</button>
+        <button class="fac-filter-btn" data-filter="centre-val-de-loire">Centre-Val de Loire</button>
+        <button class="fac-filter-btn" data-filter="dom-tom">DOM-TOM</button>
+        <button class="fac-filter-btn" data-filter="corse">Corse</button>
+      </div>
+
+      <!-- Compteur -->
+      <p class="fac-counter"><strong>30</strong> facultés affichées</p>
+
+      <!-- Grille de cartes -->
+      <div class="fac-grid">
+
+        <a href="facultes/paris-cite.html" class="glass-card fac-card fade-up" data-region="ile-de-france" data-name="université paris cité paris">
+          <div class="fac-card-header">
+            <h3>Université Paris Cité</h3>
+            <span class="fac-city">Paris</span>
+          </div>
+          <div class="fac-card-stats">
+            <div class="fac-stat"><span class="fac-stat-value">1820</span><span class="fac-stat-label">Étudiants PASS</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">33,3%</span><span class="fac-stat-label">Taux réussite</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">606</span><span class="fac-stat-label">Places 2e année</span></div>
+          </div>
+          <div class="fac-card-footer">
+            <span class="fac-badge pass">PASS recommandé</span>
+            <span class="card-link">Voir la fiche →</span>
+          </div>
+        </a>
+
+        <a href="facultes/paris-saclay.html" class="glass-card fac-card fade-up" data-region="ile-de-france" data-name="université paris-saclay saclay">
+          <div class="fac-card-header">
+            <h3>Université Paris-Saclay</h3>
+            <span class="fac-city">Saclay</span>
+          </div>
+          <div class="fac-card-stats">
+            <div class="fac-stat"><span class="fac-stat-value">490</span><span class="fac-stat-label">Étudiants PASS</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">76,3%</span><span class="fac-stat-label">Taux réussite</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">374</span><span class="fac-stat-label">Places 2e année</span></div>
+          </div>
+          <div class="fac-card-footer">
+            <span class="fac-badge pass">PASS recommandé</span>
+            <span class="card-link">Voir la fiche →</span>
+          </div>
+        </a>
+
+        <a href="facultes/lyon.html" class="glass-card fac-card fade-up" data-region="auvergne-rhone-alpes" data-name="université lyon 1 lyon">
+          <div class="fac-card-header">
+            <h3>Université Lyon 1</h3>
+            <span class="fac-city">Lyon</span>
+          </div>
+          <div class="fac-card-stats">
+            <div class="fac-stat"><span class="fac-stat-value">1725</span><span class="fac-stat-label">Étudiants PASS</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">38,3%</span><span class="fac-stat-label">Taux réussite</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">660</span><span class="fac-stat-label">Places 2e année</span></div>
+          </div>
+          <div class="fac-card-footer">
+            <span class="fac-badge idem">PASS ou LAS</span>
+            <span class="card-link">Voir la fiche →</span>
+          </div>
+        </a>
+
+        <a href="facultes/montpellier.html" class="glass-card fac-card fade-up" data-region="occitanie" data-name="université de montpellier montpellier">
+          <div class="fac-card-header">
+            <h3>Université de Montpellier</h3>
+            <span class="fac-city">Montpellier</span>
+          </div>
+          <div class="fac-card-stats">
+            <div class="fac-stat"><span class="fac-stat-value">1600</span><span class="fac-stat-label">Étudiants PASS</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">25,6%</span><span class="fac-stat-label">Taux réussite</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">409</span><span class="fac-stat-label">Places 2e année</span></div>
+          </div>
+          <div class="fac-card-footer">
+            <span class="fac-badge idem">PASS ou LAS</span>
+            <span class="card-link">Voir la fiche →</span>
+          </div>
+        </a>
+
+        <a href="facultes/toulouse.html" class="glass-card fac-card fade-up" data-region="occitanie" data-name="université de toulouse toulouse">
+          <div class="fac-card-header">
+            <h3>Université de Toulouse</h3>
+            <span class="fac-city">Toulouse</span>
+          </div>
+          <div class="fac-card-stats">
+            <div class="fac-stat"><span class="fac-stat-value">1083</span><span class="fac-stat-label">Étudiants PASS</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">30,3%</span><span class="fac-stat-label">Taux réussite</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">328</span><span class="fac-stat-label">Places 2e année</span></div>
+          </div>
+          <div class="fac-card-footer">
+            <span class="fac-badge pass">PASS recommandé</span>
+            <span class="card-link">Voir la fiche →</span>
+          </div>
+        </a>
+
+        <a href="facultes/aix-marseille.html" class="glass-card fac-card fade-up" data-region="paca" data-name="aix-marseille université marseille">
+          <div class="fac-card-header">
+            <h3>Aix-Marseille Université</h3>
+            <span class="fac-city">Marseille</span>
+          </div>
+          <div class="fac-card-stats">
+            <div class="fac-stat"><span class="fac-stat-value">1630</span><span class="fac-stat-label">Étudiants PASS</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">29,1%</span><span class="fac-stat-label">Taux réussite</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">474</span><span class="fac-stat-label">Places 2e année</span></div>
+          </div>
+          <div class="fac-card-footer">
+            <span class="fac-badge pass">PASS recommandé</span>
+            <span class="card-link">Voir la fiche →</span>
+          </div>
+        </a>
+
+        <a href="facultes/lille.html" class="glass-card fac-card fade-up" data-region="hauts-de-france" data-name="université de lille lille">
+          <div class="fac-card-header">
+            <h3>Université de Lille</h3>
+            <span class="fac-city">Lille</span>
+          </div>
+          <div class="fac-card-stats">
+            <div class="fac-stat"><span class="fac-stat-value">1730</span><span class="fac-stat-label">Étudiants PASS</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">29,8%</span><span class="fac-stat-label">Taux réussite</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">515</span><span class="fac-stat-label">Places 2e année</span></div>
+          </div>
+          <div class="fac-card-footer">
+            <span class="fac-badge pass">PASS recommandé</span>
+            <span class="card-link">Voir la fiche →</span>
+          </div>
+        </a>
+
+        <a href="facultes/bordeaux.html" class="glass-card fac-card fade-up" data-region="nouvelle-aquitaine" data-name="université de bordeaux bordeaux">
+          <div class="fac-card-header">
+            <h3>Université de Bordeaux</h3>
+            <span class="fac-city">Bordeaux</span>
+          </div>
+          <div class="fac-card-stats">
+            <div class="fac-stat"><span class="fac-stat-value">1400</span><span class="fac-stat-label">Étudiants PASS</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">26,2%</span><span class="fac-stat-label">Taux réussite</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">367</span><span class="fac-stat-label">Places 2e année</span></div>
+          </div>
+          <div class="fac-card-footer">
+            <span class="fac-badge pass">PASS recommandé</span>
+            <span class="card-link">Voir la fiche →</span>
+          </div>
+        </a>
+
+        <a href="facultes/versailles-uvsq.html" class="glass-card fac-card fade-up" data-region="ile-de-france" data-name="université de versailles uvsq versailles">
+          <div class="fac-card-header">
+            <h3>Université de Versailles (UVSQ)</h3>
+            <span class="fac-city">Versailles</span>
+          </div>
+          <div class="fac-card-stats">
+            <div class="fac-stat"><span class="fac-stat-value">556</span><span class="fac-stat-label">Étudiants PASS</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">43,3%</span><span class="fac-stat-label">Taux réussite</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">241</span><span class="fac-stat-label">Places 2e année</span></div>
+          </div>
+          <div class="fac-card-footer">
+            <span class="fac-badge las">LAS recommandé</span>
+            <span class="card-link">Voir la fiche →</span>
+          </div>
+        </a>
+
+        <a href="facultes/nantes.html" class="glass-card fac-card fade-up" data-region="pays-de-la-loire" data-name="nantes université nantes">
+          <div class="fac-card-header">
+            <h3>Nantes Université</h3>
+            <span class="fac-city">Nantes</span>
+          </div>
+          <div class="fac-card-stats">
+            <div class="fac-stat"><span class="fac-stat-value">758</span><span class="fac-stat-label">Étudiants PASS</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">28,4%</span><span class="fac-stat-label">Taux réussite</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">215</span><span class="fac-stat-label">Places 2e année</span></div>
+          </div>
+          <div class="fac-card-footer">
+            <span class="fac-badge las">LAS recommandé</span>
+            <span class="card-link">Voir la fiche →</span>
+          </div>
+        </a>
+
+        <a href="facultes/sorbonne-nord.html" class="glass-card fac-card fade-up" data-region="ile-de-france" data-name="sorbonne paris nord bobigny">
+          <div class="fac-card-header">
+            <h3>Sorbonne Paris Nord</h3>
+            <span class="fac-city">Bobigny</span>
+          </div>
+          <div class="fac-card-stats">
+            <div class="fac-stat"><span class="fac-stat-value">355</span><span class="fac-stat-label">Étudiants PASS</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">30,4%</span><span class="fac-stat-label">Taux réussite</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">108</span><span class="fac-stat-label">Places 2e année</span></div>
+          </div>
+          <div class="fac-card-footer">
+            <span class="fac-badge pass">PASS recommandé</span>
+            <span class="card-link">Voir la fiche →</span>
+          </div>
+        </a>
+
+        <a href="facultes/sorbonne-universite.html" class="glass-card fac-card fade-up" data-region="ile-de-france" data-name="sorbonne université paris">
+          <div class="fac-card-header">
+            <h3>Sorbonne Université</h3>
+            <span class="fac-city">Paris</span>
+          </div>
+          <div class="fac-card-stats">
+            <div class="fac-stat"><span class="fac-stat-value">1400</span><span class="fac-stat-label">Étudiants PASS</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">24,1%</span><span class="fac-stat-label">Taux réussite</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">338</span><span class="fac-stat-label">Places 2e année</span></div>
+          </div>
+          <div class="fac-card-footer">
+            <span class="fac-badge pass">PASS recommandé</span>
+            <span class="card-link">Voir la fiche →</span>
+          </div>
+        </a>
+
+        <a href="facultes/grenoble-alpes.html" class="glass-card fac-card fade-up" data-region="auvergne-rhone-alpes" data-name="université grenoble alpes grenoble">
+          <div class="fac-card-header">
+            <h3>Université Grenoble Alpes</h3>
+            <span class="fac-city">Grenoble</span>
+          </div>
+          <div class="fac-card-stats">
+            <div class="fac-stat"><span class="fac-stat-value">1300</span><span class="fac-stat-label">Étudiants PASS</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">16,5%</span><span class="fac-stat-label">Taux réussite</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">214</span><span class="fac-stat-label">Places 2e année</span></div>
+          </div>
+          <div class="fac-card-footer">
+            <span class="fac-badge pass">PASS recommandé</span>
+            <span class="card-link">Voir la fiche →</span>
+          </div>
+        </a>
+
+        <a href="facultes/nancy.html" class="glass-card fac-card fade-up" data-region="grand-est" data-name="université de lorraine nancy nancy">
+          <div class="fac-card-header">
+            <h3>Université de Lorraine (Nancy)</h3>
+            <span class="fac-city">Nancy</span>
+          </div>
+          <div class="fac-card-stats">
+            <div class="fac-stat"><span class="fac-stat-value">750</span><span class="fac-stat-label">Étudiants PASS</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">46,8%</span><span class="fac-stat-label">Taux réussite</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">351</span><span class="fac-stat-label">Places 2e année</span></div>
+          </div>
+          <div class="fac-card-footer">
+            <span class="fac-badge pass">PASS recommandé</span>
+            <span class="card-link">Voir la fiche →</span>
+          </div>
+        </a>
+
+        <a href="facultes/rennes.html" class="glass-card fac-card fade-up" data-region="bretagne" data-name="université de rennes rennes">
+          <div class="fac-card-header">
+            <h3>Université de Rennes</h3>
+            <span class="fac-city">Rennes</span>
+          </div>
+          <div class="fac-card-stats">
+            <div class="fac-stat"><span class="fac-stat-value">696</span><span class="fac-stat-label">Étudiants PASS</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">30,7%</span><span class="fac-stat-label">Taux réussite</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">214</span><span class="fac-stat-label">Places 2e année</span></div>
+          </div>
+          <div class="fac-card-footer">
+            <span class="fac-badge las">LAS recommandé</span>
+            <span class="card-link">Voir la fiche →</span>
+          </div>
+        </a>
+
+        <a href="facultes/clermont-ferrand.html" class="glass-card fac-card fade-up" data-region="auvergne-rhone-alpes" data-name="université clermont auvergne clermont-ferrand">
+          <div class="fac-card-header">
+            <h3>Université Clermont Auvergne</h3>
+            <span class="fac-city">Clermont-Ferrand</span>
+          </div>
+          <div class="fac-card-stats">
+            <div class="fac-stat"><span class="fac-stat-value">560</span><span class="fac-stat-label">Étudiants PASS</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">34,8%</span><span class="fac-stat-label">Taux réussite</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">216</span><span class="fac-stat-label">Places 2e année</span></div>
+          </div>
+          <div class="fac-card-footer">
+            <span class="fac-badge pass">PASS recommandé</span>
+            <span class="card-link">Voir la fiche →</span>
+          </div>
+        </a>
+
+        <a href="facultes/dijon.html" class="glass-card fac-card fade-up" data-region="bourgogne-franche-comte" data-name="université de bourgogne dijon dijon">
+          <div class="fac-card-header">
+            <h3>Université de Bourgogne (Dijon)</h3>
+            <span class="fac-city">Dijon</span>
+          </div>
+          <div class="fac-card-stats">
+            <div class="fac-stat"><span class="fac-stat-value">800</span><span class="fac-stat-label">Étudiants PASS</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">33,0%</span><span class="fac-stat-label">Taux réussite</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">264</span><span class="fac-stat-label">Places 2e année</span></div>
+          </div>
+          <div class="fac-card-footer">
+            <span class="fac-badge pass">PASS recommandé</span>
+            <span class="card-link">Voir la fiche →</span>
+          </div>
+        </a>
+
+        <a href="facultes/saint-etienne.html" class="glass-card fac-card fade-up" data-region="auvergne-rhone-alpes" data-name="université jean monnet saint-étienne saint-etienne">
+          <div class="fac-card-header">
+            <h3>Université Jean Monnet (Saint-Étienne)</h3>
+            <span class="fac-city">Saint-Étienne</span>
+          </div>
+          <div class="fac-card-stats">
+            <div class="fac-stat"><span class="fac-stat-value">500</span><span class="fac-stat-label">Étudiants PASS</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">38,6%</span><span class="fac-stat-label">Taux réussite</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">193</span><span class="fac-stat-label">Places 2e année</span></div>
+          </div>
+          <div class="fac-card-footer">
+            <span class="fac-badge pass">PASS recommandé</span>
+            <span class="card-link">Voir la fiche →</span>
+          </div>
+        </a>
+
+        <a href="facultes/limoges.html" class="glass-card fac-card fade-up" data-region="nouvelle-aquitaine" data-name="université de limoges limoges">
+          <div class="fac-card-header">
+            <h3>Université de Limoges</h3>
+            <span class="fac-city">Limoges</span>
+          </div>
+          <div class="fac-card-stats">
+            <div class="fac-stat"><span class="fac-stat-value">660</span><span class="fac-stat-label">Étudiants PASS</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">27,3%</span><span class="fac-stat-label">Taux réussite</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">180</span><span class="fac-stat-label">Places 2e année</span></div>
+          </div>
+          <div class="fac-card-footer">
+            <span class="fac-badge pass">PASS recommandé</span>
+            <span class="card-link">Voir la fiche →</span>
+          </div>
+        </a>
+
+        <a href="facultes/rouen.html" class="glass-card fac-card fade-up" data-region="normandie" data-name="université de rouen normandie rouen">
+          <div class="fac-card-header">
+            <h3>Université de Rouen Normandie</h3>
+            <span class="fac-city">Rouen</span>
+          </div>
+          <div class="fac-card-stats">
+            <div class="fac-stat"><span class="fac-stat-value">631</span><span class="fac-stat-label">Étudiants PASS</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">31,4%</span><span class="fac-stat-label">Taux réussite</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">198</span><span class="fac-stat-label">Places 2e année</span></div>
+          </div>
+          <div class="fac-card-footer">
+            <span class="fac-badge pass">PASS recommandé</span>
+            <span class="card-link">Voir la fiche →</span>
+          </div>
+        </a>
+
+        <a href="facultes/tours.html" class="glass-card fac-card fade-up" data-region="centre-val-de-loire" data-name="université de tours tours">
+          <div class="fac-card-header">
+            <h3>Université de Tours</h3>
+            <span class="fac-city">Tours</span>
+          </div>
+          <div class="fac-card-stats">
+            <div class="fac-stat"><span class="fac-stat-value">815</span><span class="fac-stat-label">Étudiants PASS</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">32,4%</span><span class="fac-stat-label">Taux réussite</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">264</span><span class="fac-stat-label">Places 2e année</span></div>
+          </div>
+          <div class="fac-card-footer">
+            <span class="fac-badge idem">PASS ou LAS</span>
+            <span class="card-link">Voir la fiche →</span>
+          </div>
+        </a>
+
+        <a href="facultes/besancon.html" class="glass-card fac-card fade-up" data-region="bourgogne-franche-comte" data-name="université de franche-comté besançon besancon">
+          <div class="fac-card-header">
+            <h3>Université de Franche-Comté (Besançon)</h3>
+            <span class="fac-city">Besançon</span>
+          </div>
+          <div class="fac-card-stats">
+            <div class="fac-stat"><span class="fac-stat-value">593</span><span class="fac-stat-label">Étudiants PASS</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">38,6%</span><span class="fac-stat-label">Taux réussite</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">229</span><span class="fac-stat-label">Places 2e année</span></div>
+          </div>
+          <div class="fac-card-footer">
+            <span class="fac-badge pass">PASS recommandé</span>
+            <span class="card-link">Voir la fiche →</span>
+          </div>
+        </a>
+
+        <a href="facultes/antilles.html" class="glass-card fac-card fade-up" data-region="dom-tom" data-name="université des antilles pointe-à-pitre">
+          <div class="fac-card-header">
+            <h3>Université des Antilles</h3>
+            <span class="fac-city">Pointe-à-Pitre</span>
+          </div>
+          <div class="fac-card-stats">
+            <div class="fac-stat"><span class="fac-stat-value">937</span><span class="fac-stat-label">Étudiants PASS</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">14,5%</span><span class="fac-stat-label">Taux réussite</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">136</span><span class="fac-stat-label">Places 2e année</span></div>
+          </div>
+          <div class="fac-card-footer">
+            <span class="fac-badge las">LAS recommandé</span>
+            <span class="card-link">Voir la fiche →</span>
+          </div>
+        </a>
+
+        <a href="facultes/brest.html" class="glass-card fac-card fade-up" data-region="bretagne" data-name="université de bretagne occidentale brest brest">
+          <div class="fac-card-header">
+            <h3>Université de Bretagne Occidentale (Brest)</h3>
+            <span class="fac-city">Brest</span>
+          </div>
+          <div class="fac-card-stats">
+            <div class="fac-stat"><span class="fac-stat-value">720</span><span class="fac-stat-label">Étudiants PASS</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">27,6%</span><span class="fac-stat-label">Taux réussite</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">199</span><span class="fac-stat-label">Places 2e année</span></div>
+          </div>
+          <div class="fac-card-footer">
+            <span class="fac-badge pass">PASS recommandé</span>
+            <span class="card-link">Voir la fiche →</span>
+          </div>
+        </a>
+
+        <a href="facultes/amiens.html" class="glass-card fac-card fade-up" data-region="hauts-de-france" data-name="université de picardie jules verne amiens amiens">
+          <div class="fac-card-header">
+            <h3>Université de Picardie Jules Verne (Amiens)</h3>
+            <span class="fac-city">Amiens</span>
+          </div>
+          <div class="fac-card-stats">
+            <div class="fac-stat"><span class="fac-stat-value">862</span><span class="fac-stat-label">Étudiants PASS</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">28,5%</span><span class="fac-stat-label">Taux réussite</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">246</span><span class="fac-stat-label">Places 2e année</span></div>
+          </div>
+          <div class="fac-card-footer">
+            <span class="fac-badge pass">PASS recommandé</span>
+            <span class="card-link">Voir la fiche →</span>
+          </div>
+        </a>
+
+        <a href="facultes/corse.html" class="glass-card fac-card fade-up" data-region="corse" data-name="université de corse corte">
+          <div class="fac-card-header">
+            <h3>Université de Corse</h3>
+            <span class="fac-city">Corte</span>
+          </div>
+          <div class="fac-card-stats">
+            <div class="fac-stat"><span class="fac-stat-value">160</span><span class="fac-stat-label">Étudiants PASS</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">20,6%</span><span class="fac-stat-label">Taux réussite</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">33</span><span class="fac-stat-label">Places 2e année</span></div>
+          </div>
+          <div class="fac-card-footer">
+            <span class="fac-badge las">LAS recommandé</span>
+            <span class="card-link">Voir la fiche →</span>
+          </div>
+        </a>
+
+        <a href="facultes/reunion.html" class="glass-card fac-card fade-up" data-region="dom-tom" data-name="université de la réunion saint-denis reunion">
+          <div class="fac-card-header">
+            <h3>Université de La Réunion</h3>
+            <span class="fac-city">Saint-Denis</span>
+          </div>
+          <div class="fac-card-stats">
+            <div class="fac-stat"><span class="fac-stat-value">790</span><span class="fac-stat-label">Étudiants PASS</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">14,7%</span><span class="fac-stat-label">Taux réussite</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">116</span><span class="fac-stat-label">Places 2e année</span></div>
+          </div>
+          <div class="fac-card-footer">
+            <span class="fac-badge pass">PASS recommandé</span>
+            <span class="card-link">Voir la fiche →</span>
+          </div>
+        </a>
+
+        <a href="facultes/angers.html" class="glass-card fac-card fade-up" data-region="pays-de-la-loire" data-name="université d'angers angers">
+          <div class="fac-card-header">
+            <h3>Université d'Angers</h3>
+            <span class="fac-city">Angers</span>
+          </div>
+          <div class="fac-card-stats">
+            <div class="fac-stat"><span class="fac-stat-value">825</span><span class="fac-stat-label">Étudiants PASS</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">22,4%</span><span class="fac-stat-label">Taux réussite</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">185</span><span class="fac-stat-label">Places 2e année</span></div>
+          </div>
+          <div class="fac-card-footer">
+            <span class="fac-badge pass">PASS recommandé</span>
+            <span class="card-link">Voir la fiche →</span>
+          </div>
+        </a>
+
+        <a href="facultes/orleans.html" class="glass-card fac-card fade-up" data-region="centre-val-de-loire" data-name="université d'orléans orléans orleans">
+          <div class="fac-card-header">
+            <h3>Université d'Orléans</h3>
+            <span class="fac-city">Orléans</span>
+          </div>
+          <div class="fac-card-stats">
+            <div class="fac-stat"><span class="fac-stat-value">160</span><span class="fac-stat-label">Étudiants PASS</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">64,4%</span><span class="fac-stat-label">Taux réussite</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">103</span><span class="fac-stat-label">Places 2e année</span></div>
+          </div>
+          <div class="fac-card-footer">
+            <span class="fac-badge pass">PASS recommandé</span>
+            <span class="card-link">Voir la fiche →</span>
+          </div>
+        </a>
+
+        <a href="facultes/guyane.html" class="glass-card fac-card fade-up" data-region="dom-tom" data-name="université de guyane cayenne">
+          <div class="fac-card-header">
+            <h3>Université de Guyane</h3>
+            <span class="fac-city">Cayenne</span>
+          </div>
+          <div class="fac-card-stats">
+            <div class="fac-stat"><span class="fac-stat-value">140</span><span class="fac-stat-label">Étudiants PASS</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">22,9%</span><span class="fac-stat-label">Taux réussite</span></div>
+            <div class="fac-stat"><span class="fac-stat-value">32</span><span class="fac-stat-label">Places 2e année</span></div>
+          </div>
+          <div class="fac-card-footer">
+            <span class="fac-badge pass">PASS recommandé</span>
+            <span class="card-link">Voir la fiche →</span>
+          </div>
+        </a>
+
+      </div>
+
+      <!-- No results message -->
+      <p class="fac-no-results">Aucune faculté ne correspond à votre recherche.</p>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="container">
+      <div class="cta-box fade-up">
+        <h2>Trouvez la fac faite <span class="gradient">pour vous</span></h2>
+        <p>Utilisez notre Quizz x Fac pour découvrir les facultés les plus adaptées à votre profil.</p>
+        <a href="quizz.html" class="btn btn-primary btn-lg">Faire le Quizz →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="nav-logo"><img src="assets/logo.png" alt="AFEM"></div>
+          <p>Association des Futurs Étudiants en Médecine. Nous accompagnons les lycéens et étudiants dans leur parcours vers les études de santé.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Outils</h4>
+          <a href="simulateur.html">Simulateur Parcoursup</a>
+          <a href="quizz.html">Quizz x Fac</a>
+          <a href="coaching.html">Coaching</a>
+          <a href="cours.html">Cours PASS/LAS</a>
+        </div>
+        <div class="footer-col">
+          <h4>Ressources</h4>
+          <a href="blog.html">Blog</a>
+          <a href="facultes.html">Facultés de médecine</a>
+          <a href="qui-sommes-nous.html">Qui sommes-nous</a>
+          <a href="mentions-legales.html">Mentions légales</a>
+        </div>
+        <div class="footer-col">
+          <h4>Contact</h4>
+          <a href="#" data-contact-modal>contact@afem-edu.fr</a>
+          <a href="https://www.instagram.com/afem_edu/" target="_blank" rel="noopener">Instagram</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 AFEM. Tous droits réservés.</span>
+        <div class="footer-social">
+          <a href="https://www.instagram.com/afem_edu/" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Contact Modal -->
+  <div class="modal-overlay" id="contact-modal">
+    <div class="modal-content">
+      <button class="modal-close" aria-label="Fermer">&times;</button>
+      <h3>Nous contacter</h3>
+      <p>Remplissez le formulaire ci-dessous et nous vous répondrons rapidement.</p>
+      <div id="hubspot-form-container"></div>
+    </div>
+  </div>
+
+  <script charset="utf-8" type="text/javascript" src="//js-eu1.hsforms.net/forms/embed/v2.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/facultes.js"></script>
+</body>
+</html>

@@ -2364,3 +2364,546 @@ section {
     gap: 4px;
   }
 }
+
+/* ========================================
+   FACULTÉS
+   ======================================== */
+
+/* --- Search Bar --- */
+.fac-search-wrapper {
+  max-width: 520px;
+  margin: 0 auto 28px;
+  position: relative;
+}
+
+.fac-search {
+  width: 100%;
+  padding: 14px 20px 14px 48px;
+  background: var(--glass-bg);
+  border: 1.5px solid var(--glass-border);
+  border-radius: 50px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  font-family: var(--font);
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.fac-search:focus {
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px rgba(101, 189, 125, 0.15);
+}
+
+.fac-search::placeholder {
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.fac-search-icon {
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+/* --- Region Filters --- */
+.fac-filters {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.fac-filter-btn {
+  padding: 6px 16px;
+  border-radius: 50px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-family: var(--font);
+  border: 1.5px solid var(--glass-border);
+  background: var(--glass-bg);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all var(--transition);
+  white-space: nowrap;
+}
+
+.fac-filter-btn:hover {
+  border-color: var(--green);
+  color: var(--green-dark);
+}
+
+.fac-filter-btn.active {
+  background: linear-gradient(135deg, var(--green), var(--green-dark));
+  color: var(--white);
+  border-color: transparent;
+  box-shadow: 0 4px 16px rgba(101, 189, 125, 0.25);
+}
+
+/* --- Counter --- */
+.fac-counter {
+  text-align: center;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  margin-bottom: 32px;
+}
+
+.fac-counter strong {
+  color: var(--green-dark);
+  font-weight: 700;
+}
+
+/* --- Faculty Card --- */
+.fac-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.fac-card {
+  display: flex;
+  flex-direction: column;
+  padding: 0 !important;
+  overflow: hidden;
+  transition: all var(--transition);
+  text-decoration: none;
+  color: inherit;
+}
+
+.fac-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+  border-color: var(--green);
+}
+
+.fac-card-header {
+  padding: 24px 24px 16px;
+}
+
+.fac-card-header h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--dark);
+  line-height: 1.3;
+  margin-bottom: 4px;
+}
+
+.fac-city {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.fac-card-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  padding: 0 24px 16px;
+}
+
+.fac-stat {
+  text-align: center;
+  padding: 8px 4px;
+}
+
+.fac-stat-value {
+  display: block;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--green-dark);
+  line-height: 1.2;
+}
+
+.fac-stat-label {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+  line-height: 1.3;
+}
+
+.fac-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 24px;
+  border-top: 1px solid var(--glass-border);
+  margin-top: auto;
+}
+
+.fac-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 50px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.fac-badge.pass {
+  background: rgba(101, 189, 125, 0.12);
+  color: var(--green-dark);
+}
+
+.fac-badge.las {
+  background: rgba(59, 130, 246, 0.1);
+  color: #2563eb;
+}
+
+.fac-badge.idem {
+  background: rgba(168, 85, 247, 0.1);
+  color: #7c3aed;
+}
+
+.fac-card-footer .card-link {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--green-dark);
+  transition: color var(--transition);
+}
+
+.fac-card-footer .card-link:hover {
+  color: var(--green);
+}
+
+.fac-card.hidden {
+  display: none;
+}
+
+/* --- No results --- */
+.fac-no-results {
+  text-align: center;
+  padding: 48px 24px;
+  color: var(--text-muted);
+  font-size: 1rem;
+  display: none;
+}
+
+.fac-no-results.visible {
+  display: block;
+}
+
+/* --- Faculty Detail Page --- */
+.fac-hero {
+  padding: 0 0 48px;
+}
+
+.fac-hero .blog-category {
+  margin-bottom: 16px;
+}
+
+.fac-hero h1 {
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 800;
+  letter-spacing: -1px;
+  line-height: 1.2;
+  margin-bottom: 8px;
+  color: var(--dark);
+}
+
+.fac-hero .fac-location {
+  font-size: 1.05rem;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.fac-hero .fac-subtitle {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 32px;
+}
+
+/* --- Key Stats Grid --- */
+.fac-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 48px;
+}
+
+.fac-stat-card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 24px 16px;
+  text-align: center;
+}
+
+.fac-stat-card .fac-stat-value {
+  font-size: 1.8rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--green), var(--green-dark));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.fac-stat-card .fac-stat-label {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* --- Faculty Table --- */
+.fac-table-wrapper {
+  overflow-x: auto;
+  margin-bottom: 48px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.fac-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.fac-table th,
+.fac-table td {
+  padding: 14px 20px;
+  text-align: center;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.fac-table th {
+  background: var(--bg-alt);
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+}
+
+.fac-table th:first-child,
+.fac-table td:first-child {
+  text-align: left;
+  font-weight: 600;
+}
+
+.fac-table tr:hover td {
+  background: rgba(101, 189, 125, 0.04);
+}
+
+.fac-table tfoot td {
+  font-weight: 700;
+  background: var(--bg-alt);
+  color: var(--green-dark);
+}
+
+/* --- Faculty Content Sections --- */
+.fac-section {
+  margin-bottom: 48px;
+}
+
+.fac-section h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 16px;
+}
+
+.fac-section p {
+  font-size: 1.05rem;
+  line-height: 1.85;
+  color: var(--text);
+  margin-bottom: 1.2em;
+}
+
+.fac-section ul {
+  list-style: disc;
+  padding-left: 1.5em;
+  margin-bottom: 1.5em;
+}
+
+.fac-section li {
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: var(--text);
+  margin-bottom: 0.4em;
+}
+
+/* --- CTA Grid --- */
+.fac-cta-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  margin-bottom: 48px;
+}
+
+.fac-cta-card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 32px 28px;
+  text-align: center;
+}
+
+.fac-cta-card h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: var(--dark);
+}
+
+.fac-cta-card p {
+  font-size: 0.92rem;
+  color: var(--text-muted);
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.fac-cta-card .btn {
+  width: 100%;
+  justify-content: center;
+  text-align: center;
+}
+
+/* --- FAQ Accordion --- */
+.fac-faq {
+  margin-bottom: 48px;
+}
+
+.fac-faq h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 24px;
+}
+
+.fac-faq-item {
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  margin-bottom: 12px;
+  overflow: hidden;
+  background: var(--glass-bg);
+}
+
+.fac-faq-question {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px;
+  font-family: var(--font);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--dark);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: color var(--transition);
+}
+
+.fac-faq-question:hover {
+  color: var(--green-dark);
+}
+
+.fac-faq-question .faq-chevron {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+}
+
+.fac-faq-item.open .fac-faq-question .faq-chevron {
+  transform: rotate(180deg);
+}
+
+.fac-faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+}
+
+.fac-faq-item.open .fac-faq-answer {
+  max-height: 500px;
+}
+
+.fac-faq-answer-inner {
+  padding: 0 24px 18px;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--text-muted);
+}
+
+/* --- Related Facs --- */
+.fac-related {
+  margin-top: 48px;
+  padding-top: 48px;
+  border-top: 1px solid var(--glass-border);
+}
+
+.fac-related h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 32px;
+  text-align: center;
+  color: var(--dark);
+}
+
+/* --- Faculty Responsive --- */
+@media (max-width: 1024px) {
+  .fac-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .fac-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .fac-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .fac-filters {
+    justify-content: flex-start;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 8px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .fac-filter-btn {
+    flex-shrink: 0;
+  }
+
+  .fac-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .fac-stat-card {
+    padding: 20px 12px;
+  }
+
+  .fac-stat-card .fac-stat-value {
+    font-size: 1.4rem;
+  }
+
+  .fac-cta-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .fac-hero h1 {
+    font-size: 1.6rem;
+  }
+
+  .fac-table th,
+  .fac-table td {
+    padding: 10px 12px;
+    font-size: 0.85rem;
+  }
+}
