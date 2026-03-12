@@ -2219,6 +2219,20 @@ section {
   font-weight: 500;
 }
 
+.blog-hero-img {
+  width: 100%;
+  max-height: 420px;
+  object-fit: cover;
+  border-radius: var(--radius);
+  margin-bottom: 36px;
+}
+
+.blog-content img {
+  width: 100%;
+  border-radius: var(--radius-sm);
+  margin: 24px 0;
+}
+
 /* --- Blog Content Prose --- */
 .blog-content p {
   font-size: 1.05rem;
