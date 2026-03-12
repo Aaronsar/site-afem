@@ -26,6 +26,9 @@ document.addEventListener('DOMContentLoaded', () => {
         burger.classList.remove('active');
         navLinks.classList.remove('open');
         document.body.style.overflow = '';
+        // Close dropdown on mobile too
+        const dd = document.querySelector('.nav-dropdown');
+        if (dd) dd.classList.remove('active');
       });
     });
   }
@@ -81,8 +84,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const href = link.getAttribute('href');
     if (href === currentPage || (currentPage === '' && href === 'index.html')) {
       link.classList.add('active');
+      // If active link is inside dropdown, also mark dropdown toggle as active
+      const parentDropdown = link.closest('.nav-dropdown');
+      if (parentDropdown) {
+        parentDropdown.querySelector('.nav-dropdown-toggle').classList.add('active');
+      }
     }
   });
+
+  // --- Dropdown toggle (mobile) ---
+  const dropdownToggle = document.querySelector('.nav-dropdown-toggle');
+  const navDropdown = document.querySelector('.nav-dropdown');
+  if (dropdownToggle && navDropdown) {
+    dropdownToggle.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      navDropdown.classList.toggle('active');
+    });
+
+    // Close dropdown when clicking outside (desktop)
+    document.addEventListener('click', (e) => {
+      if (!navDropdown.contains(e.target)) {
+        navDropdown.classList.remove('active');
+      }
+    });
+  }
 
   // --- Contact Modal ---
   const modalOverlay = document.getElementById('contact-modal');
