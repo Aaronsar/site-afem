@@ -10,7 +10,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="preload" as="style" href="css/style.min.css">
+  <link rel="stylesheet" href="css/style.min.css">
   <style>
     .legal-content { max-width: 800px; margin: 0 auto; }
     .legal-content h2 { font-size: 1.5rem; font-weight: 700; margin: 40px 0 16px; color: var(--white); }
@@ -31,6 +32,7 @@
   <meta name="twitter:title" content="Mentions légales — AFEM">
   <meta name="twitter:description" content="Mentions légales du site de l'AFEM, Association des Futurs Étudiants en Médecine.">
   <meta name="twitter:image" content="https://afem.fr/assets/og-image.png">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Mentions légales — AFEM","description":"Mentions légales du site afem.fr.","url":"https://afem.fr/mentions-legales.html","isPartOf":{"@type":"WebSite","name":"AFEM","url":"https://afem.fr"}}</script>
 </head>
 <body>
 
@@ -42,7 +44,7 @@
 
   <nav class="navbar">
     <div class="nav-inner">
-      <a href="index.html" class="nav-logo"><img src="assets/logo.png" alt="AFEM"></a>
+      <a href="index.html" class="nav-logo"><img loading="lazy" src="assets/logo.png" alt="AFEM"></a>
       <div class="nav-links">
         <a href="index.html">Accueil</a>
         <a href="qui-sommes-nous.html">Qui sommes-nous</a>
@@ -104,7 +106,7 @@
     <div class="container">
       <div class="footer-grid">
         <div class="footer-brand">
-          <div class="nav-logo"><img src="assets/logo.png" alt="AFEM"></div>
+          <div class="nav-logo"><img loading="lazy" src="assets/logo.png" alt="AFEM"></div>
           <p>Association des Futurs Étudiants en Médecine. Nous accompagnons les lycéens et étudiants dans leur parcours vers les études de santé.</p>
         </div>
         <div class="footer-col">
@@ -148,7 +150,7 @@
     </div>
   </div>
 
-  <script charset="utf-8" type="text/javascript" src="//js-eu1.hsforms.net/forms/embed/v2.js"></script>
-  <script src="js/main.js"></script>
+  <script defer charset="utf-8" type="text/javascript" src="https://js-eu1.hsforms.net/forms/embed/v2.js"></script>
+  <script defer src="js/main.min.js"></script>
 </body>
 </html>

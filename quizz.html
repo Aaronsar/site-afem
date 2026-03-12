@@ -10,7 +10,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="preload" as="style" href="css/style.min.css">
+  <link rel="stylesheet" href="css/style.min.css">
   <link rel="canonical" href="https://afem.fr/quizz.html">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://afem.fr/quizz.html">
@@ -23,6 +24,7 @@
   <meta name="twitter:title" content="Quizz Orientation Médecine : Trouve ta Fac Idéale | AFEM">
   <meta name="twitter:description" content="Trouvez la faculté de médecine qui correspond le mieux à votre profil grâce au quizz de compatibilité AFEM.">
   <meta name="twitter:image" content="https://afem.fr/assets/og-image.png">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Quizz Fac de Médecine — AFEM","description":"Trouvez la faculté de médecine qui vous correspond grâce à notre quizz interactif.","url":"https://afem.fr/quizz.html","applicationCategory":"EducationalApplication","provider":{"@type":"Organization","name":"AFEM","url":"https://afem.fr"}}</script>
 </head>
 <body>
 
@@ -34,7 +36,7 @@
 
   <nav class="navbar">
     <div class="nav-inner">
-      <a href="index.html" class="nav-logo"><img src="assets/logo.png" alt="AFEM"></a>
+      <a href="index.html" class="nav-logo"><img loading="lazy" src="assets/logo.png" alt="AFEM"></a>
       <div class="nav-links">
         <a href="index.html">Accueil</a>
         <a href="qui-sommes-nous.html">Qui sommes-nous</a>
@@ -198,7 +200,7 @@
     <div class="container">
       <div class="footer-grid">
         <div class="footer-brand">
-          <div class="nav-logo"><img src="assets/logo.png" alt="AFEM"></div>
+          <div class="nav-logo"><img loading="lazy" src="assets/logo.png" alt="AFEM"></div>
           <p>Association des Futurs Étudiants en Médecine. Nous accompagnons les lycéens et étudiants dans leur parcours vers les études de santé.</p>
         </div>
         <div class="footer-col">
@@ -242,9 +244,9 @@
     </div>
   </div>
 
-  <script charset="utf-8" type="text/javascript" src="//js-eu1.hsforms.net/forms/embed/v2.js"></script>
-  <script src="js/main.js"></script>
-  <script src="js/facs-data.js"></script>
-  <script src="js/quizz.js"></script>
+  <script defer charset="utf-8" type="text/javascript" src="https://js-eu1.hsforms.net/forms/embed/v2.js"></script>
+  <script defer src="js/main.min.js"></script>
+  <script defer src="js/facs-data.min.js"></script>
+  <script defer src="js/quizz.min.js"></script>
 </body>
 </html>

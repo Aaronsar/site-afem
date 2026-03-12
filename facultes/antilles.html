@@ -10,7 +10,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/style.css">
+  <link rel="preload" as="style" href="../css/style.min.css">
+  <link rel="stylesheet" href="../css/style.min.css">
   <link rel="canonical" href="https://afem.fr/facultes/antilles.html">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://afem.fr/facultes/antilles.html">
@@ -73,7 +74,7 @@
 
   <nav class="navbar">
     <div class="nav-inner">
-      <a href="../index.html" class="nav-logo"><img src="../assets/logo.png" alt="AFEM"></a>
+      <a href="../index.html" class="nav-logo"><img loading="lazy" src="../assets/logo.png" alt="AFEM"></a>
       <div class="nav-links">
         <a href="../index.html">Accueil</a>
         <a href="../qui-sommes-nous.html">Qui sommes-nous</a>
@@ -244,7 +245,7 @@
   <footer class="footer">
     <div class="container">
       <div class="footer-grid">
-        <div class="footer-brand"><div class="nav-logo"><img src="../assets/logo.png" alt="AFEM"></div><p>Association des Futurs Étudiants en Médecine. Nous accompagnons les lycéens et étudiants dans leur parcours vers les études de santé.</p></div>
+        <div class="footer-brand"><div class="nav-logo"><img loading="lazy" src="../assets/logo.png" alt="AFEM"></div><p>Association des Futurs Étudiants en Médecine. Nous accompagnons les lycéens et étudiants dans leur parcours vers les études de santé.</p></div>
         <div class="footer-col"><h4>Outils</h4><a href="../simulateur.html">Simulateur Parcoursup</a><a href="../quizz.html">Quizz x Fac</a><a href="../coaching.html">Coaching</a><a href="../cours.html">Cours PASS/LAS</a></div>
         <div class="footer-col"><h4>Ressources</h4><a href="../blog.html">Blog</a><a href="../facultes.html">Facultés de médecine</a><a href="../qui-sommes-nous.html">Qui sommes-nous</a><a href="../mentions-legales.html">Mentions légales</a></div>
         <div class="footer-col"><h4>Contact</h4><a href="#" data-contact-modal>contact@afem-edu.fr</a><a href="https://www.instagram.com/afem_edu/" target="_blank" rel="noopener">Instagram</a></div>
@@ -255,8 +256,8 @@
 
   <div class="modal-overlay" id="contact-modal"><div class="modal-content"><button class="modal-close" aria-label="Fermer">&times;</button><h3>Nous contacter</h3><p>Remplissez le formulaire ci-dessous et nous vous répondrons rapidement.</p><div id="hubspot-form-container"></div></div></div>
 
-  <script charset="utf-8" type="text/javascript" src="//js-eu1.hsforms.net/forms/embed/v2.js"></script>
-  <script src="../js/main.js"></script>
-  <script src="../js/facultes.js"></script>
+  <script defer charset="utf-8" type="text/javascript" src="https://js-eu1.hsforms.net/forms/embed/v2.js"></script>
+  <script defer src="../js/main.min.js"></script>
+  <script defer src="../js/facultes.min.js"></script>
 </body>
 </html>
