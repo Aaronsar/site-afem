@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog — AFEM</title>
+  <meta name="description" content="Articles et conseils pour réussir vos études de médecine : Parcoursup, PASS/LAS, orientation et vie étudiante.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="bg-blobs">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <nav class="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo"><img src="assets/logo.png" alt="AFEM"></a>
+      <div class="nav-links">
+        <a href="index.html">Accueil</a>
+        <a href="qui-sommes-nous.html">Qui sommes-nous</a>
+        <div class="nav-dropdown">
+          <button class="nav-dropdown-toggle">Nos outils <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
+          <div class="nav-dropdown-menu">
+            <a href="simulateur.html">Simulateur Parcoursup</a>
+            <a href="quizz.html">Quizz x Fac</a>
+            <a href="coaching.html">Coaching</a>
+            <a href="cours.html">Cours PASS/LAS</a>
+          </div>
+        </div>
+        <a href="blog.html">Blog</a>
+        <a href="simulateur.html" class="nav-cta">Accéder au Simulateur Parcoursup →</a>
+      </div>
+      <div class="nav-burger"><span></span><span></span><span></span></div>
+    </div>
+  </nav>
+
+  <section class="page-header">
+    <div class="container">
+      <span class="section-label" style="justify-content: center;">Ressources</span>
+      <h1>Blog <span class="gradient">AFEM</span></h1>
+      <p>Articles et conseils pour réussir vos études de médecine</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <!-- Filtres catégories -->
+      <div class="blog-filters">
+        <button class="blog-filter-btn active" data-filter="all">Tous</button>
+        <button class="blog-filter-btn" data-filter="parcoursup">Parcoursup</button>
+        <button class="blog-filter-btn" data-filter="pass-las">PASS/LAS</button>
+        <button class="blog-filter-btn" data-filter="orientation">Orientation</button>
+        <button class="blog-filter-btn" data-filter="vie-etudiante">Vie étudiante</button>
+      </div>
+
+      <!-- Grille d'articles -->
+      <div class="blog-grid">
+
+        <article class="glass-card blog-card fade-up" data-category="orientation">
+          <div class="blog-card-content">
+            <span class="blog-category">Orientation</span>
+            <h3>Comment choisir sa fac de médecine en 2026 ?</h3>
+            <p class="blog-excerpt">Le choix de la faculté de médecine est une étape cruciale. Découvrez les critères essentiels à prendre en compte pour faire le bon choix : taux de réussite, localisation, options de parcours...</p>
+            <div class="blog-card-footer">
+              <span class="blog-date">12 mars 2026</span>
+              <a href="articles/choisir-sa-fac-de-medecine.html" class="card-link">Lire →</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="glass-card blog-card fade-up" data-category="parcoursup">
+          <div class="blog-card-content">
+            <span class="blog-category">Parcoursup</span>
+            <h3>Parcoursup 2026 : les dates clés à retenir</h3>
+            <p class="blog-excerpt">Ne manquez aucune échéance ! Retrouvez le calendrier complet de Parcoursup 2026 avec toutes les dates importantes pour votre inscription en PASS ou LAS.</p>
+            <div class="blog-card-footer">
+              <span class="blog-date">8 mars 2026</span>
+              <a href="articles/parcoursup-dates-cles-2026.html" class="card-link">Lire →</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="glass-card blog-card fade-up" data-category="pass-las">
+          <div class="blog-card-content">
+            <span class="blog-category">PASS/LAS</span>
+            <h3>PASS ou LAS : comment choisir le bon parcours ?</h3>
+            <p class="blog-excerpt">PASS et LAS offrent deux voies d'accès aux études de santé. Quelles sont les différences ? Lequel choisir selon votre profil ? On vous explique tout.</p>
+            <div class="blog-card-footer">
+              <span class="blog-date">3 mars 2026</span>
+              <a href="articles/pass-ou-las-comment-choisir.html" class="card-link">Lire →</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="glass-card blog-card fade-up" data-category="vie-etudiante">
+          <div class="blog-card-content">
+            <span class="blog-category">Vie étudiante</span>
+            <h3>5 conseils pour bien préparer sa rentrée en PASS</h3>
+            <p class="blog-excerpt">La rentrée en PASS peut être intimidante. Voici 5 conseils concrets pour bien démarrer votre première année d'études de santé et prendre de l'avance.</p>
+            <div class="blog-card-footer">
+              <span class="blog-date">25 février 2026</span>
+              <a href="articles/5-conseils-rentree-pass.html" class="card-link">Lire →</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="glass-card blog-card fade-up" data-category="parcoursup">
+          <div class="blog-card-content">
+            <span class="blog-category">Parcoursup</span>
+            <h3>Lettre de motivation Parcoursup : nos conseils</h3>
+            <p class="blog-excerpt">Votre projet de formation motivé est déterminant pour votre admission en PASS/LAS. Découvrez comment rédiger une lettre qui fera la différence.</p>
+            <div class="blog-card-footer">
+              <span class="blog-date">18 février 2026</span>
+              <a href="articles/lettre-motivation-parcoursup.html" class="card-link">Lire →</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="glass-card blog-card fade-up" data-category="pass-las">
+          <div class="blog-card-content">
+            <span class="blog-category">PASS/LAS</span>
+            <h3>Les spécialités à choisir au lycée pour la médecine</h3>
+            <p class="blog-excerpt">SVT, Physique-Chimie, Maths... Quelles spécialités choisir en Première et Terminale pour maximiser vos chances d'intégrer médecine ?</p>
+            <div class="blog-card-footer">
+              <span class="blog-date">10 février 2026</span>
+              <a href="articles/specialites-lycee-medecine.html" class="card-link">Lire →</a>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="container">
+      <div class="cta-box fade-up">
+        <h2>Prêt à préparer votre <span class="gradient">avenir en médecine</span> ?</h2>
+        <p>Utilisez nos outils gratuits pour maximiser vos chances de réussite.</p>
+        <a href="simulateur.html" class="btn btn-primary btn-lg">Accéder au Simulateur →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="nav-logo"><img src="assets/logo.png" alt="AFEM"></div>
+          <p>Association des Futurs Étudiants en Médecine. Nous accompagnons les lycéens et étudiants dans leur parcours vers les études de santé.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Outils</h4>
+          <a href="simulateur.html">Simulateur Parcoursup</a>
+          <a href="quizz.html">Quizz x Fac</a>
+          <a href="coaching.html">Coaching</a>
+          <a href="cours.html">Cours PASS/LAS</a>
+        </div>
+        <div class="footer-col">
+          <h4>Ressources</h4>
+          <a href="blog.html">Blog</a>
+          <a href="qui-sommes-nous.html">Qui sommes-nous</a>
+          <a href="mentions-legales.html">Mentions légales</a>
+        </div>
+        <div class="footer-col">
+          <h4>Contact</h4>
+          <a href="#" data-contact-modal>contact@afem-edu.fr</a>
+          <a href="https://www.instagram.com/afem_edu/" target="_blank" rel="noopener">Instagram</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 AFEM. Tous droits réservés.</span>
+        <div class="footer-social">
+          <a href="https://www.instagram.com/afem_edu/" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Contact Modal -->
+  <div class="modal-overlay" id="contact-modal">
+    <div class="modal-content">
+      <button class="modal-close" aria-label="Fermer">&times;</button>
+      <h3>Nous contacter</h3>
+      <p>Remplissez le formulaire ci-dessous et nous vous répondrons rapidement.</p>
+      <div id="hubspot-form-container"></div>
+    </div>
+  </div>
+
+  <script charset="utf-8" type="text/javascript" src="//js-eu1.hsforms.net/forms/embed/v2.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/blog.js"></script>
+</body>
+</html>
