@@ -294,9 +294,12 @@
             formId: '89c3a74e-207c-4234-9e69-d2f26321577c',
             region: 'eu1',
             target: '#calc-hubspot-form',
+            redirectUrl: '',
             onFormSubmitted: function () {
               resultsUnlocked = true;
               closeLeadModal();
+              // Remove blur from results
+              resultsPanel.classList.remove('calc-results-blurred');
               updateResults(true);
               if (window.innerWidth < 900) {
                 resultsPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -448,6 +451,13 @@
   // ─── Update Results Panel ───────────────────────────────────────
   function updateResults(final) {
     const result = calculateScore();
+
+    // Add blur when results exist but not unlocked
+    if (result && !resultsUnlocked) {
+      resultsPanel.classList.add('calc-results-blurred');
+    } else {
+      resultsPanel.classList.remove('calc-results-blurred');
+    }
 
     if (!result) {
       resultsPanel.innerHTML = '<div class="calc-results-placeholder">' +
