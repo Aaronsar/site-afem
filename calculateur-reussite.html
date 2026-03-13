@@ -188,12 +188,13 @@
                 <input type="number" id="calc-note2" class="calc-input calc-input-note" placeholder="Note /20" min="0" max="20" step="0.5">
               </div>
             </div>
-            <button class="btn btn-primary calc-next-btn" id="next-to-methode" style="display:none;">Suivant →</button>
+            <button class="btn btn-primary calc-next-btn" id="next-to-methode" style="display:none;">Découvrir mon estimation →</button>
           </div>
 
-          <!-- Tab 3: Méthode de travail -->
+          <!-- Tab 3: Méthode de travail (unlocked after form) -->
           <div class="calc-tab-content" id="tab-methode">
             <button class="calc-back-btn" data-target="profil">← Retour</button>
+            <p class="calc-tab-intro">Dernière étape — affine ton analyse en répondant à ces 3 questions.</p>
             <div class="calc-field">
               <label>Heures de travail personnel par jour (en dehors des cours)</label>
               <div class="calc-options">
@@ -222,12 +223,11 @@
               </div>
             </div>
 
+            <!-- Dévoiler l'analyse button -->
+            <button class="btn btn-primary btn-lg calc-devoiler" id="calc-devoiler" style="display:none; width: 100%; margin-top: 20px;">
+              Dévoiler mon analyse →
+            </button>
           </div>
-
-          <!-- Calculate button -->
-          <button class="btn btn-primary btn-lg calc-submit" id="calc-submit" style="display:none; width: 100%; margin-top: 16px;">
-            Calculer mes chances →
-          </button>
         </div>
 
         <!-- Right: Results panel -->
@@ -311,10 +311,84 @@
         <div class="calc-lead-icon">
           <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.5"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
         </div>
-        <h3>Découvre tes résultats personnalisés</h3>
-        <p>Renseigne tes coordonnées pour accéder à ton estimation détaillée et recevoir des conseils adaptés à ton profil.</p>
+        <h3>Plus qu'une étape pour ton estimation</h3>
+        <p>Renseigne tes coordonnées pour accéder à ton analyse personnalisée et recevoir des conseils adaptés.</p>
       </div>
       <div id="calc-hubspot-form"></div>
+    </div>
+  </div>
+
+  <!-- Coup de coeur Modal -->
+  <div class="modal-overlay" id="cdc-modal">
+    <div class="modal-content cdc-modal-content">
+      <button class="modal-close" id="cdc-close" aria-label="Fermer">&times;</button>
+
+      <!-- Step 1: Coup de coeur + intérêt -->
+      <div class="cdc-step active" id="cdc-step-interest">
+        <div class="cdc-badge-wrap"><span class="cdc-badge">COUP DE CŒUR AFEM</span></div>
+        <h3>Notre recommandation à <span id="cdc-city">ta ville</span></h3>
+        <div class="cdc-prepa-card">
+          <h4 id="cdc-prepa-name">—</h4>
+          <p id="cdc-prepa-desc">—</p>
+          <a id="cdc-prepa-link" href="#" class="cdc-prepa-link" target="_blank">En savoir plus →</a>
+        </div>
+        <div class="cdc-avatars">
+          <div class="cdc-avatar-group">
+            <div class="cdc-avatar">👨‍⚕️</div>
+            <div class="cdc-avatar">👩‍⚕️</div>
+            <div class="cdc-avatar">🧑‍⚕️</div>
+          </div>
+        </div>
+        <div id="cdc-others"></div>
+        <p class="cdc-question">Envie d'échanger avec un étudiant passé par cette prépa ?</p>
+        <div class="cdc-buttons">
+          <button class="btn btn-primary" id="cdc-yes">Oui, je veux échanger</button>
+          <button class="btn btn-secondary" id="cdc-no">Non merci, voir mes résultats</button>
+        </div>
+      </div>
+
+      <!-- Step 2: Formulaire de contact -->
+      <div class="cdc-step" id="cdc-step-contact">
+        <h3>Pour préparer l'échange</h3>
+        <label class="cdc-label">Pose ici toutes tes questions</label>
+        <textarea id="cdc-questions" class="cdc-textarea" rows="3" placeholder="Ex : est-ce que c'est bien de faire une prépa ?"></textarea>
+
+        <label class="cdc-label">Comment souhaites-tu être contacté(e) ?</label>
+        <div class="cdc-contact-methods">
+          <button class="calc-option cdc-method" data-value="appel">Être rappelé(e)</button>
+          <button class="calc-option cdc-method" data-value="sms">Échanger par SMS</button>
+        </div>
+
+        <div id="cdc-phone-field" style="display:none;">
+          <label class="cdc-label">Ton numéro de téléphone</label>
+          <div class="cdc-phone-row">
+            <div class="cdc-phone-prefix">+33</div>
+            <input type="tel" id="cdc-phone" class="cdc-input" placeholder="06 12 34 56 78" maxlength="14">
+          </div>
+
+          <label class="cdc-checkbox-wrap">
+            <input type="checkbox" id="cdc-consent">
+            <span>J'accepte d'être contacté(e) par un étudiant afin d'échanger sur son expérience.</span>
+          </label>
+
+          <label class="cdc-label">À quel moment te contacter ?</label>
+          <input type="text" id="cdc-when" class="cdc-input" placeholder="Ex : Mardi après-midi à 14h">
+
+          <button class="btn btn-primary cdc-submit-btn" id="cdc-submit" disabled>
+            Échanger avec un étudiant
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 3: Confirmation -->
+      <div class="cdc-step" id="cdc-step-confirm">
+        <div class="cdc-confirm-icon">
+          <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </div>
+        <h3>Demande envoyée !</h3>
+        <p>Un étudiant te contactera très bientôt. En attendant, découvre ton analyse détaillée.</p>
+        <button class="btn btn-primary" id="cdc-see-results">Voir mon analyse →</button>
+      </div>
     </div>
   </div>
 

@@ -1,61 +1,129 @@
 /**
  * Calculateur de réussite PASS/LAS — AFEM
- * Estime les chances de réussite à partir du profil scolaire et des données officielles.
+ * Flow : Étapes 1-2 → Formulaire HubSpot → Étape 3 → Dévoiler l'analyse → Coup de coeur
  */
 
 (function () {
   'use strict';
 
-  // State
-  const state = {
-    fac: null,
-    parcours: null,
-    classe: null,
-    mention: null,
-    spe1: null,
-    note1: null,
-    spe2: null,
-    note2: null,
-    heures: null,
-    prepa: null,
-    regularite: null,
+  // ─── Coup de coeur + autres prépas par ville ───────────────────
+  var COUPS_DE_COEUR = {
+    'paris': {
+      name: 'Diploma Santé',
+      link: 'prepa-diploma-sante.html',
+      desc: 'La prépa médecine de référence à Paris — accompagnement complet, professeurs issus des facs parisiennes et résultats prouvés.',
+      others: [
+        { name: 'Médisup Sciences', price: 'à partir de 8 700€' },
+        { name: 'Antémed-Epsilon', price: '7 400 – 8 500€' },
+        { name: 'CPCM', price: '6 100 – 7 200€' }
+      ]
+    },
+    'marseille': {
+      name: 'Medibox',
+      link: 'prepa-medibox.html',
+      desc: 'Prépa en ligne avec 76% d\'admissibilité en médecine. Formule Réussite dès 690€/an, adaptée à ta fac.',
+      others: [
+        { name: 'Sup Provence', price: 'non communiqué' },
+        { name: 'MDEP', price: '3 500€' },
+        { name: 'Cours Galien', price: 'non communiqué' },
+        { name: 'CLM Laennec', price: 'non communiqué' }
+      ]
+    },
+    'montpellier': {
+      name: 'Medibox',
+      link: 'prepa-medibox.html',
+      desc: 'Prépa en ligne avec 76% d\'admissibilité en médecine. Formule Réussite dès 690€/an, adaptée à ta fac.',
+      others: [
+        { name: 'Cours Agora', price: 'non communiqué' },
+        { name: 'ParcoursMed', price: 'non communiqué' }
+      ]
+    },
+    'lille': {
+      name: 'Medibox',
+      link: 'prepa-medibox.html',
+      desc: 'Prépa en ligne avec 76% d\'admissibilité en médecine. Formule Réussite dès 790€/an, adaptée à ta fac.',
+      others: [
+        { name: 'CAPPEC', price: '5 900 – 7 800€' },
+        { name: 'SupMédical', price: '8 590€' },
+        { name: 'Cours Galien', price: 'non communiqué' }
+      ]
+    },
+    'bordeaux': {
+      name: 'Medibox',
+      link: 'prepa-medibox.html',
+      desc: 'Prépa en ligne avec 76% d\'admissibilité en médecine. Formule Réussite dès 790€/an, adaptée à ta fac.',
+      others: [
+        { name: 'MMPP', price: '4 590€' },
+        { name: 'Médical Sciences', price: '799€/mois' },
+        { name: 'Cours Galien', price: 'non communiqué' },
+        { name: 'Cours Accès', price: 'non communiqué' }
+      ]
+    }
   };
 
-  // DOM refs
-  const facSelect = document.getElementById('calc-fac-select');
-  const fieldParcours = document.getElementById('field-parcours');
-  const fieldMention = document.getElementById('field-mention');
-  const fieldSpe1 = document.getElementById('field-spe1');
-  const fieldSpe2 = document.getElementById('field-spe2');
-  const fieldPrepa = document.getElementById('field-prepa');
-  const fieldRegularity = document.getElementById('field-regularity');
-  const submitBtn = document.getElementById('calc-submit');
-  const resultsPanel = document.getElementById('calc-results');
-  const stepDots = document.querySelectorAll('.calc-step-dot');
-  const tabContents = document.querySelectorAll('.calc-tab-content');
-  const nextToProfil = document.getElementById('next-to-profil');
-  const nextToMethode = document.getElementById('next-to-methode');
+  function getCityKey(fac) {
+    if (!fac || !fac.city) return null;
+    var city = fac.city.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    if (city.indexOf('paris') !== -1) return 'paris';
+    if (city.indexOf('marseille') !== -1) return 'marseille';
+    if (city.indexOf('montpellier') !== -1) return 'montpellier';
+    if (city.indexOf('lille') !== -1) return 'lille';
+    if (city.indexOf('bordeaux') !== -1) return 'bordeaux';
+    return null;
+  }
 
-  // Scientific specialties relevant to medicine
-  const SCIENCE_SPES = ['physique-chimie', 'svt', 'mathematiques', 'biologie-ecologie', 'nsi'];
+  // ─── State ────────────────────────────────────────────────────
+  var state = {
+    fac: null, parcours: null, classe: null, mention: null,
+    spe1: null, note1: null, spe2: null, note2: null,
+    heures: null, prepa: null, regularite: null,
+  };
 
-  // ─── Faculty select ─────────────────────────────────────────────
+  // ─── DOM refs ─────────────────────────────────────────────────
+  var facSelect = document.getElementById('calc-fac-select');
+  var fieldParcours = document.getElementById('field-parcours');
+  var fieldMention = document.getElementById('field-mention');
+  var fieldSpe1 = document.getElementById('field-spe1');
+  var fieldSpe2 = document.getElementById('field-spe2');
+  var fieldPrepa = document.getElementById('field-prepa');
+  var fieldRegularity = document.getElementById('field-regularity');
+  var resultsPanel = document.getElementById('calc-results');
+  var stepDots = document.querySelectorAll('.calc-step-dot');
+  var tabContents = document.querySelectorAll('.calc-tab-content');
+  var nextToProfil = document.getElementById('next-to-profil');
+  var nextToMethode = document.getElementById('next-to-methode');
+  var devoilerBtn = document.getElementById('calc-devoiler');
+
+  // Lead modal
+  var leadModal = document.getElementById('calc-lead-modal');
+  var leadFormContainer = document.getElementById('calc-hubspot-form');
+
+  // Coup de coeur modal
+  var cdcModal = document.getElementById('cdc-modal');
+  var cdcStepInterest = document.getElementById('cdc-step-interest');
+  var cdcStepContact = document.getElementById('cdc-step-contact');
+  var cdcStepConfirm = document.getElementById('cdc-step-confirm');
+
+  var SCIENCE_SPES = ['physique-chimie', 'svt', 'mathematiques', 'biologie-ecologie', 'nsi'];
+
+  var hubspotFormLoaded = false;
+  var formSubmitted = false;
+  var resultsUnlocked = false;
+
+  // ─── Faculty select ─────────────────────────────────────────
   function initFacSelect() {
-    const facs = window.FACS_DATA || [];
-    // Sort alphabetically by city then name
-    const sorted = facs.slice().sort(function (a, b) {
+    var facs = window.FACS_DATA || [];
+    var sorted = facs.slice().sort(function (a, b) {
       if (a.city < b.city) return -1;
       if (a.city > b.city) return 1;
       return a.name.localeCompare(b.name);
     });
-    // Count facs per city to detect multi-fac cities
     var cityCount = {};
     sorted.forEach(function (f) { cityCount[f.city] = (cityCount[f.city] || 0) + 1; });
 
     sorted.forEach(function (f) {
       var opt = document.createElement('option');
       opt.value = f.id;
-      // Multi-fac cities (Paris): show fac name, others: just city name
       opt.textContent = cityCount[f.city] > 1 ? f.name : f.city;
       facSelect.appendChild(opt);
     });
@@ -68,30 +136,22 @@
 
   function selectFac(fac) {
     state.fac = fac;
-
-    // Show parcours options
     fieldParcours.style.display = '';
 
-    // Check which parcours are available
-    const parcoursOptions = fieldParcours.querySelectorAll('.calc-option');
-    parcoursOptions.forEach(btn => {
-      const val = btn.dataset.value;
+    var parcoursOptions = fieldParcours.querySelectorAll('.calc-option');
+    parcoursOptions.forEach(function (btn) {
+      var val = btn.dataset.value;
       if (val === 'pass' && !fac.pass) {
-        btn.disabled = true;
-        btn.style.opacity = '0.4';
+        btn.disabled = true; btn.style.opacity = '0.4';
         btn.title = 'PASS non disponible dans cette fac';
       } else if (val === 'las' && !fac.las) {
-        btn.disabled = true;
-        btn.style.opacity = '0.4';
+        btn.disabled = true; btn.style.opacity = '0.4';
         btn.title = 'LAS non disponible dans cette fac';
       } else {
-        btn.disabled = false;
-        btn.style.opacity = '';
-        btn.title = '';
+        btn.disabled = false; btn.style.opacity = ''; btn.title = '';
       }
     });
 
-    // Auto-select if only one parcours available
     if (fac.pass && !fac.las) {
       selectParcours('pass');
       parcoursOptions[0].classList.add('selected');
@@ -99,65 +159,73 @@
       selectParcours('las');
       parcoursOptions[1].classList.add('selected');
     }
-
     updateResults();
   }
 
   function selectParcours(parcours) {
     state.parcours = parcours;
-    // Show next button instead of auto-advancing
     nextToProfil.style.display = '';
     updateResults();
   }
 
-  // ─── Tab navigation ─────────────────────────────────────────────
-  const tabOrder = ['filiere', 'profil', 'methode'];
+  // ─── Tab navigation ─────────────────────────────────────────
+  var tabOrder = ['filiere', 'profil', 'methode'];
 
   function activateTab(tabName) {
-    const idx = tabOrder.indexOf(tabName);
-    stepDots.forEach(d => {
-      const dotIdx = tabOrder.indexOf(d.dataset.tab);
+    var idx = tabOrder.indexOf(tabName);
+    stepDots.forEach(function (d) {
+      var dotIdx = tabOrder.indexOf(d.dataset.tab);
       d.classList.remove('active', 'completed');
       if (dotIdx === idx) d.classList.add('active');
       else if (dotIdx < idx) d.classList.add('completed');
     });
-    tabContents.forEach(tc => tc.classList.toggle('active', tc.id === 'tab-' + tabName));
+    tabContents.forEach(function (tc) {
+      tc.classList.toggle('active', tc.id === 'tab-' + tabName);
+    });
   }
 
   // Back buttons
-  document.querySelectorAll('.calc-back-btn').forEach(btn => {
+  document.querySelectorAll('.calc-back-btn').forEach(function (btn) {
     btn.addEventListener('click', function () {
       activateTab(this.dataset.target);
     });
   });
 
-  // Next buttons
+  // Next button step 1 → step 2
   nextToProfil.addEventListener('click', function () {
     activateTab('profil');
   });
+
+  // Next button step 2 → HubSpot form (NEW FLOW)
   nextToMethode.addEventListener('click', function () {
-    activateTab('methode');
+    if (formSubmitted) {
+      // Already submitted, just go to step 3
+      activateTab('methode');
+    } else {
+      openLeadModal();
+    }
   });
 
-  stepDots.forEach(dot => {
+  // Step dots clickable (but step 3 only if form submitted)
+  stepDots.forEach(function (dot) {
     dot.addEventListener('click', function () {
-      activateTab(this.dataset.tab);
+      var target = this.dataset.tab;
+      if (target === 'methode' && !formSubmitted) return;
+      activateTab(target);
     });
   });
 
-  // ─── Option buttons ─────────────────────────────────────────────
-  document.querySelectorAll('.calc-options').forEach(group => {
-    group.querySelectorAll('.calc-option').forEach(btn => {
+  // ─── Option buttons ─────────────────────────────────────────
+  document.querySelectorAll('.calc-options').forEach(function (group) {
+    group.querySelectorAll('.calc-option').forEach(function (btn) {
       btn.addEventListener('click', function () {
         if (this.disabled) return;
-        // Deselect siblings
-        group.querySelectorAll('.calc-option').forEach(b => b.classList.remove('selected'));
+        group.querySelectorAll('.calc-option').forEach(function (b) { b.classList.remove('selected'); });
         this.classList.add('selected');
 
-        // Determine which field this belongs to
-        const field = this.closest('.calc-field');
-        const fieldId = field ? field.id : '';
-        const value = this.dataset.value;
+        var field = this.closest('.calc-field');
+        var fieldId = field ? field.id : '';
+        var value = this.dataset.value;
 
         if (fieldId === 'field-parcours') {
           selectParcours(value);
@@ -165,47 +233,28 @@
           state.mention = value;
           fieldSpe1.style.display = '';
           updateResults();
-        } else if (field && field.querySelector('[id*="heures"]') === null && fieldId === '') {
-          // Heures de travail (first field in methode tab, no ID)
-          const parentTab = this.closest('.calc-tab-content');
-          if (parentTab && parentTab.id === 'tab-methode') {
-            const allFields = parentTab.querySelectorAll('.calc-field');
-            const fieldIndex = Array.from(allFields).indexOf(field);
-            if (fieldIndex === 0) {
-              state.heures = value;
-              fieldPrepa.style.display = '';
-              updateResults();
-            } else if (fieldId === 'field-prepa') {
-              state.prepa = value;
-              fieldRegularity.style.display = '';
-              updateResults();
-            } else if (fieldId === 'field-regularity') {
-              state.regularite = value;
-              submitBtn.style.display = '';
-              updateResults();
-            }
-          }
         } else if (fieldId === 'field-prepa') {
           state.prepa = value;
           fieldRegularity.style.display = '';
           updateResults();
         } else if (fieldId === 'field-regularity') {
           state.regularite = value;
-          submitBtn.style.display = '';
+          devoilerBtn.style.display = '';
           updateResults();
         }
       });
     });
   });
 
-  // Handle heures (first field in methode tab has no id, use event delegation)
-  const methodeTab = document.getElementById('tab-methode');
+  // Handle heures (first field in methode tab has no id)
+  var methodeTab = document.getElementById('tab-methode');
   if (methodeTab) {
-    const firstField = methodeTab.querySelector('.calc-field');
-    if (firstField) {
-      firstField.querySelectorAll('.calc-option').forEach(btn => {
+    var fields = methodeTab.querySelectorAll('.calc-field');
+    var firstField = fields[0];
+    if (firstField && !firstField.id) {
+      firstField.querySelectorAll('.calc-option').forEach(function (btn) {
         btn.addEventListener('click', function () {
-          firstField.querySelectorAll('.calc-option').forEach(b => b.classList.remove('selected'));
+          firstField.querySelectorAll('.calc-option').forEach(function (b) { b.classList.remove('selected'); });
           this.classList.add('selected');
           state.heures = this.dataset.value;
           fieldPrepa.style.display = '';
@@ -215,8 +264,8 @@
     }
   }
 
-  // ─── Select dropdowns ──────────────────────────────────────────
-  const classeSelect = document.getElementById('calc-classe');
+  // ─── Select dropdowns ──────────────────────────────────────
+  var classeSelect = document.getElementById('calc-classe');
   classeSelect.addEventListener('change', function () {
     state.classe = this.value;
     if (this.value === 'terminale' || this.value === 'premiere') {
@@ -228,21 +277,16 @@
     updateResults();
   });
 
-  const spe1Select = document.getElementById('calc-spe1');
-  const spe2Select = document.getElementById('calc-spe2');
-  const note1Input = document.getElementById('calc-note1');
-  const note2Input = document.getElementById('calc-note2');
+  var spe1Select = document.getElementById('calc-spe1');
+  var spe2Select = document.getElementById('calc-spe2');
+  var note1Input = document.getElementById('calc-note1');
+  var note2Input = document.getElementById('calc-note2');
 
   spe1Select.addEventListener('change', function () {
     state.spe1 = this.value;
     fieldSpe2.style.display = '';
-    // Filter spe2 options
-    spe2Select.querySelectorAll('option').forEach(opt => {
-      if (opt.value && opt.value === this.value) {
-        opt.style.display = 'none';
-      } else {
-        opt.style.display = '';
-      }
+    spe2Select.querySelectorAll('option').forEach(function (opt) {
+      opt.style.display = (opt.value && opt.value === spe1Select.value) ? 'none' : '';
     });
     updateResults();
   });
@@ -260,31 +304,15 @@
 
   note2Input.addEventListener('input', function () {
     state.note2 = parseFloat(this.value) || null;
-    // Show next button when both notes are filled
-    if (state.note1 && state.note2) {
-      nextToMethode.style.display = '';
-    }
+    if (state.note1 && state.note2) nextToMethode.style.display = '';
     updateResults();
   });
 
-  // Also check note1 to show next button
-  function checkProfilComplete() {
-    if (state.note1 && state.note2) {
-      nextToMethode.style.display = '';
-    }
-  }
-
-  // ─── Lead capture modal ────────────────────────────────────────
-  const leadModal = document.getElementById('calc-lead-modal');
-  const leadFormContainer = document.getElementById('calc-hubspot-form');
-  let hubspotFormLoaded = false;
-  let resultsUnlocked = false;
-
+  // ─── Lead capture modal ──────────────────────────────────────
   function openLeadModal() {
     leadModal.classList.add('active');
     document.body.style.overflow = 'hidden';
 
-    // Load HubSpot form only once
     if (!hubspotFormLoaded) {
       hubspotFormLoaded = true;
       function createHsForm() {
@@ -296,18 +324,14 @@
             target: '#calc-hubspot-form',
             redirectUrl: '',
             onFormSubmitted: function () {
-              resultsUnlocked = true;
+              formSubmitted = true;
               closeLeadModal();
-              // Remove blur from results
-              resultsPanel.classList.remove('calc-results-blurred');
-              updateResults(true);
-              if (window.innerWidth < 900) {
-                resultsPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-              }
+              // Advance to step 3
+              activateTab('methode');
+              updateResults();
             }
           });
         } else {
-          // HubSpot not loaded yet, retry
           setTimeout(createHsForm, 300);
         }
       }
@@ -323,136 +347,266 @@
   leadModal.addEventListener('click', function (e) {
     if (e.target === leadModal) closeLeadModal();
   });
-
   leadModal.querySelector('.modal-close').addEventListener('click', closeLeadModal);
 
-  // ─── Submit ─────────────────────────────────────────────────────
-  submitBtn.addEventListener('click', function () {
-    if (resultsUnlocked) {
-      updateResults(true);
-      if (window.innerWidth < 900) {
-        resultsPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
+  // ─── Dévoiler l'analyse ──────────────────────────────────────
+  devoilerBtn.addEventListener('click', function () {
+    var cityKey = getCityKey(state.fac);
+    var cdc = cityKey ? COUPS_DE_COEUR[cityKey] : null;
+
+    if (cdc) {
+      openCdcModal(cdc, state.fac.city);
     } else {
-      openLeadModal();
+      revealResults();
     }
   });
 
-  // ─── Calculation Engine ─────────────────────────────────────────
+  function revealResults() {
+    resultsUnlocked = true;
+    resultsPanel.classList.remove('calc-results-blurred');
+    updateResults(true);
+    if (window.innerWidth < 900) {
+      resultsPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  // ─── Coup de coeur modal ─────────────────────────────────────
+  function openCdcModal(cdc, city) {
+    // Populate coup de coeur
+    document.getElementById('cdc-city').textContent = city;
+    document.getElementById('cdc-prepa-name').textContent = cdc.name;
+    document.getElementById('cdc-prepa-desc').textContent = cdc.desc;
+    document.getElementById('cdc-prepa-link').href = cdc.link;
+
+    // Populate other prépas
+    var othersContainer = document.getElementById('cdc-others');
+    if (othersContainer) {
+      if (cdc.others && cdc.others.length > 0) {
+        var html = '<p class="cdc-others-title">Autres prépas à ' + city + '</p>';
+        html += '<div class="cdc-others-list">';
+        cdc.others.forEach(function (p) {
+          html += '<div class="cdc-other-item"><span class="cdc-other-name">' + p.name + '</span>';
+          html += '<span class="cdc-other-price">' + p.price + '</span></div>';
+        });
+        html += '</div>';
+        othersContainer.innerHTML = html;
+        othersContainer.style.display = '';
+      } else {
+        othersContainer.style.display = 'none';
+      }
+    }
+
+    // Reset to step 1
+    showCdcStep('interest');
+
+    cdcModal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeCdcModal() {
+    cdcModal.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  function showCdcStep(step) {
+    [cdcStepInterest, cdcStepContact, cdcStepConfirm].forEach(function (el) {
+      el.classList.remove('active');
+    });
+    document.getElementById('cdc-step-' + step).classList.add('active');
+  }
+
+  // Close
+  cdcModal.addEventListener('click', function (e) {
+    if (e.target === cdcModal) { closeCdcModal(); revealResults(); }
+  });
+  document.getElementById('cdc-close').addEventListener('click', function () {
+    closeCdcModal(); revealResults();
+  });
+
+  // "Non merci" → reveal results
+  document.getElementById('cdc-no').addEventListener('click', function () {
+    closeCdcModal();
+    revealResults();
+  });
+
+  // "Oui, je veux échanger" → step 2
+  document.getElementById('cdc-yes').addEventListener('click', function () {
+    showCdcStep('contact');
+  });
+
+  // Contact method selection
+  var cdcPhoneField = document.getElementById('cdc-phone-field');
+  document.querySelectorAll('.cdc-method').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      document.querySelectorAll('.cdc-method').forEach(function (b) { b.classList.remove('selected'); });
+      this.classList.add('selected');
+      cdcPhoneField.style.display = '';
+    });
+  });
+
+  // Phone + consent → enable submit
+  var cdcPhone = document.getElementById('cdc-phone');
+  var cdcConsent = document.getElementById('cdc-consent');
+  var cdcSubmitBtn = document.getElementById('cdc-submit');
+
+  function checkCdcSubmit() {
+    var phoneVal = cdcPhone.value.replace(/\s/g, '');
+    var valid = phoneVal.length >= 10 && cdcConsent.checked;
+    cdcSubmitBtn.disabled = !valid;
+  }
+
+  cdcPhone.addEventListener('input', checkCdcSubmit);
+  cdcConsent.addEventListener('change', checkCdcSubmit);
+
+  // Submit contact form via HubSpot Forms API
+  cdcSubmitBtn.addEventListener('click', function () {
+    if (this.disabled) return;
+    cdcSubmitBtn.disabled = true;
+    cdcSubmitBtn.textContent = 'Envoi en cours…';
+
+    // Collect data
+    var contactData = {
+      questions: document.getElementById('cdc-questions').value,
+      method: document.querySelector('.cdc-method.selected') ? document.querySelector('.cdc-method.selected').dataset.value : '',
+      phone: cdcPhone.value,
+      when: document.getElementById('cdc-when').value,
+      city: state.fac ? state.fac.city : '',
+      prepa: document.getElementById('cdc-prepa-name').textContent
+    };
+
+    // Get email from HubSpot cookie if available
+    var hutk = '';
+    try {
+      var match = document.cookie.match(/hubspotutk=([^;]+)/);
+      if (match) hutk = match[1];
+    } catch (e) {}
+
+    // Build HubSpot form submission
+    var payload = {
+      fields: [
+        { name: 'phone', value: contactData.phone },
+        { name: 'afem_questions_echange', value: contactData.questions },
+        { name: 'afem_methode_contact', value: contactData.method },
+        { name: 'afem_creneau_contact', value: contactData.when },
+        { name: 'afem_prepa_recommandee', value: contactData.prepa },
+        { name: 'afem_ville_fac', value: contactData.city }
+      ],
+      context: {
+        pageUri: window.location.href,
+        pageName: document.title
+      }
+    };
+    if (hutk) payload.context.hutk = hutk;
+
+    fetch('https://api.hsforms-eu1.com/submissions/v3/integration/submit/26711031/a6ec3207-7934-4af8-83ca-15b85e8a48b8', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    }).then(function () {
+      showCdcStep('confirm');
+    }).catch(function () {
+      // Even on error, show confirmation to not block user
+      showCdcStep('confirm');
+    });
+  });
+
+  // "Voir mon analyse" from confirmation
+  document.getElementById('cdc-see-results').addEventListener('click', function () {
+    closeCdcModal();
+    revealResults();
+  });
+
+  // ─── Calculation Engine ─────────────────────────────────────
   function calculateScore() {
     if (!state.fac || !state.parcours) return null;
 
-    const data = state.parcours === 'pass' ? state.fac.pass : state.fac.las;
+    var data = state.parcours === 'pass' ? state.fac.pass : state.fac.las;
     if (!data) return null;
 
-    // Base success rate from fac data
-    let baseRate = data.taux_reussite || 0;
-
-    // If no taux_reussite, calculate from places/etudiants
+    var baseRate = data.taux_reussite || 0;
     if (!baseRate && data.etudiants && data.places_mmopk) {
       baseRate = (data.places_mmopk / data.etudiants) * 100;
     }
 
-    let score = baseRate;
-    let factors = [];
+    var score = baseRate;
+    var factors = [];
 
-    // ─── Factor 1: Mention au bac (±10 points max) ───
+    // Factor 1: Mention au bac
     if (state.mention) {
-      const mentionBonus = { '0': -5, 'ab': -1, 'b': 3, 'tb': 7, 'tbf': 10 };
-      const bonus = mentionBonus[state.mention] || 0;
-      score += bonus;
+      var mentionBonus = { '0': -5, 'ab': -1, 'b': 3, 'tb': 7, 'tbf': 10 };
+      var mb = mentionBonus[state.mention] || 0;
+      score += mb;
       factors.push({
-        label: 'Mention au bac',
-        value: bonus,
-        detail: bonus > 0 ? 'Bon indicateur de réussite' : bonus < 0 ? 'Les mentions élevées sont corrélées à la réussite' : 'Impact neutre'
+        label: 'Mention au bac', value: mb,
+        detail: mb > 0 ? 'Bon indicateur de réussite' : mb < 0 ? 'Les mentions élevées sont corrélées à la réussite' : 'Impact neutre'
       });
     }
 
-    // ─── Factor 2: Spécialités scientifiques (±8 points max) ───
-    let speBonus = 0;
-    if (state.spe1) {
-      if (SCIENCE_SPES.includes(state.spe1)) speBonus += 4;
-      else speBonus -= 2;
-    }
-    if (state.spe2) {
-      if (SCIENCE_SPES.includes(state.spe2)) speBonus += 4;
-      else speBonus -= 2;
-    }
+    // Factor 2: Spécialités scientifiques
+    var speBonus = 0;
+    if (state.spe1) { speBonus += SCIENCE_SPES.indexOf(state.spe1) !== -1 ? 4 : -2; }
+    if (state.spe2) { speBonus += SCIENCE_SPES.indexOf(state.spe2) !== -1 ? 4 : -2; }
     if (state.spe1 && state.spe2) {
       score += speBonus;
       factors.push({
-        label: 'Spécialités',
-        value: speBonus,
+        label: 'Spécialités', value: speBonus,
         detail: speBonus > 0 ? 'Spécialités scientifiques adaptées au programme PASS/LAS' : 'Spécialités moins directement liées au programme'
       });
     }
 
-    // ─── Factor 3: Notes moyennes (±8 points max) ───
+    // Factor 3: Notes moyennes
     if (state.note1 && state.note2) {
-      const avgNote = (state.note1 + state.note2) / 2;
-      let noteBonus = 0;
-      if (avgNote >= 18) noteBonus = 8;
-      else if (avgNote >= 16) noteBonus = 6;
-      else if (avgNote >= 14) noteBonus = 3;
-      else if (avgNote >= 12) noteBonus = 0;
-      else if (avgNote >= 10) noteBonus = -3;
-      else noteBonus = -6;
-
+      var avgNote = (state.note1 + state.note2) / 2;
+      var noteBonus = avgNote >= 18 ? 8 : avgNote >= 16 ? 6 : avgNote >= 14 ? 3 : avgNote >= 12 ? 0 : avgNote >= 10 ? -3 : -6;
       score += noteBonus;
       factors.push({
-        label: 'Notes en spécialités',
-        value: noteBonus,
+        label: 'Notes en spécialités', value: noteBonus,
         detail: 'Moyenne de ' + avgNote.toFixed(1) + '/20 en spécialités'
       });
     }
 
-    // ─── Factor 4: Heures de travail (±6 points max) ───
+    // Factor 4: Heures de travail
     if (state.heures) {
-      const heuresBonus = { 'lt3': -4, '3-5': 0, '5-7': 3, 'gt7': 6 };
-      const bonus = heuresBonus[state.heures] || 0;
-      score += bonus;
+      var heuresBonus = { 'lt3': -4, '3-5': 0, '5-7': 3, 'gt7': 6 };
+      var hb = heuresBonus[state.heures] || 0;
+      score += hb;
       factors.push({
-        label: 'Temps de travail',
-        value: bonus,
-        detail: bonus >= 3 ? 'Volume horaire solide pour réussir' : bonus < 0 ? 'Un volume horaire plus important est recommandé' : 'Volume correct'
+        label: 'Temps de travail', value: hb,
+        detail: hb >= 3 ? 'Volume horaire solide pour réussir' : hb < 0 ? 'Un volume horaire plus important est recommandé' : 'Volume correct'
       });
     }
 
-    // ─── Factor 5: Prépa (±3 points) ───
+    // Factor 5: Prépa
     if (state.prepa) {
-      const prepaBonus = { 'oui': 3, 'non': -1, 'indecis': 0 };
-      const bonus = prepaBonus[state.prepa] || 0;
-      score += bonus;
+      var prepaBonus = { 'oui': 3, 'non': -1, 'indecis': 0 };
+      var pb = prepaBonus[state.prepa] || 0;
+      score += pb;
       factors.push({
-        label: 'Prépa médecine',
-        value: bonus,
+        label: 'Prépa médecine', value: pb,
         detail: state.prepa === 'oui' ? 'La prépa augmente statistiquement les chances' : 'Le tutorat gratuit reste une bonne alternative'
       });
     }
 
-    // ─── Factor 6: Régularité (±4 points) ───
+    // Factor 6: Régularité
     if (state.regularite) {
-      const regBonus = { 'tres-regulier': 4, 'assez-regulier': 1, 'irregular': -3 };
-      const bonus = regBonus[state.regularite] || 0;
-      score += bonus;
+      var regBonus = { 'tres-regulier': 4, 'assez-regulier': 1, 'irregular': -3 };
+      var rb = regBonus[state.regularite] || 0;
+      score += rb;
       factors.push({
-        label: 'Régularité',
-        value: bonus,
-        detail: bonus >= 3 ? 'La régularité est le facteur clé en PASS/LAS' : bonus < 0 ? 'La régularité est essentielle — travaille à l\'améliorer' : 'Marge de progression possible'
+        label: 'Régularité', value: rb,
+        detail: rb >= 3 ? 'La régularité est le facteur clé en PASS/LAS' : rb < 0 ? 'La régularité est essentielle — travaille à l\'améliorer' : 'Marge de progression possible'
       });
     }
 
-    // Clamp between 2 and 95
     score = Math.max(2, Math.min(95, score));
-
     return { score: Math.round(score * 10) / 10, factors: factors, baseRate: baseRate };
   }
 
-  // ─── Update Results Panel ───────────────────────────────────────
+  // ─── Update Results Panel ───────────────────────────────────
   function updateResults(final) {
-    const result = calculateScore();
+    var result = calculateScore();
 
-    // Add blur when results exist but not unlocked
+    // Blur logic: blur until results are unlocked
     if (result && !resultsUnlocked) {
       resultsPanel.classList.add('calc-results-blurred');
     } else {
@@ -472,14 +626,14 @@
       return;
     }
 
-    const fac = state.fac;
-    const data = state.parcours === 'pass' ? fac.pass : fac.las;
-    const scoreColor = result.score >= 40 ? 'var(--green)' : result.score >= 25 ? '#e8a838' : '#e05252';
-    const parcoursLabel = state.parcours.toUpperCase();
+    var fac = state.fac;
+    var data = state.parcours === 'pass' ? fac.pass : fac.las;
+    var scoreColor = result.score >= 40 ? 'var(--green)' : result.score >= 25 ? '#e8a838' : '#e05252';
+    var parcoursLabel = state.parcours.toUpperCase();
 
-    let html = '';
+    var html = '';
 
-    // Header: Taux de réussite
+    // Score display
     html += '<div class="calc-result-header">';
     html += '<h3>Taux de réussite estimé</h3>';
     html += '<div class="calc-score-display">';
@@ -487,9 +641,7 @@
     html += '<div class="calc-score-row">';
     html += '<span class="calc-score-label">' + parcoursLabel + '</span>';
     html += '<span class="calc-score-value" style="color:' + scoreColor + '">' + result.score + '%</span>';
-    html += '</div>';
-    html += '</div>';
-    html += '</div>';
+    html += '</div></div></div>';
 
     // Fac info
     if (data) {
@@ -499,8 +651,8 @@
       html += '<p class="calc-base-note">Taux de base : ' + result.baseRate.toFixed(1) + '% — ajusté selon ton profil.</p>';
       html += '</div>';
 
-      // Répartition MMOPK
-      const fields = [
+      // MMOPK breakdown
+      var mmopkFields = [
         { key: 'places_med', label: 'Médecine', emoji: '🩺' },
         { key: 'places_pharma', label: 'Pharmacie', emoji: '💊' },
         { key: 'places_odonto', label: 'Odontologie', emoji: '🦷' },
@@ -508,33 +660,32 @@
         { key: 'places_kine', label: 'Kinésithérapie', emoji: '🏃' }
       ];
 
-      const totalPlaces = data.places_mmopk || 1;
-      let hasPlaces = false;
-      let placesHtml = '<div class="calc-repartition"><h4>Répartition des places</h4>';
+      var totalPlaces = data.places_mmopk || 1;
+      var hasPlaces = false;
+      var placesHtml = '<div class="calc-repartition"><h4>Répartition des places</h4>';
 
-      fields.forEach(f => {
-        const places = data[f.key] || 0;
+      mmopkFields.forEach(function (f) {
+        var places = data[f.key] || 0;
         if (places > 0) {
           hasPlaces = true;
-          const pct = ((places / totalPlaces) * 100).toFixed(1);
+          var pct = ((places / totalPlaces) * 100).toFixed(1);
           placesHtml += '<div class="calc-rep-row">';
           placesHtml += '<span class="calc-rep-label">' + f.emoji + ' ' + f.label + '</span>';
           placesHtml += '<span class="calc-rep-value">' + places + ' places (' + pct + '%)</span>';
           placesHtml += '</div>';
         }
       });
-
       placesHtml += '</div>';
       if (hasPlaces) html += placesHtml;
     }
 
-    // Factors breakdown
+    // Factors breakdown (only after reveal)
     if (result.factors.length > 0 && final) {
       html += '<div class="calc-factors">';
       html += '<h4>Détail du calcul</h4>';
-      result.factors.forEach(f => {
-        const sign = f.value > 0 ? '+' : '';
-        const cls = f.value > 0 ? 'positive' : f.value < 0 ? 'negative' : 'neutral';
+      result.factors.forEach(function (f) {
+        var sign = f.value > 0 ? '+' : '';
+        var cls = f.value > 0 ? 'positive' : f.value < 0 ? 'negative' : 'neutral';
         html += '<div class="calc-factor ' + cls + '">';
         html += '<div class="calc-factor-header">';
         html += '<span class="calc-factor-label">' + f.label + '</span>';
@@ -546,21 +697,41 @@
       html += '</div>';
     }
 
-    // CTA
+    // CTA after reveal
     if (final) {
+      // Check if coup de coeur for this city
+      var cityKey = getCityKey(state.fac);
+      var cdc = cityKey ? COUPS_DE_COEUR[cityKey] : null;
+
+      if (cdc) {
+        html += '<div class="calc-cdc-inline">';
+        html += '<span class="cdc-badge">COUP DE CŒUR AFEM</span>';
+        html += '<h4>' + cdc.name + '</h4>';
+        html += '<p>' + cdc.desc + '</p>';
+        html += '<a href="' + cdc.link + '" class="btn btn-primary btn-sm" target="_blank">Découvrir ' + cdc.name + ' →</a>';
+        if (cdc.others && cdc.others.length > 0) {
+          html += '<div class="calc-cdc-others">';
+          html += '<p class="calc-cdc-others-title">Autres prépas à ' + state.fac.city + '</p>';
+          cdc.others.forEach(function (p) {
+            html += '<div class="calc-cdc-other-row"><span>' + p.name + '</span><span class="calc-cdc-other-price">' + p.price + '</span></div>';
+          });
+          html += '</div>';
+        }
+        html += '</div>';
+      }
+
       html += '<div class="calc-cta">';
       html += '<p>Envie d\'aller plus loin ? Découvre nos outils pour maximiser tes chances.</p>';
       html += '<div class="calc-cta-buttons">';
       html += '<a href="quizz.html" class="btn btn-primary">Quizz de compatibilité →</a>';
       html += '<a href="coaching.html" class="btn btn-secondary">Coaching PASS/LAS</a>';
-      html += '</div>';
-      html += '</div>';
+      html += '</div></div>';
     }
 
     resultsPanel.innerHTML = html;
   }
 
-  // ─── Init ───────────────────────────────────────────────────────
+  // ─── Init ───────────────────────────────────────────────────
   function init() {
     if (!window.FACS_DATA) {
       console.warn('FACS_DATA not loaded');

@@ -4218,6 +4218,298 @@ section {
   box-shadow: 0 4px 16px rgba(76, 175, 80, 0.3);
 }
 
+/* Tab intro text */
+.calc-tab-intro {
+  font-size: 0.9rem;
+  color: var(--text-light);
+  margin-bottom: 20px;
+  padding: 10px 14px;
+  background: rgba(76, 175, 80, 0.06);
+  border-radius: 8px;
+  border-left: 3px solid var(--green);
+}
+
+/* Dévoiler button */
+.calc-devoiler {
+  background: linear-gradient(135deg, var(--green), var(--green-dark));
+  color: #fff;
+  font-size: 1.05rem;
+}
+
+/* ─── Coup de coeur modal ─────────────────────────────────── */
+.cdc-modal-content {
+  max-width: 520px;
+  text-align: center;
+}
+.cdc-step {
+  display: none;
+}
+.cdc-step.active {
+  display: block;
+  animation: calcFadeIn 0.3s ease;
+}
+.cdc-badge-wrap {
+  margin-bottom: 16px;
+}
+.cdc-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, var(--green), var(--green-dark));
+  color: #fff;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+.cdc-modal-content h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+.cdc-prepa-card {
+  background: rgba(76, 175, 80, 0.06);
+  border: 1.5px solid rgba(76, 175, 80, 0.2);
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+.cdc-prepa-card h4 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--green-dark);
+  margin-bottom: 8px;
+}
+.cdc-prepa-card p {
+  font-size: 0.9rem;
+  color: var(--text-light);
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+.cdc-prepa-link {
+  display: inline-block;
+  color: var(--green);
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+.cdc-prepa-link:hover {
+  text-decoration: underline;
+}
+.cdc-avatars {
+  margin-bottom: 16px;
+}
+.cdc-avatar-group {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+.cdc-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(76, 175, 80, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+}
+.cdc-question {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+.cdc-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.cdc-buttons .btn {
+  width: 100%;
+}
+
+/* CDC Contact form */
+.cdc-label {
+  display: block;
+  font-weight: 500;
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+  text-align: left;
+  margin-top: 16px;
+}
+.cdc-label:first-of-type {
+  margin-top: 0;
+}
+.cdc-textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  resize: vertical;
+  transition: border-color 0.2s;
+}
+.cdc-textarea:focus {
+  border-color: var(--green);
+  outline: none;
+}
+.cdc-contact-methods {
+  display: flex;
+  gap: 10px;
+}
+.cdc-contact-methods .calc-option {
+  flex: 1;
+}
+.cdc-phone-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.cdc-phone-prefix {
+  padding: 10px 14px;
+  background: #f5f5f5;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.cdc-input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+.cdc-input:focus {
+  border-color: var(--green);
+  outline: none;
+}
+.cdc-checkbox-wrap {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 14px 0;
+  font-size: 0.85rem;
+  color: var(--text-light);
+  text-align: left;
+  cursor: pointer;
+}
+.cdc-checkbox-wrap input[type="checkbox"] {
+  margin-top: 2px;
+  flex-shrink: 0;
+  accent-color: var(--green);
+}
+.cdc-submit-btn {
+  width: 100%;
+  margin-top: 16px;
+}
+.cdc-submit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* CDC Confirmation */
+.cdc-confirm-icon {
+  margin-bottom: 16px;
+}
+#cdc-step-confirm h3 {
+  margin-bottom: 8px;
+}
+#cdc-step-confirm p {
+  color: var(--text-light);
+  margin-bottom: 20px;
+  font-size: 0.95rem;
+}
+
+/* CDC Others in popup */
+.cdc-others-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-light);
+  margin-bottom: 8px;
+  text-align: left;
+}
+.cdc-others-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+.cdc-other-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: #f8f8f8;
+  border-radius: 8px;
+  font-size: 0.85rem;
+}
+.cdc-other-name {
+  font-weight: 500;
+}
+.cdc-other-price {
+  color: var(--text-light);
+  font-size: 0.8rem;
+}
+
+/* Coup de coeur inline in results */
+.calc-cdc-inline {
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.06), rgba(56, 142, 60, 0.1));
+  border: 1.5px solid rgba(76, 175, 80, 0.25);
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+.calc-cdc-inline .cdc-badge {
+  margin-bottom: 10px;
+}
+.calc-cdc-inline h4 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--green-dark);
+  margin: 8px 0;
+}
+.calc-cdc-inline p {
+  font-size: 0.9rem;
+  color: var(--text-light);
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+/* Others list in inline results */
+.calc-cdc-others {
+  margin-top: 16px;
+  border-top: 1px solid rgba(76, 175, 80, 0.15);
+  padding-top: 14px;
+}
+.calc-cdc-others-title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+.calc-cdc-other-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  font-size: 0.85rem;
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+}
+.calc-cdc-other-row:last-child {
+  border-bottom: none;
+}
+.calc-cdc-other-price {
+  color: var(--text-light);
+  font-size: 0.8rem;
+}
+
 /* Responsive */
 @media (max-width: 900px) {
   .calc-layout { grid-template-columns: 1fr; }
@@ -4230,6 +4522,7 @@ section {
   .calc-option { min-width: calc(33% - 10px); }
   .calc-row { flex-direction: column; }
   .calc-input-note { width: 100%; }
+  .cdc-contact-methods { flex-direction: column; }
 }
 @media (max-width: 500px) {
   .calc-hero-stats { flex-direction: column; gap: 12px; }
