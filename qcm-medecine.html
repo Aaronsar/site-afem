@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QCM Médecine PASS/LAS : Teste tes Connaissances | AFEM</title>
+  <meta name="description" content="Entraîne-toi avec des QCM de médecine PASS/LAS gratuits : anatomie, biochimie, biophysique, biostatistiques et plus. 20 questions par matière avec correction détaillée.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="preload" as="style" href="css/style.min.css">
+  <link rel="stylesheet" href="css/style.min.css">
+  <link rel="canonical" href="https://afem.fr/qcm-medecine.html">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://afem.fr/qcm-medecine.html">
+  <meta property="og:title" content="QCM Médecine PASS/LAS : Teste tes Connaissances | AFEM">
+  <meta property="og:description" content="Entraîne-toi avec des QCM de médecine PASS/LAS gratuits. 7 matières, 20 questions, correction détaillée.">
+  <meta property="og:image" content="https://afem.fr/assets/og-image.png">
+  <meta property="og:site_name" content="AFEM">
+  <meta property="og:locale" content="fr_FR">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="QCM Médecine PASS/LAS : Teste tes Connaissances | AFEM">
+  <meta name="twitter:description" content="Entraîne-toi avec des QCM de médecine PASS/LAS gratuits. 7 matières, 20 questions, correction détaillée.">
+  <meta name="twitter:image" content="https://afem.fr/assets/og-image.png">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"QCM Médecine PASS/LAS — AFEM","description":"Entraîne-toi avec des QCM de médecine PASS/LAS gratuits par matière.","url":"https://afem.fr/qcm-medecine.html","applicationCategory":"EducationalApplication","provider":{"@type":"Organization","name":"AFEM","url":"https://afem.fr"}}</script>
+</head>
+<body>
+
+  <div class="bg-blobs">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <nav class="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo"><img loading="lazy" src="assets/logo.png" alt="AFEM"></a>
+      <div class="nav-links">
+        <a href="index.html">Accueil</a>
+        <a href="qui-sommes-nous.html">Qui sommes-nous</a>
+        <div class="nav-dropdown">
+          <button class="nav-dropdown-toggle">Nos outils <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
+          <div class="nav-dropdown-menu">
+            <a href="simulateur.html">Simulateur Parcoursup</a>
+            <a href="quizz.html">Quizz x Fac</a>
+            <a href="calculateur-reussite.html">Calculateur de réussite</a>
+            <a href="qcm-medecine.html">QCM Médecine</a>
+            <a href="coaching.html">Coaching</a>
+            <a href="cours.html">Cours PASS/LAS</a>
+          </div>
+        </div>
+        <a href="blog.html">Blog</a>
+        <a href="prepas-medecine.html">Prépas médecine</a>
+        <a href="facultes.html">Facultés</a>
+        <a href="simulateur.html" class="nav-cta">Accéder au Simulateur Parcoursup →</a>
+      </div>
+      <div class="nav-burger"><span></span><span></span><span></span></div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="calc-hero">
+    <div class="container">
+      <div class="calc-hero-badge">Entraînement gratuit</div>
+      <h1>QCM Médecine <span class="gradient">PASS/LAS</span></h1>
+      <p class="calc-hero-sub">Teste tes connaissances avec des <strong>QCM par matière</strong>. 20 questions, correction détaillée.</p>
+      <div class="calc-hero-stats">
+        <div class="calc-hero-stat">
+          <span class="calc-hero-stat-num">7</span>
+          <span class="calc-hero-stat-label">Matières</span>
+        </div>
+        <div class="calc-hero-stat">
+          <span class="calc-hero-stat-num">20</span>
+          <span class="calc-hero-stat-label">Questions / QCM</span>
+        </div>
+        <div class="calc-hero-stat">
+          <span class="calc-hero-stat-num">100%</span>
+          <span class="calc-hero-stat-label">Gratuit</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Subject selector -->
+  <section class="content-section" style="padding-top:0;" id="qcm-select">
+    <div class="container">
+      <h2 class="section-title" style="font-size:1.5rem;text-align:center;margin-bottom:4px;">Choisis ta matière</h2>
+      <p style="text-align:center;color:var(--text-light);margin-bottom:0;">Sélectionne une matière pour commencer le QCM.</p>
+      <div id="qcm-subject-grid" class="qcm-subject-grid"></div>
+    </div>
+  </section>
+
+  <!-- QCM container (hidden) -->
+  <section class="content-section" style="padding-top:0;">
+    <div class="container">
+      <div id="qcm-container" class="qcm-container"></div>
+      <div id="qcm-results" class="qcm-results"></div>
+    </div>
+  </section>
+
+  <!-- SEO content -->
+  <section class="content-section">
+    <div class="container" style="max-width:800px;">
+      <h2 class="section-title" style="font-size:1.5rem;">Pourquoi s'entraîner avec des QCM en PASS/LAS ?</h2>
+      <p>Les QCM (Questions à Choix Multiples) sont le format d'examen principal en <strong>PASS et LAS</strong>. S'entraîner régulièrement avec des QCM permet de tester ses connaissances, identifier ses lacunes et améliorer sa rapidité de réponse. Les matières proposées ici — anatomie, biologie cellulaire, biologie moléculaire, biochimie, biophysique, biostatistiques et embryologie — couvrent les <strong>UE fondamentales</strong> du programme de première année de médecine.</p>
+      <p>Chaque QCM comprend 20 questions de niveau PASS, avec un mix de questions à choix unique (QCU) et de questions vrai/faux par item (QCM classique concours). La <strong>correction détaillée</strong> avec explications te permet de comprendre tes erreurs et progresser efficacement.</p>
+      <h3 style="font-size:1.2rem;margin-top:24px;">Nos autres outils pour réussir</h3>
+      <p>Complète ton entraînement avec notre <a href="calculateur-reussite.html">calculateur de réussite PASS/LAS</a> pour estimer tes chances, notre <a href="simulateur.html">simulateur Parcoursup</a> pour préparer ton admission, ou notre <a href="coaching.html">coaching personnalisé</a> pour un accompagnement sur-mesure. Tu peux aussi consulter nos <a href="cours.html">cours PASS/LAS</a> et notre <a href="quizz.html">quizz de compatibilité</a> pour trouver la fac qui te correspond.</p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="nav-logo"><img loading="lazy" src="assets/logo.png" alt="Logo AFEM - Aide aux Futurs Étudiants en Médecine"></div>
+          <p>Association des Futurs Étudiants en Médecine. Nous accompagnons les lycéens et étudiants dans leur parcours vers les études de santé.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Outils</h4>
+          <a href="simulateur.html">Simulateur Parcoursup</a>
+          <a href="quizz.html">Quizz x Fac</a>
+          <a href="calculateur-reussite.html">Calculateur de réussite</a>
+          <a href="qcm-medecine.html">QCM Médecine</a>
+          <a href="coaching.html">Coaching</a>
+          <a href="cours.html">Cours PASS/LAS</a>
+        </div>
+        <div class="footer-col">
+          <h4>Ressources</h4>
+          <a href="blog.html">Blog</a>
+          <a href="facultes.html">Facultés de médecine</a>
+          <a href="qui-sommes-nous.html">Qui sommes-nous</a>
+          <a href="mentions-legales.html">Mentions légales</a>
+        </div>
+        <div class="footer-col">
+          <h4>Contact</h4>
+          <a href="#" data-contact-modal>contact@afem-edu.fr</a>
+          <a href="https://www.instagram.com/afem_edu/" target="_blank" rel="noopener">Instagram</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 AFEM. Tous droits réservés.</span>
+        <div class="footer-social">
+          <a href="https://www.instagram.com/afem_edu/" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Lead capture modal -->
+  <div class="modal-overlay" id="qcm-lead-modal">
+    <div class="modal-content calc-lead-modal-content">
+      <button class="modal-close" aria-label="Fermer">&times;</button>
+      <div class="calc-lead-header">
+        <div class="calc-lead-icon">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.5"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        </div>
+        <h3>Accède aux QCM gratuitement</h3>
+        <p>Renseigne tes coordonnées pour débloquer tous les QCM et recevoir des conseils pour réussir.</p>
+      </div>
+      <div id="qcm-hubspot-form"></div>
+    </div>
+  </div>
+
+  <!-- Contact Modal -->
+  <div class="modal-overlay" id="contact-modal">
+    <div class="modal-content">
+      <button class="modal-close" aria-label="Fermer">&times;</button>
+      <h3>Nous contacter</h3>
+      <p>Remplissez le formulaire ci-dessous et nous vous répondrons rapidement.</p>
+      <div id="hubspot-form-container"></div>
+    </div>
+  </div>
+
+  <script defer charset="utf-8" type="text/javascript" src="https://js-eu1.hsforms.net/forms/embed/v2.js"></script>
+  <script defer src="js/main.min.js"></script>
+  <script defer src="js/qcm-data.js"></script>
+  <script defer src="js/qcm-medecine.min.js"></script>
+</body>
+</html>
