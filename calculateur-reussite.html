@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculateur de Réussite PASS/LAS : Estime tes Chances | AFEM</title>
+  <meta name="description" content="Estime tes chances de réussir en PASS ou LAS grâce à notre calculateur gratuit. Basé sur les données officielles de ta fac et ton profil scolaire.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="preload" as="style" href="css/style.min.css">
+  <link rel="stylesheet" href="css/style.min.css">
+  <link rel="canonical" href="https://afem.fr/calculateur-reussite.html">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://afem.fr/calculateur-reussite.html">
+  <meta property="og:title" content="Calculateur de Réussite PASS/LAS : Estime tes Chances | AFEM">
+  <meta property="og:description" content="Estime tes chances de réussir en PASS ou LAS grâce à notre calculateur gratuit.">
+  <meta property="og:image" content="https://afem.fr/assets/og-image.png">
+  <meta property="og:site_name" content="AFEM">
+  <meta property="og:locale" content="fr_FR">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Calculateur de Réussite PASS/LAS : Estime tes Chances | AFEM">
+  <meta name="twitter:description" content="Estime tes chances de réussir en PASS ou LAS grâce à notre calculateur gratuit.">
+  <meta name="twitter:image" content="https://afem.fr/assets/og-image.png">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Calculateur de Réussite PASS/LAS — AFEM","description":"Estime tes chances de réussir en PASS ou LAS grâce à notre calculateur personnalisé.","url":"https://afem.fr/calculateur-reussite.html","applicationCategory":"EducationalApplication","provider":{"@type":"Organization","name":"AFEM","url":"https://afem.fr"}}</script>
+</head>
+<body>
+
+  <div class="bg-blobs">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <nav class="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo"><img loading="lazy" src="assets/logo.png" alt="AFEM"></a>
+      <div class="nav-links">
+        <a href="index.html">Accueil</a>
+        <a href="qui-sommes-nous.html">Qui sommes-nous</a>
+        <div class="nav-dropdown">
+          <button class="nav-dropdown-toggle">Nos outils <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
+          <div class="nav-dropdown-menu">
+            <a href="simulateur.html">Simulateur Parcoursup</a>
+            <a href="quizz.html">Quizz x Fac</a>
+            <a href="calculateur-reussite.html">Calculateur de réussite</a>
+            <a href="coaching.html">Coaching</a>
+            <a href="cours.html">Cours PASS/LAS</a>
+          </div>
+        </div>
+        <a href="blog.html">Blog</a>
+        <a href="prepas-medecine.html">Prépas médecine</a>
+        <a href="facultes.html">Facultés</a>
+        <a href="simulateur.html" class="nav-cta">Accéder au Simulateur Parcoursup →</a>
+      </div>
+      <div class="nav-burger"><span></span><span></span><span></span></div>
+    </div>
+  </nav>
+
+  <section class="calc-hero">
+    <div class="container">
+      <div class="calc-hero-badge">Outil gratuit &mdash; 2 min</div>
+      <h1>Calcule tes chances de <span class="gradient">réussir</span> PASS/LAS</h1>
+      <p class="calc-hero-sub">Estimation personnalisée basée sur les <strong>données officielles</strong> de ta fac et ton profil scolaire.</p>
+      <div class="calc-hero-stats">
+        <div class="calc-hero-stat">
+          <span class="calc-hero-stat-num">30+</span>
+          <span class="calc-hero-stat-label">Facs analysées</span>
+        </div>
+        <div class="calc-hero-stat">
+          <span class="calc-hero-stat-num">2026</span>
+          <span class="calc-hero-stat-label">Données à jour</span>
+        </div>
+        <div class="calc-hero-stat">
+          <span class="calc-hero-stat-num">100%</span>
+          <span class="calc-hero-stat-label">Gratuit</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Calculator -->
+  <section class="content-section" style="padding-top: 0;">
+    <div class="container">
+      <div class="calc-layout">
+        <!-- Left: Form -->
+        <div class="calc-form glass-card">
+          <!-- Step indicator -->
+          <div class="calc-steps-indicator">
+            <div class="calc-step-dot active" data-tab="filiere"><span>1</span> Filière</div>
+            <div class="calc-step-line"></div>
+            <div class="calc-step-dot" data-tab="profil"><span>2</span> Profil</div>
+            <div class="calc-step-line"></div>
+            <div class="calc-step-dot" data-tab="methode"><span>3</span> Méthode</div>
+          </div>
+
+          <!-- Tab 1: Filière -->
+          <div class="calc-tab-content active" id="tab-filiere">
+            <div class="calc-field">
+              <label>Sélectionne une faculté</label>
+              <div class="calc-select-wrapper">
+                <select id="calc-fac-select" class="calc-select">
+                  <option value="" disabled selected>Choisis ta faculté</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="calc-field" id="field-parcours" style="display:none;">
+              <label>Sélectionne ta filière</label>
+              <div class="calc-options">
+                <button class="calc-option" data-value="pass">PASS</button>
+                <button class="calc-option" data-value="las">LAS</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab 2: Profil scolaire -->
+          <div class="calc-tab-content" id="tab-profil">
+            <div class="calc-field">
+              <label>Dans quelle classe es-tu ?</label>
+              <div class="calc-select-wrapper">
+                <select id="calc-classe" class="calc-select">
+                  <option value="" disabled selected>Ta classe</option>
+                  <option value="seconde">Seconde</option>
+                  <option value="premiere">Première</option>
+                  <option value="terminale">Terminale</option>
+                  <option value="licence">Licence (déjà en fac)</option>
+                  <option value="autre">Autre</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="calc-field" id="field-mention" style="display:none;">
+              <label>Mention visée au bac</label>
+              <div class="calc-options">
+                <button class="calc-option" data-value="0">Ø</button>
+                <button class="calc-option" data-value="ab">AB</button>
+                <button class="calc-option" data-value="b">B</button>
+                <button class="calc-option" data-value="tb">TB</button>
+                <button class="calc-option" data-value="tbf">TBF</button>
+              </div>
+            </div>
+
+            <div class="calc-field" id="field-spe1" style="display:none;">
+              <label>Spécialité (1)</label>
+              <div class="calc-row">
+                <div class="calc-select-wrapper" style="flex:1;">
+                  <select id="calc-spe1" class="calc-select">
+                    <option value="" disabled selected>Choisir une spécialité</option>
+                    <option value="physique-chimie">Physique-chimie</option>
+                    <option value="svt">SVT</option>
+                    <option value="mathematiques">Mathématiques</option>
+                    <option value="biologie-ecologie">Biologie-écologie</option>
+                    <option value="hlp">Humanités, littérature et philosophie</option>
+                    <option value="hggsp">HGGSP</option>
+                    <option value="ses">SES</option>
+                    <option value="nsi">NSI</option>
+                    <option value="llce">LLCE anglais</option>
+                    <option value="autre">Autre</option>
+                  </select>
+                </div>
+                <input type="number" id="calc-note1" class="calc-input calc-input-note" placeholder="Note /20" min="0" max="20" step="0.5">
+              </div>
+            </div>
+
+            <div class="calc-field" id="field-spe2" style="display:none;">
+              <label>Spécialité (2)</label>
+              <div class="calc-row">
+                <div class="calc-select-wrapper" style="flex:1;">
+                  <select id="calc-spe2" class="calc-select">
+                    <option value="" disabled selected>Choisir une spécialité</option>
+                    <option value="physique-chimie">Physique-chimie</option>
+                    <option value="svt">SVT</option>
+                    <option value="mathematiques">Mathématiques</option>
+                    <option value="biologie-ecologie">Biologie-écologie</option>
+                    <option value="hlp">Humanités, littérature et philosophie</option>
+                    <option value="hggsp">HGGSP</option>
+                    <option value="ses">SES</option>
+                    <option value="nsi">NSI</option>
+                    <option value="llce">LLCE anglais</option>
+                    <option value="autre">Autre</option>
+                  </select>
+                </div>
+                <input type="number" id="calc-note2" class="calc-input calc-input-note" placeholder="Note /20" min="0" max="20" step="0.5">
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab 3: Méthode de travail -->
+          <div class="calc-tab-content" id="tab-methode">
+            <div class="calc-field">
+              <label>Heures de travail personnel par jour (en dehors des cours)</label>
+              <div class="calc-options">
+                <button class="calc-option" data-value="lt3">&lt; 3h</button>
+                <button class="calc-option" data-value="3-5">3-5h</button>
+                <button class="calc-option" data-value="5-7">5-7h</button>
+                <button class="calc-option" data-value="gt7">7h+</button>
+              </div>
+            </div>
+
+            <div class="calc-field" id="field-prepa" style="display:none;">
+              <label>Prévois-tu de prendre une prépa ?</label>
+              <div class="calc-options">
+                <button class="calc-option" data-value="oui">Oui</button>
+                <button class="calc-option" data-value="non">Non</button>
+                <button class="calc-option" data-value="indecis">Je ne sais pas</button>
+              </div>
+            </div>
+
+            <div class="calc-field" id="field-regularity" style="display:none;">
+              <label>Comment qualifies-tu ta régularité ?</label>
+              <div class="calc-options">
+                <button class="calc-option" data-value="tres-regulier">Très régulier</button>
+                <button class="calc-option" data-value="assez-regulier">Assez régulier</button>
+                <button class="calc-option" data-value="irregular">Irrégulier</button>
+              </div>
+            </div>
+
+            <div class="calc-field" id="field-redoublement" style="display:none;">
+              <label>Est-ce que tu redoubles (ou as déjà fait une année de santé) ?</label>
+              <div class="calc-options">
+                <button class="calc-option" data-value="primant">Non, c'est ma 1re année (primant)</button>
+                <button class="calc-option" data-value="doublant">Oui, je redouble (doublant)</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Calculate button -->
+          <button class="btn btn-primary btn-lg calc-submit" id="calc-submit" style="display:none; width: 100%; margin-top: 16px;">
+            Calculer mes chances →
+          </button>
+        </div>
+
+        <!-- Right: Results panel -->
+        <div class="calc-results" id="calc-results">
+          <div class="calc-results-placeholder">
+            <div class="calc-placeholder-icon">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.5"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
+            </div>
+            <h3>Tes résultats apparaîtront ici</h3>
+            <p>Sélectionne ta fac et ta filière pour voir ton taux de réussite estimé, la répartition des places et des conseils personnalisés.</p>
+            <div class="calc-placeholder-features">
+              <div class="calc-ph-feat"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Taux personnalisé</div>
+              <div class="calc-ph-feat"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Répartition MMOPK</div>
+              <div class="calc-ph-feat"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Conseils adaptés</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SEO Content -->
+  <section class="content-section">
+    <div class="container">
+      <div class="content-text" style="max-width: 800px; margin: 0 auto;">
+        <h2>Comment fonctionne notre <span class="gradient">calculateur</span> ?</h2>
+        <p>Notre calculateur de réussite PASS/LAS utilise les <strong>données officielles</strong> de chaque faculté de médecine en France : nombre d'étudiants inscrits, places disponibles en 2e année (MMOPK), et taux de réussite réels. Ces données sont croisées avec ton profil scolaire pour estimer tes chances de manière personnalisée.</p>
+        <p>Le taux de base correspond au ratio entre le nombre de places disponibles et le nombre d'étudiants inscrits dans ta fac. Ce taux est ensuite ajusté en fonction de tes spécialités de terminale, tes notes, ta mention au bac, et ta méthode de travail.</p>
+        <h3>Pourquoi les spécialités comptent ?</h3>
+        <p>Les étudiants ayant choisi <strong>SVT et Physique-chimie</strong> en terminale ont statistiquement un avantage en PASS, car ces matières constituent une large part du programme de 1re année. De même, les <strong>Mathématiques</strong> sont un atout important pour les UE de biostatistiques et de biophysique.</p>
+        <h3>Un outil complémentaire à nos autres ressources</h3>
+        <p>Ce calculateur te donne une estimation, pas une certitude. Pour aller plus loin, utilise notre <a href="simulateur.html">simulateur Parcoursup</a> pour évaluer tes chances d'admission, ou notre <a href="quizz.html">quizz de compatibilité</a> pour trouver la fac qui te correspond le mieux. Tu peux aussi consulter nos <a href="cours.html">cours PASS/LAS</a> et notre <a href="coaching.html">coaching personnalisé</a>.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="nav-logo"><img loading="lazy" src="assets/logo.png" alt="Logo AFEM - Aide aux Futurs Étudiants en Médecine"></div>
+          <p>Association des Futurs Étudiants en Médecine. Nous accompagnons les lycéens et étudiants dans leur parcours vers les études de santé.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Outils</h4>
+          <a href="simulateur.html">Simulateur Parcoursup</a>
+          <a href="quizz.html">Quizz x Fac</a>
+          <a href="calculateur-reussite.html">Calculateur de réussite</a>
+          <a href="coaching.html">Coaching</a>
+          <a href="cours.html">Cours PASS/LAS</a>
+        </div>
+        <div class="footer-col">
+          <h4>Ressources</h4>
+          <a href="blog.html">Blog</a>
+          <a href="facultes.html">Facultés de médecine</a>
+          <a href="qui-sommes-nous.html">Qui sommes-nous</a>
+          <a href="mentions-legales.html">Mentions légales</a>
+        </div>
+        <div class="footer-col">
+          <h4>Contact</h4>
+          <a href="#" data-contact-modal>contact@afem-edu.fr</a>
+          <a href="https://www.instagram.com/afem_edu/" target="_blank" rel="noopener">Instagram</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 AFEM. Tous droits réservés.</span>
+        <div class="footer-social">
+          <a href="https://www.instagram.com/afem_edu/" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Calculateur Lead Capture Modal -->
+  <div class="modal-overlay" id="calc-lead-modal">
+    <div class="modal-content calc-lead-modal-content">
+      <button class="modal-close" aria-label="Fermer">&times;</button>
+      <div class="calc-lead-header">
+        <div class="calc-lead-icon">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.5"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
+        </div>
+        <h3>Découvre tes résultats personnalisés</h3>
+        <p>Renseigne tes coordonnées pour accéder à ton estimation détaillée et recevoir des conseils adaptés à ton profil.</p>
+      </div>
+      <div id="calc-hubspot-form"></div>
+    </div>
+  </div>
+
+  <!-- Contact Modal -->
+  <div class="modal-overlay" id="contact-modal">
+    <div class="modal-content">
+      <button class="modal-close" aria-label="Fermer">&times;</button>
+      <h3>Nous contacter</h3>
+      <p>Remplissez le formulaire ci-dessous et nous vous répondrons rapidement.</p>
+      <div id="hubspot-form-container"></div>
+    </div>
+  </div>
+
+  <script defer charset="utf-8" type="text/javascript" src="https://js-eu1.hsforms.net/forms/embed/v2.js"></script>
+  <script defer src="js/main.min.js"></script>
+  <script defer src="js/facs-data.min.js"></script>
+  <script defer src="js/calculateur.min.js"></script>
+</body>
+</html>
