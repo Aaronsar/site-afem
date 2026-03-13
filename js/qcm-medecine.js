@@ -139,10 +139,11 @@
     } else {
       html += '<button class="btn btn-secondary" id="qcm-back-subjects">&larr; Matières</button>';
     }
+    var answered = isAnswered(idx);
     if (idx < total - 1) {
-      html += '<button class="btn btn-primary" id="qcm-next">Suivant &rarr;</button>';
+      html += '<button class="btn btn-primary" id="qcm-next"' + (answered ? '' : ' disabled') + '>Suivant &rarr;</button>';
     } else {
-      html += '<button class="btn btn-primary" id="qcm-finish">Voir mes résultats &rarr;</button>';
+      html += '<button class="btn btn-primary" id="qcm-finish"' + (answered ? '' : ' disabled') + '>Voir mes résultats &rarr;</button>';
     }
     html += '</div>';
 
@@ -189,6 +190,22 @@
     return html;
   }
 
+  // ─── Check if question is answered ───────────────────────
+  function isAnswered(idx) {
+    var q = state.questions[idx];
+    var ans = state.answers[idx];
+    if (q.type === 'qcu') return ans !== null;
+    if (q.type === 'vf') return ans && ans.every(function (v) { return v !== null; });
+    return false;
+  }
+
+  function updateNavState(idx) {
+    var btn = document.getElementById('qcm-next') || document.getElementById('qcm-finish');
+    if (btn) {
+      btn.disabled = !isAnswered(idx);
+    }
+  }
+
   // ─── Bind events ──────────────────────────────────────────
   function bindQuestionEvents(idx) {
     var q = state.questions[idx];
@@ -199,6 +216,7 @@
           container.querySelectorAll('.qcm-option').forEach(function (o) { o.classList.remove('selected'); });
           this.classList.add('selected');
           state.answers[idx] = parseInt(this.dataset.index);
+          updateNavState(idx);
         });
       });
     } else if (q.type === 'vf') {
@@ -217,6 +235,7 @@
           });
           this.classList.add(val ? 'selected-true' : 'selected-false');
           state.answers[idx][itemIdx] = val;
+          updateNavState(idx);
         });
       });
     }
