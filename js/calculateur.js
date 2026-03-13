@@ -632,19 +632,22 @@
     html += '<div class="calc-result-header">';
     html += '<h3>Taux de réussite estimé</h3>';
     html += '<div class="calc-score-display">';
-    if (resultsUnlocked) {
+    if (formSubmitted) {
       html += '<div class="calc-score-bar"><div class="calc-score-fill" style="width:' + Math.min(result.score, 100) + '%;background:' + scoreColor + '"></div></div>';
       html += '<div class="calc-score-row">';
       html += '<span class="calc-score-label">' + parcoursLabel + '</span>';
       html += '<span class="calc-score-value" style="color:' + scoreColor + '">' + result.score + '%</span>';
       html += '</div>';
+      if (!resultsUnlocked) {
+        html += '<p class="calc-score-teaser">Complète l\'étape 3 puis clique sur « Dévoiler mon analyse » pour le détail complet.</p>';
+      }
     } else {
       html += '<div class="calc-score-bar"><div class="calc-score-fill" style="width:65%;background:#ccc"></div></div>';
       html += '<div class="calc-score-row">';
       html += '<span class="calc-score-label">' + parcoursLabel + '</span>';
       html += '<span class="calc-score-value" style="color:#999">??%</span>';
       html += '</div>';
-      html += '<p class="calc-score-teaser">Complète les 3 étapes pour découvrir ton score personnalisé.</p>';
+      html += '<p class="calc-score-teaser">Complète les étapes et remplis le formulaire pour découvrir ton score.</p>';
     }
     html += '</div></div>';
 
@@ -653,7 +656,7 @@
       html += '<div class="calc-fac-info">';
       html += '<p>À <strong>' + fac.name + '</strong>, il y a <strong>' + (data.etudiants || '?') + ' étudiants</strong> en ' + parcoursLabel;
       html += ' pour <strong>' + (data.places_mmopk || '?') + ' places</strong> en 2e année (filières MMOPK).</p>';
-      if (resultsUnlocked) {
+      if (formSubmitted) {
         html += '<p class="calc-base-note">Taux de base : ' + result.baseRate.toFixed(1) + '% — ajusté selon ton profil.</p>';
       }
       html += '</div>';
