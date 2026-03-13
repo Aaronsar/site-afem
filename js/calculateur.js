@@ -48,10 +48,15 @@
       if (a.city > b.city) return 1;
       return a.name.localeCompare(b.name);
     });
+    // Count facs per city to detect multi-fac cities
+    var cityCount = {};
+    sorted.forEach(function (f) { cityCount[f.city] = (cityCount[f.city] || 0) + 1; });
+
     sorted.forEach(function (f) {
       var opt = document.createElement('option');
       opt.value = f.id;
-      opt.textContent = f.name + ' (' + f.city + ')';
+      // Multi-fac cities (Paris): show fac name, others: just city name
+      opt.textContent = cityCount[f.city] > 1 ? f.name : f.city;
       facSelect.appendChild(opt);
     });
 
