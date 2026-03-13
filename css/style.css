@@ -3810,10 +3810,11 @@ section {
   width: 100%;
   margin-top: 20px;
 }
-.calc-results-blurred .calc-score-value,
-.calc-results-blurred .calc-score-fill {
-  filter: blur(8px);
-  user-select: none;
+.calc-score-teaser {
+  font-size: 0.85rem;
+  color: #999;
+  margin-top: 6px;
+  font-style: italic;
 }
 @keyframes calcFadeIn {
   from { opacity: 0; transform: translateY(8px); }
