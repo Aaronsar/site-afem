@@ -19,7 +19,6 @@
     heures: null,
     prepa: null,
     regularite: null,
-    redoublement: null
   };
 
   // DOM refs
@@ -30,11 +29,12 @@
   const fieldSpe2 = document.getElementById('field-spe2');
   const fieldPrepa = document.getElementById('field-prepa');
   const fieldRegularity = document.getElementById('field-regularity');
-  const fieldRedoublement = document.getElementById('field-redoublement');
   const submitBtn = document.getElementById('calc-submit');
   const resultsPanel = document.getElementById('calc-results');
   const stepDots = document.querySelectorAll('.calc-step-dot');
   const tabContents = document.querySelectorAll('.calc-tab-content');
+  const nextToProfil = document.getElementById('next-to-profil');
+  const nextToMethode = document.getElementById('next-to-methode');
 
   // Scientific specialties relevant to medicine
   const SCIENCE_SPES = ['physique-chimie', 'svt', 'mathematiques', 'biologie-ecologie', 'nsi'];
@@ -105,8 +105,8 @@
 
   function selectParcours(parcours) {
     state.parcours = parcours;
-    // Activate profil tab
-    activateTab('profil');
+    // Show next button instead of auto-advancing
+    nextToProfil.style.display = '';
     updateResults();
   }
 
@@ -129,6 +129,14 @@
     btn.addEventListener('click', function () {
       activateTab(this.dataset.target);
     });
+  });
+
+  // Next buttons
+  nextToProfil.addEventListener('click', function () {
+    activateTab('profil');
+  });
+  nextToMethode.addEventListener('click', function () {
+    activateTab('methode');
   });
 
   stepDots.forEach(dot => {
@@ -173,10 +181,6 @@
               updateResults();
             } else if (fieldId === 'field-regularity') {
               state.regularite = value;
-              fieldRedoublement.style.display = '';
-              updateResults();
-            } else if (fieldId === 'field-redoublement') {
-              state.redoublement = value;
               submitBtn.style.display = '';
               updateResults();
             }
@@ -187,10 +191,6 @@
           updateResults();
         } else if (fieldId === 'field-regularity') {
           state.regularite = value;
-          fieldRedoublement.style.display = '';
-          updateResults();
-        } else if (fieldId === 'field-redoublement') {
-          state.redoublement = value;
           submitBtn.style.display = '';
           updateResults();
         }
@@ -249,6 +249,7 @@
 
   note1Input.addEventListener('input', function () {
     state.note1 = parseFloat(this.value) || null;
+    if (state.note1 && state.note2) nextToMethode.style.display = '';
     updateResults();
   });
 
@@ -259,12 +260,19 @@
 
   note2Input.addEventListener('input', function () {
     state.note2 = parseFloat(this.value) || null;
-    // After both notes are filled, activate méthode tab
+    // Show next button when both notes are filled
     if (state.note1 && state.note2) {
-      activateTab('methode');
+      nextToMethode.style.display = '';
     }
     updateResults();
   });
+
+  // Also check note1 to show next button
+  function checkProfilComplete() {
+    if (state.note1 && state.note2) {
+      nextToMethode.style.display = '';
+    }
+  }
 
   // ─── Lead capture modal ────────────────────────────────────────
   const leadModal = document.getElementById('calc-lead-modal');
@@ -429,20 +437,6 @@
         value: bonus,
         detail: bonus >= 3 ? 'La régularité est le facteur clé en PASS/LAS' : bonus < 0 ? 'La régularité est essentielle — travaille à l\'améliorer' : 'Marge de progression possible'
       });
-    }
-
-    // ─── Factor 7: Doublant (±5 points) ───
-    if (state.redoublement) {
-      const redBonus = { 'primant': 0, 'doublant': 5 };
-      const bonus = redBonus[state.redoublement] || 0;
-      score += bonus;
-      if (bonus > 0) {
-        factors.push({
-          label: 'Doublant',
-          value: bonus,
-          detail: 'Les doublants ont un taux de réussite plus élevé'
-        });
-      }
     }
 
     // Clamp between 2 and 95
