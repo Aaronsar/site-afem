@@ -124,6 +124,13 @@
     tabContents.forEach(tc => tc.classList.toggle('active', tc.id === 'tab-' + tabName));
   }
 
+  // Back buttons
+  document.querySelectorAll('.calc-back-btn').forEach(btn => {
+    btn.addEventListener('click', function () {
+      activateTab(this.dataset.target);
+    });
+  });
+
   stepDots.forEach(dot => {
     dot.addEventListener('click', function () {
       activateTab(this.dataset.tab);
