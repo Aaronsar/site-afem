@@ -495,6 +495,35 @@ a:hover { color: var(--wp-accent-hover); text-decoration: underline; }
   color: var(--wp-red); cursor: pointer; font-size: 16px;
 }
 
+/* ─── Page list header actions ─── */
+.admin-page-list-actions { display: flex; align-items: center; gap: 12px; }
+.admin-table .action-delete { color: var(--wp-red); }
+.admin-table .action-delete:hover { color: #a02022; text-decoration: underline; }
+
+/* ─── Modal ─── */
+.admin-modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 10000; animation: adminFade 0.15s ease;
+}
+.admin-modal {
+  background: var(--wp-card);
+  border-radius: 4px;
+  padding: 24px;
+  width: 440px; max-width: 90vw;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+.admin-modal h3 {
+  font-size: 18px; font-weight: 600;
+  margin-bottom: 20px;
+}
+.admin-modal-actions {
+  display: flex; justify-content: flex-end; gap: 8px;
+  margin-top: 20px; padding-top: 16px;
+  border-top: 1px solid var(--wp-border-light);
+}
+
 /* ─── Toast ─── */
 .admin-toast {
   position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(80px);

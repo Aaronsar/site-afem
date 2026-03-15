@@ -103,11 +103,45 @@
   ];
 
   var allPages = [];
+  var hardcodedSlugs = {};
   CATEGORIES.forEach(function (cat) {
     if (cat.pages) cat.pages.forEach(function (p) {
       allPages.push({ slug: p.slug, label: p.label, type: cat.type, category: cat.label });
+      hardcodedSlugs[p.slug] = true;
     });
   });
+  var dynamicPagesLoaded = false;
+
+  /* ─── Slug prefix mapping ─── */
+  var TYPE_TO_CAT = { 'prepa': 'prepas', 'faculte': 'facultes', 'article': 'articles', 'root': 'pages' };
+  var CAT_TO_PREFIX = { 'prepas': 'prepas-medecine/', 'facultes': 'facultes/', 'articles': 'articles/', 'pages': '' };
+
+  /* ─── Load dynamic pages from Supabase ─── */
+  async function loadDynamicPages() {
+    if (dynamicPagesLoaded) return;
+    dynamicPagesLoaded = true;
+
+    var r = await sb.from('page_content').select('page_slug, page_type, title');
+    var rows = r.data || [];
+
+    rows.forEach(function (row) {
+      if (hardcodedSlugs[row.page_slug]) return;
+
+      var catId = TYPE_TO_CAT[row.page_type];
+      if (!catId) return;
+      var cat = CATEGORIES.find(function (c) { return c.id === catId; });
+      if (!cat || !cat.pages) return;
+
+      // Avoid duplicates
+      if (cat.pages.some(function (p) { return p.slug === row.page_slug; })) return;
+
+      var label = row.title || row.page_slug.split('/').pop().replace(/-/g, ' ');
+      label = label.charAt(0).toUpperCase() + label.slice(1);
+
+      cat.pages.push({ slug: row.page_slug, label: label, dynamic: true });
+      allPages.push({ slug: row.page_slug, label: label, type: row.page_type, category: cat.label, dynamic: true });
+    });
+  }
 
   /* ─── Init ─── */
   function init() {
@@ -152,9 +186,10 @@
   }
 
   /* ─── Dashboard ─── */
-  function showDashboard() {
+  async function showDashboard() {
     document.getElementById('admin-login').style.display = 'none';
     document.getElementById('admin-dashboard').style.display = 'flex';
+    await loadDynamicPages();
     renderSidebar();
     navigate('dashboard');
   }
@@ -281,20 +316,25 @@
     var html = '<div class="admin-page-list">';
     html += '<div class="admin-page-list-header">';
     html += '<h2>' + cat.label + '</h2>';
+    html += '<div class="admin-page-list-actions">';
+    html += '<button class="btn-primary" onclick="showAddModal(\'' + cat.id + '\',\'' + cat.type + '\')">+ Ajouter</button>';
     html += '<span class="list-count">' + cat.pages.length + ' pages</span>';
-    html += '</div>';
+    html += '</div></div>';
 
     html += '<table class="admin-table">';
     html += '<thead><tr><th>Page</th><th>Statut</th><th>Dernière modification</th><th>Actions</th></tr></thead>';
     html += '<tbody>';
     cat.pages.forEach(function (p) {
       var hasData = configured[p.slug];
+      var viewUrl = p.dynamic ? '/' + p.slug : '/' + p.slug + '.html';
       html += '<tr>';
       html += '<td class="page-title-cell" onclick="editPage(\'' + p.slug + '\',\'' + cat.type + '\')">' + esc(p.label) + '</td>';
       html += '<td><span class="status-dot ' + (hasData ? 'configured' : 'empty') + '"></span>' + (hasData ? 'Configuré' : 'Non configuré') + '</td>';
       html += '<td>' + (hasData ? formatDate(configured[p.slug]) : '—') + '</td>';
-      html += '<td class="row-actions"><a href="javascript:void(0)" onclick="editPage(\'' + p.slug + '\',\'' + cat.type + '\')">Modifier</a><a href="/' + p.slug + '.html" target="_blank">Voir</a></td>';
-      html += '</tr>';
+      html += '<td class="row-actions"><a href="javascript:void(0)" onclick="editPage(\'' + p.slug + '\',\'' + cat.type + '\')">Modifier</a>';
+      html += '<a href="' + viewUrl + '" target="_blank">Voir</a>';
+      if (p.dynamic) html += '<a href="javascript:void(0)" class="action-delete" onclick="deletePage(\'' + p.slug + '\',\'' + cat.id + '\')">Supprimer</a>';
+      html += '</td></tr>';
     });
     html += '</tbody></table></div>';
 
@@ -343,7 +383,9 @@
     html += '<div class="admin-editor-header">';
     html += '<h2>Modifier : ' + esc(page.label) + '</h2>';
     if (cat) html += '<button class="btn-back" onclick="navigate(\'' + cat.id + '\')">&#8592; Retour</button>';
-    html += '<a class="btn-preview" href="/' + slug + '.html" target="_blank">Voir la page &#8599;</a>';
+    var isDynamic = page.dynamic || false;
+    var viewUrl = isDynamic ? '/' + slug : '/' + slug + '.html';
+    html += '<a class="btn-preview" href="' + viewUrl + '" target="_blank">Voir la page &#8599;</a>';
     html += '</div>';
 
     // Layout: content + sidebar
@@ -549,6 +591,88 @@
     markUnsaved();
   };
   window.markUnsaved = function () { state.unsaved = true; };
+
+  /* ─── Add page modal ─── */
+  window.showAddModal = function (catId, type) {
+    var catLabels = { 'prepas': 'une prépa', 'facultes': 'une faculté', 'articles': 'un article', 'pages': 'une page' };
+    var html = '<div class="admin-modal-overlay" id="add-modal" onclick="if(event.target===this)closeAddModal()">';
+    html += '<div class="admin-modal">';
+    html += '<h3>Ajouter ' + (catLabels[catId] || 'une page') + '</h3>';
+    html += '<div class="admin-field"><label>Titre</label><input type="text" id="new-page-title" placeholder="Ex: Mon nouvel article" autofocus></div>';
+    html += '<div class="admin-field"><label>Slug (URL)</label><input type="text" id="new-page-slug" placeholder="Auto-généré depuis le titre"><div class="admin-field-hint">Sera ajouté après /' + (CAT_TO_PREFIX[catId] || '') + '</div></div>';
+    html += '<div class="admin-modal-actions">';
+    html += '<button class="btn-secondary" onclick="closeAddModal()">Annuler</button>';
+    html += '<button class="btn-primary" onclick="createNewPage(\'' + catId + '\',\'' + type + '\')">Créer la page</button>';
+    html += '</div></div></div>';
+    document.body.insertAdjacentHTML('beforeend', html);
+
+    document.getElementById('new-page-title').oninput = function () {
+      var slug = this.value.toLowerCase()
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+      document.getElementById('new-page-slug').value = slug;
+    };
+    document.getElementById('new-page-title').focus();
+  };
+
+  window.closeAddModal = function () {
+    var m = document.getElementById('add-modal');
+    if (m) m.remove();
+  };
+
+  window.createNewPage = async function (catId, type) {
+    var title = document.getElementById('new-page-title').value.trim();
+    var slug = document.getElementById('new-page-slug').value.trim();
+    if (!title || !slug) { showToast('Titre et slug requis', 'error'); return; }
+
+    var prefix = CAT_TO_PREFIX[catId] || '';
+    var fullSlug = prefix + slug;
+
+    // Check duplicates
+    if (allPages.some(function (p) { return p.slug === fullSlug; })) {
+      showToast('Ce slug existe déjà', 'error'); return;
+    }
+
+    var btn = document.querySelector('#add-modal .btn-primary');
+    btn.disabled = true; btn.textContent = 'Création...';
+
+    try {
+      var r = await sb.from('page_content').insert({ page_slug: fullSlug, page_type: type, title: title });
+      if (r.error) throw r.error;
+
+      // Add to local state
+      var cat = CATEGORIES.find(function (c) { return c.id === catId; });
+      cat.pages.push({ slug: fullSlug, label: title, dynamic: true });
+      allPages.push({ slug: fullSlug, label: title, type: type, category: cat.label, dynamic: true });
+
+      closeAddModal();
+      showToast('Page "' + title + '" créée', 'success');
+      editPage(fullSlug, type);
+    } catch (err) {
+      showToast('Erreur : ' + (err.message || 'Échec'), 'error');
+      btn.disabled = false; btn.textContent = 'Créer la page';
+    }
+  };
+
+  window.deletePage = async function (slug, catId) {
+    if (!confirm('Supprimer cette page ? Cette action est irréversible.')) return;
+
+    try {
+      var r = await sb.from('page_content').delete().eq('page_slug', slug);
+      if (r.error) throw r.error;
+
+      // Remove from local state
+      var cat = CATEGORIES.find(function (c) { return c.id === catId; });
+      if (cat) cat.pages = cat.pages.filter(function (p) { return p.slug !== slug; });
+      allPages = allPages.filter(function (p) { return p.slug !== slug; });
+
+      showToast('Page supprimée', 'success');
+      navigate(catId);
+    } catch (err) {
+      showToast('Erreur : ' + (err.message || 'Échec'), 'error');
+    }
+  };
 
   /* ─── Collect & Save ─── */
   function getVal(n) { var el = document.querySelector('[name="' + n + '"]'); return el ? el.value.trim() : ''; }

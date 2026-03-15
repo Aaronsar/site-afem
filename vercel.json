@@ -1,0 +1,8 @@
+{
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/articles/:path*", "destination": "/articles/_template.html" },
+    { "source": "/prepas-medecine/:path*", "destination": "/prepas-medecine/_template.html" },
+    { "source": "/facultes/:path*", "destination": "/facultes/_template.html" }
+  ]
+}
