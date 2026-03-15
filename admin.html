@@ -4,23 +4,21 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
-  <title>AFEM Admin</title>
+  <title>AFEM - Administration</title>
   <link rel="icon" type="image/png" href="favicon.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/admin.css">
 </head>
 <body class="admin-body">
 
-  <!-- Login -->
+  <!-- ═══ Login ═══ -->
   <div id="admin-login" class="admin-login" style="display:none;">
     <div class="admin-login-card">
       <img src="assets/logo.png" alt="AFEM">
-      <h1>Backoffice AFEM</h1>
-      <p>Connectez-vous pour gérer le contenu du site</p>
+      <h1>Administration</h1>
+      <p>Connectez-vous pour gérer votre site</p>
       <form id="login-form">
-        <label>Email</label>
+        <label>Adresse email</label>
         <input type="email" id="login-email" required placeholder="votre@email.com">
         <label>Mot de passe</label>
         <input type="password" id="login-password" required placeholder="Mot de passe">
@@ -30,38 +28,36 @@
     </div>
   </div>
 
-  <!-- Dashboard -->
+  <!-- ═══ Dashboard ═══ -->
   <div id="admin-dashboard" class="admin-layout" style="display:none;">
 
     <!-- Top bar -->
     <div class="admin-topbar">
-      <img src="assets/logo.png" alt="AFEM">
-      <span class="admin-topbar-title">Backoffice</span>
-      <button class="btn-logout" onclick="adminLogout()">Déconnexion</button>
+      <div class="admin-topbar-left">
+        <img src="assets/logo.png" alt="AFEM">
+        <span>Administration</span>
+      </div>
+      <div class="admin-topbar-right">
+        <button class="btn-visit" onclick="window.open('/', '_blank')">Voir le site</button>
+        <span class="admin-user" id="admin-user-email"></span>
+        <button class="btn-logout" onclick="adminLogout()">Déconnexion</button>
+      </div>
     </div>
 
     <!-- Sidebar -->
-    <aside class="admin-sidebar">
-      <div id="admin-sidebar-list"></div>
+    <aside class="admin-sidebar" id="admin-sidebar">
+      <!-- Rendered by JS -->
     </aside>
 
     <!-- Main content -->
-    <main class="admin-main">
-      <div id="admin-main-content">
-        <div class="admin-main-empty">
-          <div>
-            <p style="font-size:36px;margin-bottom:16px;">&#128221;</p>
-            <p>Sélectionnez une page dans le menu pour commencer l'édition.</p>
-          </div>
-        </div>
-      </div>
+    <main class="admin-main" id="admin-main">
+      <!-- Rendered by JS -->
     </main>
   </div>
 
-  <!-- Toast notification -->
+  <!-- Toast -->
   <div id="admin-toast" class="admin-toast"></div>
 
-  <!-- Supabase JS -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="js/admin.js"></script>
 </body>
