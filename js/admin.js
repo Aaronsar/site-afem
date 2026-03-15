@@ -138,8 +138,22 @@
       btn.disabled = true;
       err.style.display = 'none';
 
+      // Try sign in first
       var result = await sb.auth.signInWithPassword({ email: email, password: pass });
       if (result.error) {
+        // If user doesn't exist yet, try signUp (first-time setup only)
+        var ALLOWED_EMAIL = 'aaron@diploma-sante.fr';
+        if (email === ALLOWED_EMAIL) {
+          var signUpResult = await sb.auth.signUp({ email: email, password: pass });
+          if (signUpResult.error || !signUpResult.data.session) {
+            err.textContent = 'Identifiants incorrects';
+            err.style.display = 'block';
+            btn.disabled = false;
+            return;
+          }
+          showDashboard();
+          return;
+        }
         err.textContent = 'Identifiants incorrects';
         err.style.display = 'block';
         btn.disabled = false;
