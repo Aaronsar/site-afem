@@ -424,5 +424,71 @@
   <script defer src="js/main.min.js"></script>
   <script defer src="js/blog.min.js"></script>
   <script defer src="js/cms-live.js"></script>
+  <script>
+  /* Dynamic blog loader — loads published articles from Supabase */
+  (function() {
+    var SB_URL = 'https://jhopwqpbaiyjfoggvcaf.supabase.co';
+    var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impob3B3cXBiYWl5amZvZ2d2Y2FmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwNTI2OTEsImV4cCI6MjA4ODYyODY5MX0.rz3TJZryPxEf3P5kQgpzQkwN9aF8_F4eo4F03CEYVPs';
+    var CAT_LABELS = {'prepa':'Prépa','orientation':'Orientation','pass-las':'PASS/LAS','parcoursup':'Parcoursup','methode':'Méthode','vie-etudiante':'Vie étudiante','other':'Article'};
+
+    function esc(s) { var d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
+    function fmtDate(iso) { return new Date(iso).toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'}); }
+
+    document.addEventListener('DOMContentLoaded', async function() {
+      var grid = document.querySelector('.blog-grid');
+      if (!grid) return;
+
+      // Collect existing slugs from static HTML
+      var existing = {};
+      grid.querySelectorAll('.blog-card a.card-link').forEach(function(a) {
+        var href = a.getAttribute('href') || '';
+        existing[href.replace(/^\//, '')] = true;
+      });
+
+      try {
+        var res = await fetch(SB_URL + '/rest/v1/page_content?select=page_slug,title,excerpt,category,published_at,meta_description&page_type=eq.article&published=eq.true&order=published_at.desc', {
+          headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
+        });
+        var articles = await res.json();
+        if (!Array.isArray(articles)) return;
+
+        articles.forEach(function(a) {
+          var slug = a.page_slug;
+          if (existing[slug]) return; // already in HTML
+
+          var cat = a.category || 'other';
+          var catLabel = CAT_LABELS[cat] || 'Article';
+          var excerpt = a.excerpt || a.meta_description || '';
+          var date = a.published_at ? fmtDate(a.published_at) : '';
+          var url = '/' + slug;
+
+          var card = document.createElement('article');
+          card.className = 'glass-card blog-card fade-up';
+          card.dataset.category = cat;
+          card.innerHTML = '<div class="blog-card-content">' +
+            '<span class="blog-category">' + esc(catLabel) + '</span>' +
+            '<h3>' + esc(a.title) + '</h3>' +
+            '<p class="blog-excerpt">' + esc(excerpt) + '</p>' +
+            '<div class="blog-card-footer">' +
+            '<span class="blog-date">' + date + '</span>' +
+            '<a href="' + url + '" class="card-link">Lire &#8594;</a>' +
+            '</div></div>';
+          grid.appendChild(card);
+        });
+
+        // Re-bind filter buttons to include new cards
+        var filterBtns = document.querySelectorAll('.blog-filter-btn');
+        filterBtns.forEach(function(btn) {
+          btn.addEventListener('click', function() {
+            var filter = btn.dataset.filter;
+            document.querySelectorAll('.blog-card').forEach(function(c) {
+              c.classList.toggle('hidden', filter !== 'all' && c.dataset.category !== filter);
+            });
+          });
+        });
+      } catch(e) { console.error('Blog loader:', e); }
+    });
+  })();
+  </script>
 </body>
 </html>

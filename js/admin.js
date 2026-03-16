@@ -429,9 +429,9 @@
     var main = document.getElementById('admin-main');
     var isArticle = cat.type === 'article';
 
-    // Fetch page content — full data for articles (scoring), minimal for others
+    // Fetch page content — full data for articles (scoring + publish status), minimal for others
     var slugs = cat.pages.map(function (p) { return p.slug; });
-    var selectCols = isArticle ? 'page_slug, updated_at, title, meta_description, subtitle, sections, faq' : 'page_slug, updated_at';
+    var selectCols = isArticle ? 'page_slug, updated_at, title, meta_description, subtitle, sections, faq, published, published_at, category, excerpt' : 'page_slug, updated_at';
     var r = await sb.from('page_content').select(selectCols).in('page_slug', slugs);
     var configured = {};
     var contentMap = {};
@@ -463,7 +463,14 @@
         html += '<td>' + (d ? scoreBadge(calculateSEO(d)) : '<span class="score-badge score-na">—</span>') + '</td>';
         html += '<td>' + (d ? scoreBadge(calculateGEO(d)) : '<span class="score-badge score-na">—</span>') + '</td>';
       }
-      html += '<td><span class="status-dot ' + (hasData ? 'configured' : 'empty') + '"></span>' + (hasData ? 'Configuré' : 'Non configuré') + '</td>';
+      // Status: Published/Draft for articles, Configured/Not for others
+      if (isArticle) {
+        var artData = contentMap[p.slug];
+        var isPub = artData && artData.published;
+        html += '<td><span class="status-dot ' + (isPub ? 'published' : (hasData ? 'draft' : 'empty')) + '"></span>' + (isPub ? 'Publié' : (hasData ? 'Brouillon' : 'Non configuré')) + '</td>';
+      } else {
+        html += '<td><span class="status-dot ' + (hasData ? 'configured' : 'empty') + '"></span>' + (hasData ? 'Configuré' : 'Non configuré') + '</td>';
+      }
       html += '<td>' + (hasData ? formatDate(configured[p.slug]) : '—') + '</td>';
       html += '<td class="row-actions"><a href="javascript:void(0)" onclick="editPage(\'' + p.slug + '\',\'' + cat.type + '\')">Modifier</a>';
       html += '<a href="' + viewUrl + '" target="_blank">Voir</a>';
@@ -592,15 +599,43 @@
     html += '<div class="admin-editor-sidebar">';
 
     // Publish box
+    var isPublished = d.published || false;
     html += '<div class="admin-publish-box">';
     html += '<div class="admin-publish-box-header">Publier</div>';
     html += '<div class="admin-publish-box-body">';
-    html += '<div class="pub-info">Statut : <strong>' + (state.pageData ? 'Configuré' : 'Brouillon') + '</strong></div>';
+    if (type === 'article') {
+      html += '<div class="pub-info">Statut : <strong class="pub-status-label ' + (isPublished ? 'pub-green' : 'pub-orange') + '">' + (isPublished ? 'Publié' : 'Brouillon') + '</strong></div>';
+      if (d.published_at) html += '<div class="pub-info">Publié le : <strong>' + formatDate(d.published_at) + '</strong></div>';
+    } else {
+      html += '<div class="pub-info">Statut : <strong>' + (state.pageData ? 'Configuré' : 'Brouillon') + '</strong></div>';
+    }
     if (d.updated_at) html += '<div class="pub-info">Modifié : <strong>' + formatDate(d.updated_at) + '</strong></div>';
     html += '<div class="pub-info">Type : <strong>' + type + '</strong></div>';
+    // Article-specific: category + excerpt
+    if (type === 'article') {
+      html += '<div class="admin-field" style="margin-top:12px;"><label>Catégorie</label>';
+      html += '<select name="article_category" onchange="markUnsaved()">';
+      var cats = [['prepa','Prépa'],['orientation','Orientation'],['pass-las','PASS/LAS'],['parcoursup','Parcoursup'],['methode','Méthode'],['vie-etudiante','Vie étudiante'],['other','Autre']];
+      cats.forEach(function (c) {
+        html += '<option value="' + c[0] + '"' + ((d.category || 'other') === c[0] ? ' selected' : '') + '>' + c[1] + '</option>';
+      });
+      html += '</select></div>';
+      html += '<div class="admin-field"><label>Extrait (blog)</label>';
+      html += '<textarea name="article_excerpt" rows="3" oninput="markUnsaved()" placeholder="Court résumé affiché sur la page blog...">' + esc(d.excerpt || '') + '</textarea></div>';
+    }
     html += '</div>';
     html += '<div class="admin-publish-box-footer">';
-    html += '<button class="btn-primary" onclick="savePage(\'' + type + '\')" id="btn-save">Mettre à jour</button>';
+    if (type === 'article') {
+      if (isPublished) {
+        html += '<button class="btn-unpublish" onclick="togglePublish(false,\'' + type + '\')">Dépublier</button>';
+        html += '<button class="btn-primary" onclick="savePage(\'' + type + '\')" id="btn-save">Mettre à jour</button>';
+      } else {
+        html += '<button class="btn-save-draft" onclick="savePage(\'' + type + '\')" id="btn-save">Enregistrer brouillon</button>';
+        html += '<button class="btn-publish" onclick="togglePublish(true,\'' + type + '\')">Publier</button>';
+      }
+    } else {
+      html += '<button class="btn-primary" onclick="savePage(\'' + type + '\')" id="btn-save">Mettre à jour</button>';
+    }
     html += '</div></div>';
 
     // Score panel (article only)
@@ -1147,6 +1182,49 @@
   /* ─── Collect & Save ─── */
   function getVal(n) { var el = document.querySelector('[name="' + n + '"]'); return el ? el.value.trim() : ''; }
 
+  /* ─── Publish / Unpublish ─── */
+  window.togglePublish = async function (publish, type) {
+    if (publish && !getVal('title')) { showToast('Titre requis pour publier', 'error'); return; }
+    if (publish && !confirm('Publier cet article ? Il apparaîtra sur le blog.')) return;
+    if (!publish && !confirm('Dépublier cet article ? Il disparaîtra du blog.')) return;
+
+    // Save first, then toggle publish
+    try {
+      var data = {
+        page_slug: state.currentSlug, page_type: type,
+        title: getVal('title') || null,
+        meta_description: getVal('meta_description') || null,
+        subtitle: getVal('subtitle') || null,
+        sections: [], faq: [], coup_de_coeur: {},
+        category: getVal('article_category') || 'other',
+        excerpt: getVal('article_excerpt') || null,
+        published: publish,
+        published_at: publish ? new Date().toISOString() : null
+      };
+      document.querySelectorAll('#sections-list .admin-content-section').forEach(function (el) {
+        var h = el.querySelector('[name^="section_heading_"]');
+        var c = el.querySelector('[name^="section_html_"]');
+        if (h || c) data.sections.push({ heading: h ? h.value.trim() : '', html: c ? c.value.trim() : '' });
+      });
+      document.querySelectorAll('#faq-list .admin-faq-item').forEach(function (el) {
+        var q = el.querySelector('[name^="faq_q_"]');
+        var a = el.querySelector('[name^="faq_a_"]');
+        if (q && a && (q.value.trim() || a.value.trim())) data.faq.push({ question: q.value.trim(), answer: a.value.trim() });
+      });
+
+      var r = await sb.from('page_content').upsert(data, { onConflict: 'page_slug' });
+      if (r.error) throw r.error;
+
+      state.unsaved = false;
+      showToast(publish ? 'Article publié !' : 'Article dépublié', 'success');
+      // Reload editor to reflect new state
+      editPage(state.currentSlug, type);
+    } catch (err) {
+      console.error(err);
+      showToast('Erreur : ' + (err.message || 'Échec'), 'error');
+    }
+  };
+
   window.savePage = async function (type) {
     var btn = document.getElementById('btn-save');
     btn.disabled = true; btn.textContent = 'Sauvegarde...';
@@ -1160,6 +1238,11 @@
         subtitle: getVal('subtitle') || null,
         sections: [], faq: [], coup_de_coeur: {}
       };
+      // Article-specific fields
+      if (type === 'article') {
+        data.category = getVal('article_category') || 'other';
+        data.excerpt = getVal('article_excerpt') || null;
+      }
       document.querySelectorAll('#sections-list .admin-content-section').forEach(function (el) {
         var h = el.querySelector('[name^="section_heading_"]');
         var c = el.querySelector('[name^="section_html_"]');

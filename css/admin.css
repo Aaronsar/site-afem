@@ -285,6 +285,8 @@ a:hover { color: var(--wp-accent-hover); text-decoration: underline; }
   border-radius: 50%; margin-right: 6px;
 }
 .admin-table .status-dot.configured { background: var(--wp-green); }
+.admin-table .status-dot.published { background: #00a32a; }
+.admin-table .status-dot.draft { background: #dba617; }
 .admin-table .status-dot.empty { background: var(--wp-border); }
 .admin-table .row-actions {
   color: var(--wp-text-lighter); font-size: 12px;
@@ -354,6 +356,26 @@ a:hover { color: var(--wp-accent-hover); text-decoration: underline; }
   border-top: 1px solid var(--wp-border-light);
   display: flex; justify-content: flex-end; gap: 8px;
 }
+.pub-green { color: #00a32a !important; }
+.pub-orange { color: #dba617 !important; }
+.btn-publish {
+  background: #00a32a; color: #fff; border: none;
+  padding: 6px 18px; border-radius: 4px; font-size: 13px;
+  font-weight: 600; cursor: pointer; transition: background 0.15s;
+}
+.btn-publish:hover { background: #008a20; }
+.btn-unpublish {
+  background: none; color: #b32d2e; border: 1px solid #b32d2e;
+  padding: 6px 14px; border-radius: 4px; font-size: 12px;
+  cursor: pointer; transition: all 0.15s;
+}
+.btn-unpublish:hover { background: #b32d2e; color: #fff; }
+.btn-save-draft {
+  background: none; border: 1px solid var(--wp-border);
+  padding: 6px 14px; border-radius: 4px; font-size: 12px;
+  cursor: pointer; color: var(--wp-text-light); transition: all 0.15s;
+}
+.btn-save-draft:hover { border-color: var(--wp-text); color: var(--wp-text); }
 
 /* Meta box */
 .admin-meta-box {
