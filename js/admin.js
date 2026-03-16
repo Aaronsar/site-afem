@@ -195,18 +195,32 @@
   }
 
   /* ─── Sidebar ─── */
+  var openSidebar = {}; // track which sidebar categories are open
+
   function renderSidebar() {
     var html = '';
     CATEGORIES.forEach(function (cat) {
-      var isActive = state.view === cat.id || (cat.pages && cat.pages.some(function (p) { return p.slug === state.currentSlug; }));
-      html += '<button class="admin-nav-item' + (isActive ? ' active' : '') + '" onclick="navigate(\'' + cat.id + '\')">';
+      var isEditing = cat.pages && cat.pages.some(function (p) { return p.slug === state.currentSlug; });
+      var isActive = state.view === cat.id || isEditing;
+      // Auto-open if viewing/editing this category
+      if (isActive && cat.pages) openSidebar[cat.id] = true;
+      var isOpen = !!openSidebar[cat.id];
+
+      if (cat.pages) {
+        html += '<button class="admin-nav-item' + (isActive ? ' active' : '') + '" onclick="toggleSidebar(\'' + cat.id + '\')">';
+      } else {
+        html += '<button class="admin-nav-item' + (isActive ? ' active' : '') + '" onclick="navigate(\'' + cat.id + '\')">';
+      }
       html += '<span class="nav-icon">' + cat.icon + '</span>';
       html += cat.label;
-      if (cat.pages) html += '<span class="nav-count">' + cat.pages.length + '</span>';
+      if (cat.pages) {
+        html += '<span class="nav-count">' + cat.pages.length + '</span>';
+        html += '<span class="nav-chevron' + (isOpen ? ' open' : '') + '">&#9662;</span>';
+      }
       html += '</button>';
 
       if (cat.pages) {
-        html += '<div class="admin-subnav' + (isActive ? ' open' : '') + '" id="subnav-' + cat.id + '">';
+        html += '<div class="admin-subnav' + (isOpen ? ' open' : '') + '" id="subnav-' + cat.id + '">';
         cat.pages.forEach(function (p) {
           html += '<button class="admin-subnav-item' + (state.currentSlug === p.slug ? ' active' : '') + '" onclick="editPage(\'' + p.slug + '\',\'' + cat.type + '\')">' + p.label + '</button>';
         });
@@ -215,6 +229,24 @@
     });
     document.getElementById('admin-sidebar').innerHTML = html;
   }
+
+  window.toggleSidebar = function (catId) {
+    if (openSidebar[catId]) {
+      // Already open: close it
+      openSidebar[catId] = false;
+    } else {
+      // Open it and navigate to the list
+      openSidebar[catId] = true;
+    }
+    // Always navigate to show the page list
+    if (state.unsaved && !confirm('Modifications non sauvegardées. Continuer ?')) return;
+    state.unsaved = false;
+    state.view = catId;
+    state.currentSlug = null;
+    var cat = CATEGORIES.find(function (c) { return c.id === catId; });
+    if (cat && cat.pages) renderPageList(cat);
+    renderSidebar();
+  };
 
   /* ─── Navigation ─── */
   window.navigate = function (viewId) {

@@ -144,6 +144,16 @@ a:hover { color: var(--wp-accent-hover); text-decoration: underline; }
   font-size: 11px; padding: 1px 7px;
   border-radius: 10px;
 }
+.admin-nav-item .nav-chevron {
+  margin-left: 6px;
+  font-size: 10px;
+  color: rgba(255,255,255,0.4);
+  transition: transform 0.2s ease;
+  display: inline-block;
+}
+.admin-nav-item .nav-chevron.open {
+  transform: rotate(180deg);
+}
 
 /* Sidebar separator */
 .admin-nav-sep {
