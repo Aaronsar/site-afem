@@ -455,7 +455,7 @@
     html += '<tbody>';
     cat.pages.forEach(function (p) {
       var hasData = configured[p.slug];
-      var viewUrl = p.dynamic ? '/' + p.slug : '/' + p.slug + '.html';
+      var viewUrl = '/' + p.slug;
       html += '<tr>';
       html += '<td class="page-title-cell" onclick="editPage(\'' + p.slug + '\',\'' + cat.type + '\')">' + esc(p.label) + '</td>';
       if (isArticle) {
@@ -517,8 +517,7 @@
     html += '<div class="admin-editor-header">';
     html += '<h2>Modifier : ' + esc(page.label) + '</h2>';
     if (cat) html += '<button class="btn-back" onclick="navigate(\'' + cat.id + '\')">&#8592; Retour</button>';
-    var isDynamic = page.dynamic || false;
-    var viewUrl = isDynamic ? '/' + slug : '/' + slug + '.html';
+    var viewUrl = '/' + slug;
     html += '<a class="btn-preview" href="' + viewUrl + '" target="_blank">Voir la page &#8599;</a>';
     if (type === 'article') {
       html += '<button class="btn-ai-regen" onclick="regenerateArticle()">🤖 Regénérer avec l\'IA</button>';
