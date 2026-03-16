@@ -419,6 +419,9 @@
     var isDynamic = page.dynamic || false;
     var viewUrl = isDynamic ? '/' + slug : '/' + slug + '.html';
     html += '<a class="btn-preview" href="' + viewUrl + '" target="_blank">Voir la page &#8599;</a>';
+    if (type === 'article') {
+      html += '<button class="btn-ai-regen" onclick="regenerateArticle()">🤖 Regénérer avec l\'IA</button>';
+    }
     html += '</div>';
 
     // Layout: content + sidebar
@@ -626,16 +629,36 @@
   window.markUnsaved = function () { state.unsaved = true; };
 
   /* ─── Add page modal ─── */
+  var competitorArticlesCache = null;
+
   window.showAddModal = function (catId, type) {
     var catLabels = { 'prepas': 'une prépa', 'facultes': 'une faculté', 'articles': 'un article', 'pages': 'une page' };
+    var isArticle = (catId === 'articles');
     var html = '<div class="admin-modal-overlay" id="add-modal" onclick="if(event.target===this)closeAddModal()">';
-    html += '<div class="admin-modal">';
+    html += '<div class="admin-modal' + (isArticle ? ' admin-modal-wide' : '') + '">';
     html += '<h3>Ajouter ' + (catLabels[catId] || 'une page') + '</h3>';
     html += '<div class="admin-field"><label>Titre</label><input type="text" id="new-page-title" placeholder="Ex: Mon nouvel article" autofocus></div>';
     html += '<div class="admin-field"><label>Slug (URL)</label><input type="text" id="new-page-slug" placeholder="Auto-généré depuis le titre"><div class="admin-field-hint">Sera ajouté après /' + (CAT_TO_PREFIX[catId] || '') + '</div></div>';
+
+    // AI source selector for articles
+    if (isArticle) {
+      html += '<div class="ai-source-section">';
+      html += '<div class="ai-source-header"><span class="ai-icon">🤖</span> Génération IA (optionnel)</div>';
+      html += '<div class="admin-field"><label>S\'inspirer d\'un article concurrent</label>';
+      html += '<select id="ai-competitor-select"><option value="">— Chargement des articles... —</option></select>';
+      html += '<div class="admin-field-hint">Sélectionne un article concurrent ou colle une URL ci-dessous</div></div>';
+      html += '<div class="admin-field"><label>Ou coller une URL source</label>';
+      html += '<input type="url" id="ai-source-url" placeholder="https://example.com/article-a-copier"></div>';
+      html += '</div>';
+    }
+
     html += '<div class="admin-modal-actions">';
     html += '<button class="btn-secondary" onclick="closeAddModal()">Annuler</button>';
-    html += '<button class="btn-primary" onclick="createNewPage(\'' + catId + '\',\'' + type + '\')">Créer la page</button>';
+    if (isArticle) {
+      html += '<button class="btn-primary btn-ai-generate" onclick="createNewPage(\'' + catId + '\',\'' + type + '\')"><span class="ai-icon-sm">🤖</span> Créer &amp; Générer</button>';
+    } else {
+      html += '<button class="btn-primary" onclick="createNewPage(\'' + catId + '\',\'' + type + '\')">Créer la page</button>';
+    }
     html += '</div></div></div>';
     document.body.insertAdjacentHTML('beforeend', html);
 
@@ -647,7 +670,53 @@
       document.getElementById('new-page-slug').value = slug;
     };
     document.getElementById('new-page-title').focus();
+
+    // Load competitor articles for article creation
+    if (isArticle) {
+      loadCompetitorArticles();
+      // Sync select → URL field
+      document.getElementById('ai-competitor-select').onchange = function () {
+        var urlInput = document.getElementById('ai-source-url');
+        if (this.value) urlInput.value = this.value;
+      };
+    }
   };
+
+  async function loadCompetitorArticles() {
+    var sel = document.getElementById('ai-competitor-select');
+    if (!sel) return;
+    if (competitorArticlesCache) {
+      renderCompetitorSelect(sel, competitorArticlesCache);
+      return;
+    }
+    try {
+      var res = await fetch(SUPABASE_URL + '/functions/v1/fetch-competitor-articles');
+      var data = await res.json();
+      if (data.sources) {
+        competitorArticlesCache = data.sources;
+        renderCompetitorSelect(sel, data.sources);
+      } else {
+        sel.innerHTML = '<option value="">Erreur de chargement</option>';
+      }
+    } catch (e) {
+      console.error('Competitor fetch error:', e);
+      sel.innerHTML = '<option value="">Erreur de chargement</option>';
+    }
+  }
+
+  function renderCompetitorSelect(sel, sources) {
+    var html = '<option value="">— Choisir un article concurrent —</option>';
+    sources.forEach(function (src) {
+      if (src.articles.length === 0) return;
+      html += '<optgroup label="' + esc(src.site) + ' (' + src.articles.length + ' articles)">';
+      src.articles.forEach(function (a) {
+        var shortTitle = a.title.length > 70 ? a.title.substring(0, 67) + '...' : a.title;
+        html += '<option value="' + esc(a.url) + '">' + esc(shortTitle) + '</option>';
+      });
+      html += '</optgroup>';
+    });
+    sel.innerHTML = html;
+  }
 
   window.closeAddModal = function () {
     var m = document.getElementById('add-modal');
@@ -668,23 +737,141 @@
     }
 
     var btn = document.querySelector('#add-modal .btn-primary');
-    btn.disabled = true; btn.textContent = 'Création...';
+    btn.disabled = true;
+
+    // Check if AI generation is requested (articles only)
+    var isArticle = (catId === 'articles');
+    var sourceUrl = '';
+    if (isArticle) {
+      var urlInput = document.getElementById('ai-source-url');
+      sourceUrl = urlInput ? urlInput.value.trim() : '';
+    }
+    var useAI = isArticle && (sourceUrl || title);
+
+    if (useAI) {
+      btn.innerHTML = '<span class="ai-icon-sm">🤖</span> Génération IA...';
+      showAIOverlay('Génération de l\'article en cours...<br><small>Cela peut prendre 20-30 secondes</small>');
+    } else {
+      btn.textContent = 'Création...';
+    }
 
     try {
-      var r = await sb.from('page_content').insert({ page_slug: fullSlug, page_type: type, title: title });
+      // 1. Create empty record
+      var insertData = { page_slug: fullSlug, page_type: type, title: title };
+      var r = await sb.from('page_content').insert(insertData);
       if (r.error) throw r.error;
 
-      // Add to local state
+      // 2. If AI, generate content
+      if (useAI) {
+        try {
+          var existingArticles = allPages
+            .filter(function (p) { return p.type === 'article'; })
+            .map(function (p) { return { title: p.label, slug: p.slug }; });
+
+          var aiRes = await fetch(SUPABASE_URL + '/functions/v1/generate-article', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title: title, source_url: sourceUrl, existing_articles: existingArticles })
+          });
+          var aiData = await aiRes.json();
+
+          if (aiData.error) {
+            showToast('IA: ' + aiData.error + ' — page créée vide', 'error');
+          } else {
+            // Update record with AI content
+            var update = {
+              title: aiData.title || title,
+              meta_description: aiData.meta_description || null,
+              subtitle: aiData.subtitle || null,
+              sections: aiData.sections || [],
+              faq: aiData.faq || []
+            };
+            var ur = await sb.from('page_content').update(update).eq('page_slug', fullSlug);
+            if (ur.error) console.error('Update error:', ur.error);
+            else showToast('Article généré par l\'IA ✨', 'success');
+          }
+        } catch (aiErr) {
+          console.error('AI generation error:', aiErr);
+          showToast('Erreur IA — page créée vide', 'error');
+        }
+      }
+
+      // 3. Add to local state
       var cat = CATEGORIES.find(function (c) { return c.id === catId; });
       cat.pages.push({ slug: fullSlug, label: title, dynamic: true });
       allPages.push({ slug: fullSlug, label: title, type: type, category: cat.label, dynamic: true });
 
+      hideAIOverlay();
       closeAddModal();
-      showToast('Page "' + title + '" créée', 'success');
+      if (!useAI) showToast('Page "' + title + '" créée', 'success');
       editPage(fullSlug, type);
     } catch (err) {
+      hideAIOverlay();
       showToast('Erreur : ' + (err.message || 'Échec'), 'error');
       btn.disabled = false; btn.textContent = 'Créer la page';
+    }
+  };
+
+  /* ─── AI Overlay ─── */
+  function showAIOverlay(msg) {
+    if (document.getElementById('ai-overlay')) return;
+    var html = '<div id="ai-overlay" class="ai-overlay">';
+    html += '<div class="ai-overlay-content">';
+    html += '<div class="ai-spinner"></div>';
+    html += '<p>' + msg + '</p>';
+    html += '</div></div>';
+    document.body.insertAdjacentHTML('beforeend', html);
+  }
+  function hideAIOverlay() {
+    var el = document.getElementById('ai-overlay');
+    if (el) el.remove();
+  }
+
+  /* ─── Regenerate article with AI ─── */
+  window.regenerateArticle = async function () {
+    if (!state.currentSlug) return;
+    var title = document.querySelector('[name="title"]');
+    if (!title || !title.value.trim()) { showToast('Titre requis pour régénérer', 'error'); return; }
+    if (!confirm('Régénérer l\'article avec l\'IA ? Le contenu actuel sera remplacé.')) return;
+
+    showAIOverlay('Regénération en cours...<br><small>~20-30 secondes</small>');
+
+    try {
+      var existingArticles = allPages
+        .filter(function (p) { return p.type === 'article' && p.slug !== state.currentSlug; })
+        .map(function (p) { return { title: p.label, slug: p.slug }; });
+
+      var aiRes = await fetch(SUPABASE_URL + '/functions/v1/generate-article', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: title.value.trim(), existing_articles: existingArticles })
+      });
+      var aiData = await aiRes.json();
+
+      if (aiData.error) {
+        hideAIOverlay();
+        showToast('Erreur IA: ' + aiData.error, 'error');
+        return;
+      }
+
+      // Update in DB
+      var update = {
+        title: aiData.title || title.value.trim(),
+        meta_description: aiData.meta_description || null,
+        subtitle: aiData.subtitle || null,
+        sections: aiData.sections || [],
+        faq: aiData.faq || []
+      };
+      var r = await sb.from('page_content').update(update).eq('page_slug', state.currentSlug);
+      if (r.error) throw r.error;
+
+      hideAIOverlay();
+      showToast('Article regénéré ✨', 'success');
+      // Reload editor
+      editPage(state.currentSlug, 'article');
+    } catch (err) {
+      hideAIOverlay();
+      showToast('Erreur : ' + (err.message || 'Échec'), 'error');
     }
   };
 
