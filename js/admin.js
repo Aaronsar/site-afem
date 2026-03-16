@@ -41,6 +41,7 @@
       { slug: 'facultes/sorbonne-universite', label: 'Sorbonne Université' },
       { slug: 'facultes/paris-saclay', label: 'Paris-Saclay' },
       { slug: 'facultes/versailles-uvsq', label: 'UVSQ (Versailles)' },
+      { slug: 'facultes/creteil', label: 'Créteil (UPEC)' },
       { slug: 'facultes/sorbonne-nord', label: 'Sorbonne Paris Nord' },
       { slug: 'facultes/lyon', label: 'Lyon' },
       { slug: 'facultes/aix-marseille', label: 'Aix-Marseille' },

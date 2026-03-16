@@ -324,6 +324,35 @@ window.FACS_DATA = [
     recommended_path: "PASS"
   },
   {
+    id: "creteil",
+    name: "Université Paris-Est Créteil (UPEC)",
+    city: "Créteil",
+    region: "Île-de-France",
+    pass: {
+      etudiants: 750,
+      places_mmopk: 210,
+      taux_reussite: 28.0,
+      places_med: 95,
+      places_pharma: 40,
+      places_kine: 10,
+      places_odonto: 18,
+      places_sage_femme: 15,
+      voeux_parcoursup: 52000,
+      pct_admission: 1.44
+    },
+    las: {
+      etudiants: 400,
+      places_mmopk: 32,
+      taux_reussite: 8.0,
+      places_med: 15,
+      places_pharma: 8,
+      places_kine: 3,
+      places_odonto: 3,
+      places_sage_femme: 3
+    },
+    recommended_path: "PASS"
+  },
+  {
     id: "sorbonne-universite",
     name: "Sorbonne Université",
     city: "Paris",
