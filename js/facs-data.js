@@ -263,7 +263,7 @@ window.FACS_DATA = [
       places_odonto: 0,
       places_sage_femme: 0
     },
-    recommended_path: "LAS"
+    recommended_path: "PASS"
   },
   {
     id: "nantes",
@@ -301,25 +301,25 @@ window.FACS_DATA = [
     region: "Île-de-France",
     pass: {
       etudiants: 355,
-      places_mmopk: 108,
-      taux_reussite: 30.4,
-      places_med: 65,
+      places_mmopk: 105,
+      taux_reussite: 29.6,
+      places_med: 66,
       places_pharma: 28,
-      places_kine: 4,
+      places_kine: 0,
       places_odonto: 7,
       places_sage_femme: 4,
       voeux_parcoursup: 99669,
       pct_admission: 0.36
     },
     las: {
-      etudiants: 505,
-      places_mmopk: 93,
-      taux_reussite: 18.4,
-      places_med: 0,
-      places_pharma: 0,
+      etudiants: 345,
+      places_mmopk: 88,
+      taux_reussite: 25.5,
+      places_med: 69,
+      places_pharma: 10,
       places_kine: 0,
-      places_odonto: 0,
-      places_sage_femme: 0
+      places_odonto: 3,
+      places_sage_femme: 6
     },
     recommended_path: "PASS"
   },
