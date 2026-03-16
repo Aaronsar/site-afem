@@ -2279,13 +2279,13 @@ section {
   color: var(--dark);
 }
 
-.blog-content a {
+.blog-content a:not(.btn) {
   color: var(--green-dark);
   text-decoration: underline;
   text-underline-offset: 2px;
 }
 
-.blog-content a:hover {
+.blog-content a:not(.btn):hover {
   color: var(--green);
 }
 
