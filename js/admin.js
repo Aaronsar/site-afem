@@ -202,8 +202,8 @@
     CATEGORIES.forEach(function (cat) {
       var isEditing = cat.pages && cat.pages.some(function (p) { return p.slug === state.currentSlug; });
       var isActive = state.view === cat.id || isEditing;
-      // Auto-open if viewing/editing this category
-      if (isActive && cat.pages) openSidebar[cat.id] = true;
+      // Auto-open only when editing a page inside the category
+      if (isEditing && cat.pages) openSidebar[cat.id] = true;
       var isOpen = !!openSidebar[cat.id];
 
       if (cat.pages) {
@@ -231,16 +231,17 @@
   }
 
   window.toggleSidebar = function (catId) {
-    if (openSidebar[catId]) {
-      // Already open: close it
-      openSidebar[catId] = false;
-    } else {
-      // Open it and navigate to the list
-      openSidebar[catId] = true;
-    }
-    // Always navigate to show the page list
     if (state.unsaved && !confirm('Modifications non sauvegardées. Continuer ?')) return;
     state.unsaved = false;
+
+    if (openSidebar[catId] && state.view === catId) {
+      // Already open AND viewing this category: just close the subnav
+      openSidebar[catId] = false;
+      renderSidebar();
+      return;
+    }
+    // Open it and navigate to the list
+    openSidebar[catId] = true;
     state.view = catId;
     state.currentSlug = null;
     var cat = CATEGORIES.find(function (c) { return c.id === catId; });
