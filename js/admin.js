@@ -10,6 +10,93 @@
   var sb;
   var state = { view: 'dashboard', currentSlug: null, pageData: null, prepasData: [], facStatsData: null, unsaved: false };
 
+  /* ─── SEO / GEO Scoring ─── */
+  function countWords(html) {
+    if (!html) return 0;
+    var tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    return (tmp.textContent || '').split(/\s+/).filter(Boolean).length;
+  }
+
+  function calculateSEO(d) {
+    if (!d) return 0;
+    var score = 0;
+    var t = d.title || '';
+    var md = d.meta_description || '';
+    var secs = d.sections || [];
+    var faq = d.faq || [];
+
+    // Title (20)
+    if (t.length > 0) score += 5;
+    if (t.length >= 50 && t.length <= 65) score += 15;
+    else if (t.length > 0) score += Math.max(0, 15 - Math.abs(t.length - 57) * 0.5);
+
+    // Meta description (20)
+    if (md.length > 0) score += 5;
+    if (md.length >= 140 && md.length <= 160) score += 15;
+    else if (md.length > 0) score += Math.max(0, 15 - Math.abs(md.length - 150) * 0.3);
+
+    // Subtitle (5)
+    if (d.subtitle) score += 5;
+
+    // Sections with content (15)
+    var filledSecs = secs.filter(function (s) { return s.html && s.html.length > 30; });
+    score += Math.min(15, filledSecs.length * 5);
+
+    // Sections have headings (10)
+    var headedSecs = secs.filter(function (s) { return s.heading && s.heading.length > 0; });
+    score += Math.min(10, headedSecs.length * (10 / Math.max(secs.length, 1)));
+
+    // Word count > 800 (15)
+    var totalWords = 0;
+    secs.forEach(function (s) { totalWords += countWords(s.html); });
+    score += Math.min(15, Math.round((totalWords / 800) * 15));
+
+    // FAQ (15)
+    if (faq.length > 0) score += 10;
+    if (faq.length >= 3) score += 5;
+
+    return Math.min(100, Math.round(score));
+  }
+
+  function calculateGEO(d) {
+    if (!d) return 0;
+    var score = 0;
+    var secs = d.sections || [];
+    var faq = d.faq || [];
+
+    // Structured FAQ (25 — 5 per item, max 5)
+    score += Math.min(25, faq.length * 5);
+
+    // Content > 1500 words (20)
+    var totalWords = 0;
+    var allHtml = '';
+    secs.forEach(function (s) { totalWords += countWords(s.html); allHtml += (s.html || ''); });
+    score += Math.min(20, Math.round((totalWords / 1500) * 20));
+
+    // Headings in sections (15)
+    var headedSecs = secs.filter(function (s) { return s.heading && s.heading.length > 0; });
+    score += Math.min(15, headedSecs.length * 3);
+
+    // Lists in content (15)
+    var hasList = /<(ul|ol)\b/i.test(allHtml);
+    if (hasList) score += 15;
+
+    // >= 5 sections (10)
+    score += Math.min(10, secs.length * 2);
+
+    // Detailed FAQ answers > 50 chars (15)
+    var detailedFaq = faq.filter(function (f) { return (f.answer || '').length > 50; });
+    score += Math.min(15, detailedFaq.length * 3);
+
+    return Math.min(100, Math.round(score));
+  }
+
+  function scoreBadge(val) {
+    var cls = val < 50 ? 'score-low' : val <= 75 ? 'score-mid' : 'score-good';
+    return '<span class="score-badge ' + cls + '">' + val + '</span>';
+  }
+
   /* ─── Page Registry ─── */
   var CATEGORIES = [
     { id: 'dashboard', label: 'Tableau de bord', icon: '&#9776;' },
@@ -340,12 +427,18 @@
   /* ─── Page List ─── */
   async function renderPageList(cat) {
     var main = document.getElementById('admin-main');
+    var isArticle = cat.type === 'article';
 
-    // Fetch which pages have content
+    // Fetch page content — full data for articles (scoring), minimal for others
     var slugs = cat.pages.map(function (p) { return p.slug; });
-    var r = await sb.from('page_content').select('page_slug, updated_at').in('page_slug', slugs);
+    var selectCols = isArticle ? 'page_slug, updated_at, title, meta_description, subtitle, sections, faq' : 'page_slug, updated_at';
+    var r = await sb.from('page_content').select(selectCols).in('page_slug', slugs);
     var configured = {};
-    (r.data || []).forEach(function (p) { configured[p.page_slug] = p.updated_at; });
+    var contentMap = {};
+    (r.data || []).forEach(function (p) {
+      configured[p.page_slug] = p.updated_at;
+      if (isArticle) contentMap[p.page_slug] = p;
+    });
 
     var html = '<div class="admin-page-list">';
     html += '<div class="admin-page-list-header">';
@@ -356,13 +449,20 @@
     html += '</div></div>';
 
     html += '<table class="admin-table">';
-    html += '<thead><tr><th>Page</th><th>Statut</th><th>Dernière modification</th><th>Actions</th></tr></thead>';
+    html += '<thead><tr><th>Page</th>';
+    if (isArticle) html += '<th>SEO</th><th>GEO</th>';
+    html += '<th>Statut</th><th>Dernière modification</th><th>Actions</th></tr></thead>';
     html += '<tbody>';
     cat.pages.forEach(function (p) {
       var hasData = configured[p.slug];
       var viewUrl = p.dynamic ? '/' + p.slug : '/' + p.slug + '.html';
       html += '<tr>';
       html += '<td class="page-title-cell" onclick="editPage(\'' + p.slug + '\',\'' + cat.type + '\')">' + esc(p.label) + '</td>';
+      if (isArticle) {
+        var d = contentMap[p.slug];
+        html += '<td>' + (d ? scoreBadge(calculateSEO(d)) : '<span class="score-badge score-na">—</span>') + '</td>';
+        html += '<td>' + (d ? scoreBadge(calculateGEO(d)) : '<span class="score-badge score-na">—</span>') + '</td>';
+      }
       html += '<td><span class="status-dot ' + (hasData ? 'configured' : 'empty') + '"></span>' + (hasData ? 'Configuré' : 'Non configuré') + '</td>';
       html += '<td>' + (hasData ? formatDate(configured[p.slug]) : '—') + '</td>';
       html += '<td class="row-actions"><a href="javascript:void(0)" onclick="editPage(\'' + p.slug + '\',\'' + cat.type + '\')">Modifier</a>';
@@ -504,6 +604,17 @@
     html += '<button class="btn-primary" onclick="savePage(\'' + type + '\')" id="btn-save">Mettre à jour</button>';
     html += '</div></div>';
 
+    // Score panel (article only)
+    if (type === 'article') {
+      html += '<div class="admin-score-panel" id="score-panel">';
+      html += '<div class="admin-meta-box-header">Optimisation</div>';
+      html += '<div class="score-panel-body">';
+      html += '<div class="score-summary" id="score-summary"></div>';
+      html += '<button class="btn-improve" onclick="improveArticle()">&#10024; Améliorer avec l\'IA</button>';
+      html += '<div class="score-checks" id="score-checks"></div>';
+      html += '</div></div>';
+    }
+
     // Coup de coeur (prepa only)
     if (type === 'prepa') {
       var cdc = d.coup_de_coeur || {};
@@ -522,6 +633,7 @@
 
     main.innerHTML = html;
     main.scrollTop = 0;
+    if (type === 'article') { updateScorePanel(); bindScoreUpdates(); }
   }
 
   /* ─── Meta Box helpers ─── */
@@ -869,6 +981,144 @@
       hideAIOverlay();
       showToast('Article regénéré ✨', 'success');
       // Reload editor
+      editPage(state.currentSlug, 'article');
+    } catch (err) {
+      hideAIOverlay();
+      showToast('Erreur : ' + (err.message || 'Échec'), 'error');
+    }
+  };
+
+  /* ─── Score Panel (real-time) ─── */
+  var _scoreTimer = null;
+
+  function collectFormData() {
+    var d = { title: getVal('title'), meta_description: getVal('meta_description'), subtitle: getVal('subtitle'), sections: [], faq: [] };
+    document.querySelectorAll('#sections-list .admin-content-section').forEach(function (el) {
+      var h = el.querySelector('[name^="section_heading_"]');
+      var c = el.querySelector('[name^="section_html_"]');
+      d.sections.push({ heading: h ? h.value.trim() : '', html: c ? c.value.trim() : '' });
+    });
+    document.querySelectorAll('#faq-list .admin-faq-item').forEach(function (el) {
+      var q = el.querySelector('[name^="faq_q_"]');
+      var a = el.querySelector('[name^="faq_a_"]');
+      if (q || a) d.faq.push({ question: q ? q.value.trim() : '', answer: a ? a.value.trim() : '' });
+    });
+    return d;
+  }
+
+  function updateScorePanel() {
+    var panel = document.getElementById('score-panel');
+    if (!panel) return;
+    var d = collectFormData();
+    var seo = calculateSEO(d);
+    var geo = calculateGEO(d);
+
+    // Summary
+    document.getElementById('score-summary').innerHTML =
+      '<div class="score-row"><span>SEO</span>' + scoreBadge(seo) + '</div>' +
+      '<div class="score-row"><span>GEO</span>' + scoreBadge(geo) + '</div>';
+
+    // Checks
+    var t = d.title || '';
+    var md = d.meta_description || '';
+    var secs = d.sections || [];
+    var faq = d.faq || [];
+    var filledSecs = secs.filter(function (s) { return s.html && s.html.length > 30; });
+    var headedSecs = secs.filter(function (s) { return s.heading && s.heading.length > 0; });
+    var totalWords = 0;
+    var allHtml = '';
+    secs.forEach(function (s) { totalWords += countWords(s.html); allHtml += (s.html || ''); });
+    var hasList = /<(ul|ol)\b/i.test(allHtml);
+    var detailedFaq = faq.filter(function (f) { return (f.answer || '').length > 50; });
+
+    var checks = '';
+    checks += '<div class="score-check-label">SEO</div>';
+    checks += chk(t.length >= 50 && t.length <= 65, 'Titre ' + t.length + '/50-65 car.', t.length > 0 ? 'Titre : ' + t.length + ' car. (idéal 50-65)' : 'Titre manquant');
+    checks += chk(md.length >= 140 && md.length <= 160, 'Meta ' + md.length + '/140-160 car.', md.length > 0 ? 'Meta : ' + md.length + ' car. (idéal 140-160)' : 'Meta description manquante');
+    checks += chk(!!d.subtitle, 'Sous-titre présent', 'Sous-titre manquant');
+    checks += chk(filledSecs.length >= 3, filledSecs.length + ' sections avec contenu', 'Moins de 3 sections (actuellement ' + filledSecs.length + ')');
+    checks += chk(headedSecs.length >= secs.length && secs.length > 0, 'Toutes les sections ont un titre', (secs.length - headedSecs.length) + ' section(s) sans titre');
+    checks += chk(totalWords >= 800, totalWords + ' mots (min. 800)', totalWords + ' mots (min. 800 recommandé)');
+    checks += chk(faq.length >= 3, faq.length + ' questions FAQ', faq.length > 0 ? faq.length + ' FAQ (min. 3 recommandé)' : 'Pas de FAQ');
+
+    checks += '<div class="score-check-label">GEO</div>';
+    checks += chk(faq.length >= 5, faq.length + '/5 questions FAQ', faq.length + '/5 questions FAQ minimum');
+    checks += chk(totalWords >= 1500, totalWords + ' mots (min. 1500)', totalWords + '/1500 mots minimum');
+    checks += chk(hasList, 'Listes HTML présentes', 'Pas de listes (ul/ol) dans le contenu');
+    checks += chk(secs.length >= 5, secs.length + '/5 sections minimum', secs.length + '/5 sections minimum');
+    checks += chk(detailedFaq.length >= faq.length && faq.length > 0, 'Réponses FAQ détaillées', detailedFaq.length + '/' + faq.length + ' réponses FAQ détaillées');
+
+    document.getElementById('score-checks').innerHTML = checks;
+  }
+
+  function chk(pass, goodText, badText) {
+    return '<div class="score-check ' + (pass ? 'pass' : 'fail') + '">' +
+      '<span>' + (pass ? '&#10003;' : '&#10007;') + '</span>' +
+      '<span>' + (pass ? goodText : badText) + '</span></div>';
+  }
+
+  function bindScoreUpdates() {
+    var content = document.querySelector('.admin-editor-content');
+    if (!content) return;
+    content.addEventListener('input', function () {
+      clearTimeout(_scoreTimer);
+      _scoreTimer = setTimeout(updateScorePanel, 500);
+    });
+    // Observe section/faq additions/removals
+    ['sections-list', 'faq-list'].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      new MutationObserver(function () { clearTimeout(_scoreTimer); _scoreTimer = setTimeout(updateScorePanel, 300); })
+        .observe(el, { childList: true });
+    });
+  }
+
+  /* ─── Improve Article with AI ─── */
+  window.improveArticle = async function () {
+    if (!state.currentSlug) return;
+    var d = collectFormData();
+    if (!d.title) { showToast('Titre requis pour améliorer', 'error'); return; }
+    if (!confirm('Améliorer l\'article avec l\'IA ? Le contenu sera réécrit et humanisé.')) return;
+
+    var seo = calculateSEO(d);
+    var geo = calculateGEO(d);
+
+    showAIOverlay('Amélioration et humanisation en cours...<br><small>~30-40 secondes</small>');
+
+    try {
+      var aiRes = await fetch(SUPABASE_URL + '/functions/v1/improve-article', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: d.title,
+          meta_description: d.meta_description,
+          subtitle: d.subtitle,
+          sections: d.sections,
+          faq: d.faq,
+          scores: { seo: seo, geo: geo }
+        })
+      });
+      var aiData = await aiRes.json();
+
+      if (aiData.error) {
+        hideAIOverlay();
+        showToast('Erreur IA: ' + aiData.error, 'error');
+        return;
+      }
+
+      // Update in DB
+      var update = {
+        title: aiData.title || d.title,
+        meta_description: aiData.meta_description || null,
+        subtitle: aiData.subtitle || null,
+        sections: aiData.sections || [],
+        faq: aiData.faq || []
+      };
+      var r = await sb.from('page_content').update(update).eq('page_slug', state.currentSlug);
+      if (r.error) throw r.error;
+
+      hideAIOverlay();
+      showToast('Article amélioré et humanisé ✨', 'success');
       editPage(state.currentSlug, 'article');
     } catch (err) {
       hideAIOverlay();

@@ -510,6 +510,34 @@ a:hover { color: var(--wp-accent-hover); text-decoration: underline; }
 .admin-table .action-delete { color: var(--wp-red); }
 .admin-table .action-delete:hover { color: #a02022; text-decoration: underline; }
 
+/* ─── Score Badges ─── */
+.score-badge {
+  display: inline-block; min-width: 32px; padding: 3px 8px;
+  border-radius: 12px; font-size: 12px; font-weight: 700;
+  text-align: center; line-height: 1.4;
+}
+.score-good { background: #dcfce7; color: #166534; }
+.score-mid { background: #fef3c7; color: #92400e; }
+.score-low { background: #fee2e2; color: #991b1b; }
+.score-na { background: #f3f4f6; color: #9ca3af; }
+
+/* ─── Score Panel (editor sidebar) ─── */
+.admin-score-panel { background: var(--wp-card); border: 1px solid var(--wp-border-light); border-radius: 4px; margin-top: 12px; }
+.score-panel-body { padding: 12px; }
+.score-summary { display: flex; gap: 12px; margin-bottom: 12px; }
+.score-row { flex: 1; display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; background: #f9fafb; border-radius: 6px; font-weight: 600; font-size: 13px; }
+.btn-improve {
+  width: 100%; padding: 10px; border: none; border-radius: 6px; cursor: pointer;
+  background: linear-gradient(135deg, #059669, #10b981); color: #fff;
+  font-size: 13px; font-weight: 600; transition: opacity 0.15s;
+}
+.btn-improve:hover { opacity: 0.9; }
+.score-checks { margin-top: 12px; border-top: 1px solid #f0f0f1; padding-top: 8px; }
+.score-check { font-size: 12px; padding: 3px 0; display: flex; gap: 6px; align-items: baseline; }
+.score-check.pass { color: #166534; }
+.score-check.fail { color: #991b1b; }
+.score-check-label { font-size: 10px; color: #787c82; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 8px; margin-bottom: 2px; font-weight: 700; }
+
 /* ─── Modal ─── */
 .admin-modal-overlay {
   position: fixed; inset: 0;
