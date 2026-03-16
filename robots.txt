@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /admin
 
-Sitemap: https://afem.fr/sitemap.xml
+Sitemap: https://www.afem-edu.fr/sitemap.xml

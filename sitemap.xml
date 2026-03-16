@@ -3,482 +3,506 @@
 
   <!-- Pages principales -->
   <url>
-    <loc>https://afem.fr/</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://afem.fr/qui-sommes-nous.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/qui-sommes-nous</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://afem.fr/simulateur.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/simulateur</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://afem.fr/quizz.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/quizz</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://afem.fr/coaching.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/calculateur-reussite</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://afem.fr/cours.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/qcm-medecine</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://afem.fr/blog.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/coaching</loc>
+    <lastmod>2026-03-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.afem-edu.fr/cours</loc>
+    <lastmod>2026-03-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.afem-edu.fr/blog</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://afem.fr/facultes.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/facultes</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://afem.fr/prepas-medecine.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/prepas-medecine</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://afem.fr/prepa-diploma-sante.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/prepa-diploma-sante</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://afem.fr/mentions-legales.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/prepa-medibox</loc>
+    <lastmod>2026-03-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.afem-edu.fr/mentions-legales</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
   </url>
 
-  <!-- Articles de blog -->
+  <!-- Articles de blog (17 articles) -->
   <url>
-    <loc>https://afem.fr/articles/reussir-pass-conseils.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/articles/reussir-pass-conseils</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://afem.fr/articles/pass-ou-las-comment-choisir.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/articles/pass-ou-las-comment-choisir</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://afem.fr/articles/faut-il-prepa-medecine.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/articles/faut-il-prepa-medecine</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://afem.fr/articles/matieres-programme-pass-las.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/articles/matieres-programme-pass-las</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://afem.fr/articles/5-conseils-rentree-pass.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/articles/5-conseils-rentree-pass</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://afem.fr/articles/specialites-lycee-medecine.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/articles/specialites-lycee-medecine</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://afem.fr/articles/methode-des-j-memorisation-pass.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/articles/methode-des-j-memorisation-pass</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://afem.fr/articles/qcm-pass-las-guide-complet.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/articles/qcm-pass-las-guide-complet</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://afem.fr/articles/rattraper-retard-pass.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/articles/rattraper-retard-pass</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://afem.fr/articles/gerer-vie-sociale-pass.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/articles/gerer-vie-sociale-pass</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://afem.fr/articles/choisir-sa-fac-de-medecine.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/articles/choisir-sa-fac-de-medecine</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://afem.fr/articles/debouches-etudes-sante.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/articles/debouches-etudes-sante</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://afem.fr/articles/quelle-moyenne-pour-medecine.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/articles/quelle-moyenne-pour-medecine</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://afem.fr/articles/parcoursup-dates-cles-2026.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/articles/parcoursup-dates-cles-2026</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://afem.fr/articles/lettre-motivation-parcoursup.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/articles/lettre-motivation-parcoursup</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://afem.fr/articles/anki-pass-guide.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/articles/anki-pass-guide</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://afem.fr/articles/choisir-mineure-pass.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/articles/choisir-mineure-pass</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
 
-  <!-- Pages facultes -->
+  <!-- Pages facultés (31 facultés) -->
   <url>
-    <loc>https://afem.fr/facultes/paris-cite.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/facultes/paris-cite</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://afem.fr/facultes/sorbonne-universite.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/facultes/sorbonne-universite</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://afem.fr/facultes/sorbonne-nord.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/facultes/sorbonne-nord</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://afem.fr/facultes/paris-saclay.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/facultes/paris-saclay</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://afem.fr/facultes/versailles-uvsq.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/facultes/versailles-uvsq</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://afem.fr/facultes/lyon.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/facultes/creteil</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://afem.fr/facultes/aix-marseille.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/facultes/lyon</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://afem.fr/facultes/lille.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/facultes/aix-marseille</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://afem.fr/facultes/bordeaux.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/facultes/lille</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://afem.fr/facultes/toulouse.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/facultes/bordeaux</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://afem.fr/facultes/montpellier.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/facultes/toulouse</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://afem.fr/facultes/amiens.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/facultes/montpellier</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://afem.fr/facultes/angers.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/facultes/amiens</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://afem.fr/facultes/antilles.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/facultes/angers</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://afem.fr/facultes/besancon.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/facultes/antilles</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://afem.fr/facultes/brest.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/facultes/besancon</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://afem.fr/facultes/clermont-ferrand.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/facultes/brest</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://afem.fr/facultes/corse.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/facultes/clermont-ferrand</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://afem.fr/facultes/dijon.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/facultes/corse</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://afem.fr/facultes/grenoble-alpes.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/facultes/dijon</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://afem.fr/facultes/guyane.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/facultes/grenoble-alpes</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://afem.fr/facultes/limoges.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/facultes/guyane</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://afem.fr/facultes/nancy.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/facultes/limoges</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://afem.fr/facultes/nantes.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/facultes/nancy</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://afem.fr/facultes/orleans.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/facultes/nantes</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://afem.fr/facultes/rennes.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/facultes/orleans</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://afem.fr/facultes/reunion.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/facultes/rennes</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://afem.fr/facultes/rouen.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/facultes/reunion</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://afem.fr/facultes/saint-etienne.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/facultes/rouen</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://afem.fr/facultes/tours.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/facultes/saint-etienne</loc>
+    <lastmod>2026-03-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.afem-edu.fr/facultes/tours</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
 
-  <!-- Pages prepas-medecine -->
+  <!-- Pages prépas médecine (21 villes) -->
   <url>
-    <loc>https://afem.fr/prepas-medecine/paris.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/prepas-medecine/paris</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://afem.fr/prepas-medecine/lyon.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/prepas-medecine/lyon</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://afem.fr/prepas-medecine/marseille.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/prepas-medecine/marseille</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://afem.fr/prepas-medecine/toulouse.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/prepas-medecine/toulouse</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://afem.fr/prepas-medecine/bordeaux.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/prepas-medecine/bordeaux</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://afem.fr/prepas-medecine/lille.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/prepas-medecine/lille</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://afem.fr/prepas-medecine/nice.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/prepas-medecine/nice</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://afem.fr/prepas-medecine/montpellier.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/prepas-medecine/montpellier</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://afem.fr/prepas-medecine/strasbourg.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/prepas-medecine/strasbourg</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://afem.fr/prepas-medecine/nantes.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/prepas-medecine/nantes</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://afem.fr/prepas-medecine/grenoble.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/prepas-medecine/grenoble</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://afem.fr/prepas-medecine/rennes.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/prepas-medecine/rennes</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://afem.fr/prepas-medecine/rouen.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/prepas-medecine/rouen</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://afem.fr/prepas-medecine/reims.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/prepas-medecine/reims</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://afem.fr/prepas-medecine/dijon.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/prepas-medecine/dijon</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://afem.fr/prepas-medecine/nancy.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/prepas-medecine/nancy</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://afem.fr/prepas-medecine/clermont-ferrand.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/prepas-medecine/clermont-ferrand</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://afem.fr/prepas-medecine/amiens.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/prepas-medecine/amiens</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://afem.fr/prepas-medecine/angers.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/prepas-medecine/angers</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://afem.fr/prepas-medecine/besancon.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/prepas-medecine/besancon</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://afem.fr/prepas-medecine/poitiers.html</loc>
-    <lastmod>2026-03-12</lastmod>
+    <loc>https://www.afem-edu.fr/prepas-medecine/poitiers</loc>
+    <lastmod>2026-03-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
