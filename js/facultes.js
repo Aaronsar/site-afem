@@ -9,6 +9,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const counter = document.querySelector('.fac-counter strong');
   const noResults = document.querySelector('.fac-no-results');
 
+  // FAQ accordion (for detail pages)
+  document.querySelectorAll('.fac-faq-question').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.closest('.fac-faq-item');
+      item.classList.toggle('open');
+    });
+  });
+
   if (!facCards.length) return;
 
   let activeRegion = 'all';
@@ -47,14 +55,6 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.classList.add('active');
       activeRegion = btn.dataset.filter;
       filterCards();
-    });
-  });
-
-  // FAQ accordion (for detail pages)
-  document.querySelectorAll('.fac-faq-question').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const item = btn.closest('.fac-faq-item');
-      item.classList.toggle('open');
     });
   });
 });
