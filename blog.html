@@ -474,26 +474,13 @@
             '<a href="' + url + '" class="card-link">Lire &#8594;</a>' +
             '</div></div>';
 
-          // Insert at correct position by date (newest first)
-          var pubDate = new Date(a.published_at || 0);
-          var inserted = false;
-          var cards = grid.querySelectorAll('.blog-card');
-          for (var ci = 0; ci < cards.length; ci++) {
-            var cardDate = cards[ci].querySelector('.blog-date');
-            if (cardDate && cardDate.textContent) {
-              var parts = cardDate.textContent.trim().split(' ');
-              var months = { 'janvier':0,'février':1,'mars':2,'avril':3,'mai':4,'juin':5,'juillet':6,'août':7,'septembre':8,'octobre':9,'novembre':10,'décembre':11 };
-              if (parts.length === 3 && months[parts[1].toLowerCase()] !== undefined) {
-                var existingDate = new Date(parseInt(parts[2]), months[parts[1].toLowerCase()], parseInt(parts[0]));
-                if (pubDate > existingDate) {
-                  grid.insertBefore(card, cards[ci]);
-                  inserted = true;
-                  break;
-                }
-              }
-            }
+          // Insert at the top of the grid (dynamic articles are newest)
+          var firstCard = grid.querySelector('.blog-card');
+          if (firstCard) {
+            grid.insertBefore(card, firstCard);
+          } else {
+            grid.appendChild(card);
           }
-          if (!inserted) grid.appendChild(card);
         });
 
         // Re-bind filter buttons to include new cards
