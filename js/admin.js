@@ -532,8 +532,9 @@
     var viewUrl = '/' + slug;
     html += '<a class="btn-preview" href="' + viewUrl + '" target="_blank">Voir la page &#8599;</a>';
     if (type === 'article') {
-      html += '<button class="btn-ai-regen" onclick="regenerateArticle()">🤖 Regénérer avec l\'IA</button>';
-      html += '<button class="btn-ai-feedback" onclick="showFeedbackModal()">💬 Donner un retour</button>';
+      html += '<button class="btn-ai-regen" onclick="regenerateArticle()">🤖 Regénérer</button>';
+      html += '<button class="btn-ai-humanize" onclick="humanizeArticle()">✍️ Humaniser</button>';
+      html += '<button class="btn-ai-feedback" onclick="showFeedbackModal()">💬 Retour</button>';
     }
     html += '</div>';
 
@@ -1246,6 +1247,66 @@
 
       hideAIOverlay();
       showToast('Article amélioré et humanisé ✨', 'success');
+      editPage(state.currentSlug, 'article');
+    } catch (err) {
+      hideAIOverlay();
+      showToast('Erreur : ' + (err.message || 'Échec'), 'error');
+    }
+  };
+
+  /* ─── Humanize Article ─── */
+  window.humanizeArticle = async function () {
+    if (!state.currentSlug) return;
+    var d;
+    if (window.collectFormDataFromBlocks && document.getElementById('blocks-list')) {
+      d = window.collectFormDataFromBlocks();
+    } else {
+      d = collectFormData();
+    }
+    if (!d.title || (!d.sections || d.sections.length === 0)) { showToast('Contenu requis pour humaniser', 'error'); return; }
+    if (!confirm('Humaniser l\'article ? Le style sera réécrit pour un ton plus naturel.')) return;
+
+    // Convert blocks to legacy for the AI
+    var sectionsForAI = d.sections || [];
+    if (sectionsForAI.length && sectionsForAI[0] && sectionsForAI[0].type) {
+      // Already in block format, pass as-is
+    } else {
+      // Legacy — convert to blocks first (shouldn't happen but just in case)
+      if (window.convertLegacyToBlocks) {
+        sectionsForAI = window.convertLegacyToBlocks({ sections: sectionsForAI, faq: d.faq || [] });
+      }
+    }
+
+    showAIOverlay('Humanisation en cours...<br><small>~30-40 secondes</small>');
+
+    try {
+      var aiRes = await fetch(SUPABASE_URL + '/functions/v1/humanize-article', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: d.title,
+          excerpt: getVal('article_excerpt') || '',
+          sections: sectionsForAI
+        })
+      });
+      var aiData = await aiRes.json();
+
+      if (aiData.error) {
+        hideAIOverlay();
+        showToast('Erreur : ' + aiData.error, 'error');
+        return;
+      }
+
+      var humanized = aiData.humanized || aiData;
+      var newSections = humanized.sections || [];
+
+      var update = { sections: newSections };
+      if (humanized.excerpt) update.excerpt = humanized.excerpt;
+      var r = await sb.from('page_content').update(update).eq('page_slug', state.currentSlug);
+      if (r.error) throw r.error;
+
+      hideAIOverlay();
+      showToast('Article humanisé avec succès', 'success');
       editPage(state.currentSlug, 'article');
     } catch (err) {
       hideAIOverlay();
