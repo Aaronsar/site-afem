@@ -112,7 +112,7 @@
         t += '<tbody>';
         (block.rows || []).forEach(function (row) {
           t += '<tr>';
-          row.forEach(function (cell) { t += '<td>' + esc(cell) + '</td>'; });
+          row.forEach(function (cell) { t += '<td>' + (cell || '') + '</td>'; });
           t += '</tr>';
         });
         t += '</tbody></table></div>';
@@ -121,7 +121,7 @@
       case 'list':
         var listTag = block.style === 'numbered' ? 'ol' : 'ul';
         var l = '<' + listTag + '>';
-        (block.items || []).forEach(function (item) { l += '<li>' + esc(item) + '</li>'; });
+        (block.items || []).forEach(function (item) { l += '<li>' + (item || '') + '</li>'; });
         l += '</' + listTag + '>';
         return l;
 
@@ -135,10 +135,14 @@
       case 'grid':
         var g = '<div class="blog-grid-block cols-' + (block.columns || 3) + '">';
         (block.items || []).forEach(function (item) {
-          g += '<div class="blog-grid-card">';
+          if (item.href) {
+            g += '<a href="' + esc(item.href) + '" class="blog-grid-card blog-grid-card-link">';
+          } else {
+            g += '<div class="blog-grid-card">';
+          }
           if (item.title) g += '<h4>' + esc(item.title) + '</h4>';
-          if (item.description) g += '<p>' + esc(item.description) + '</p>';
-          g += '</div>';
+          if (item.description) g += '<p>' + (item.description || '') + '</p>';
+          g += item.href ? '</a>' : '</div>';
         });
         g += '</div>';
         return g;

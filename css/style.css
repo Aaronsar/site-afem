@@ -4931,6 +4931,12 @@ section {
   transform: translateY(-2px);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
 }
+a.blog-grid-card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+a.blog-grid-card-link:hover h4 { color: var(--green); }
 .blog-grid-card h4 {
   font-size: 1.05rem;
   font-weight: 600;
