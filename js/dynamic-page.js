@@ -62,27 +62,112 @@
 
     if (page.sections && page.sections.length) {
       html += '<div class="blog-content">';
-      page.sections.forEach(function (sec) {
-        if (sec.heading) html += '<h2>' + sec.heading + '</h2>';
-        if (sec.html) html += sec.html;
-      });
+      // Detect block format vs legacy format
+      var isBlockFormat = page.sections[0] && page.sections[0].type;
+      if (isBlockFormat) {
+        page.sections.forEach(function (block) {
+          html += renderBlock(block);
+        });
+      } else {
+        // Legacy format: { heading, html }
+        page.sections.forEach(function (sec) {
+          if (sec.heading) html += '<h2>' + sec.heading + '</h2>';
+          if (sec.html) html += sec.html;
+        });
+      }
       html += '</div>';
     }
 
-    if (page.faq && page.faq.length) {
-      html += '<div class="fac-faq" style="margin-top:48px;"><h2>Questions fréquentes</h2>';
-      page.faq.forEach(function (item) {
-        html += '<div class="fac-faq-item">';
-        html += '<button class="fac-faq-question" onclick="this.parentElement.classList.toggle(\'open\')">' + esc(item.question);
-        html += ' <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;"><polyline points="6 9 12 15 18 9"></polyline></svg></button>';
-        html += '<div class="fac-faq-answer"><div class="fac-faq-answer-inner">' + (item.answer || '') + '</div></div>';
-        html += '</div>';
-      });
-      html += '</div>';
+    // Legacy FAQ (only if NOT using block format — block format has FAQ inline)
+    var isBlockFormat = page.sections && page.sections[0] && page.sections[0].type;
+    if (!isBlockFormat && page.faq && page.faq.length) {
+      html += renderFaqHtml(page.faq);
     }
 
     html += '</div></article>';
     document.getElementById('dynamic-content').innerHTML = html;
+  }
+
+  /* ─── Block Renderer ─── */
+  function renderBlock(block) {
+    switch (block.type) {
+      case 'heading':
+        var tag = block.level === 'h3' ? 'h3' : 'h2';
+        return '<' + tag + '>' + esc(block.text || '') + '</' + tag + '>';
+
+      case 'paragraph':
+        return block.html || '';
+
+      case 'callout':
+        var cls = block.variant === 'warning' ? 'callout-warning' : 'callout-info';
+        return '<div class="blog-callout ' + cls + '">' + (block.html || '') + '</div>';
+
+      case 'table':
+        var t = '<div class="blog-table-wrapper"><table class="blog-table">';
+        if (block.headers && block.headers.length) {
+          t += '<thead><tr>';
+          block.headers.forEach(function (h) { t += '<th>' + esc(h) + '</th>'; });
+          t += '</tr></thead>';
+        }
+        t += '<tbody>';
+        (block.rows || []).forEach(function (row) {
+          t += '<tr>';
+          row.forEach(function (cell) { t += '<td>' + esc(cell) + '</td>'; });
+          t += '</tr>';
+        });
+        t += '</tbody></table></div>';
+        return t;
+
+      case 'list':
+        var listTag = block.style === 'numbered' ? 'ol' : 'ul';
+        var l = '<' + listTag + '>';
+        (block.items || []).forEach(function (item) { l += '<li>' + esc(item) + '</li>'; });
+        l += '</' + listTag + '>';
+        return l;
+
+      case 'image':
+        var img = '<figure class="blog-figure">';
+        img += '<img src="' + esc(block.src || '') + '" alt="' + esc(block.alt || '') + '" loading="lazy">';
+        if (block.caption) img += '<figcaption>' + esc(block.caption) + '</figcaption>';
+        img += '</figure>';
+        return img;
+
+      case 'grid':
+        var g = '<div class="blog-grid-block cols-' + (block.columns || 3) + '">';
+        (block.items || []).forEach(function (item) {
+          g += '<div class="blog-grid-card">';
+          if (item.title) g += '<h4>' + esc(item.title) + '</h4>';
+          if (item.description) g += '<p>' + esc(item.description) + '</p>';
+          g += '</div>';
+        });
+        g += '</div>';
+        return g;
+
+      case 'faq':
+        return renderFaqHtml(block.items || []);
+
+      default:
+        // Legacy fallback: { heading, html }
+        var fallback = '';
+        if (block.heading) fallback += '<h2>' + block.heading + '</h2>';
+        if (block.html) fallback += block.html;
+        return fallback;
+    }
+  }
+
+  /* ─── FAQ HTML renderer (shared) ─── */
+  function renderFaqHtml(items) {
+    if (!items || !items.length) return '';
+    var faqHtml = '<div class="fac-faq" style="margin-top:48px;"><h2>Questions fréquentes</h2>';
+    items.forEach(function (item) {
+      faqHtml += '<div class="fac-faq-item">';
+      faqHtml += '<button class="fac-faq-question" onclick="this.parentElement.classList.toggle(\'open\')">' + esc(item.question);
+      faqHtml += ' <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;"><polyline points="6 9 12 15 18 9"></polyline></svg></button>';
+      faqHtml += '<div class="fac-faq-answer"><div class="fac-faq-answer-inner">' + (item.answer || '') + '</div></div>';
+      faqHtml += '</div>';
+    });
+    faqHtml += '</div>';
+    return faqHtml;
   }
 
   function renderPrepa(page) {

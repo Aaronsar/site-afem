@@ -431,7 +431,7 @@
 
     // Fetch page content — full data for articles (scoring + publish status), minimal for others
     var slugs = cat.pages.map(function (p) { return p.slug; });
-    var selectCols = isArticle ? 'page_slug, updated_at, title, meta_description, subtitle, sections, faq, published, published_at, category, excerpt' : 'page_slug, updated_at';
+    var selectCols = isArticle ? 'page_slug, updated_at, title, meta_description, subtitle, sections, faq, published, published_at, category, excerpt, scheduled_at' : 'page_slug, updated_at';
     var r = await sb.from('page_content').select(selectCols).in('page_slug', slugs);
     var configured = {};
     var contentMap = {};
@@ -463,11 +463,16 @@
         html += '<td>' + (d ? scoreBadge(calculateSEO(d)) : '<span class="score-badge score-na">—</span>') + '</td>';
         html += '<td>' + (d ? scoreBadge(calculateGEO(d)) : '<span class="score-badge score-na">—</span>') + '</td>';
       }
-      // Status: Published/Draft for articles, Configured/Not for others
+      // Status: Published/Scheduled/Draft for articles, Configured/Not for others
       if (isArticle) {
         var artData = contentMap[p.slug];
         var isPub = artData && artData.published;
-        html += '<td><span class="status-dot ' + (isPub ? 'published' : (hasData ? 'draft' : 'empty')) + '"></span>' + (isPub ? 'Publié' : (hasData ? 'Brouillon' : 'Non configuré')) + '</td>';
+        var isSched = !isPub && artData && artData.published_at === null && hasData;
+        // Check scheduled_at if available
+        if (artData && artData.scheduled_at && !isPub && new Date(artData.scheduled_at) > new Date()) isSched = true;
+        var artStatus = isPub ? 'Publié' : (isSched ? 'Planifié' : (hasData ? 'Brouillon' : 'Non configuré'));
+        var artDotClass = isPub ? 'published' : (isSched ? 'scheduled' : (hasData ? 'draft' : 'empty'));
+        html += '<td><span class="status-dot ' + artDotClass + '"></span>' + artStatus + '</td>';
       } else {
         html += '<td><span class="status-dot ' + (hasData ? 'configured' : 'empty') + '"></span>' + (hasData ? 'Configuré' : 'Non configuré') + '</td>';
       }
@@ -528,6 +533,7 @@
     html += '<a class="btn-preview" href="' + viewUrl + '" target="_blank">Voir la page &#8599;</a>';
     if (type === 'article') {
       html += '<button class="btn-ai-regen" onclick="regenerateArticle()">🤖 Regénérer avec l\'IA</button>';
+      html += '<button class="btn-ai-feedback" onclick="showFeedbackModal()">💬 Donner un retour</button>';
     }
     html += '</div>';
 
@@ -544,14 +550,22 @@
     html += field('subtitle', 'Sous-titre', d.subtitle || '', 'text');
     html += metaBoxClose();
 
-    // Sections
+    // Sections / Blocks
     var sections = d.sections || [];
-    html += metaBoxOpen('Contenu des sections', false);
-    html += '<div id="sections-list">';
-    sections.forEach(function (sec, i) { html += renderSectionBlock(i, sec); });
-    html += '</div>';
-    html += '<button class="btn-add" onclick="addSection()">+ Ajouter une section</button>';
-    html += metaBoxClose();
+    if (type === 'article') {
+      // Block-based editor for articles
+      html += metaBoxOpen('Contenu (blocs)', false);
+      html += window.renderBlockEditor(sections);
+      html += metaBoxClose();
+    } else {
+      // Legacy section editor for prepa/faculte/root
+      html += metaBoxOpen('Contenu des sections', false);
+      html += '<div id="sections-list">';
+      sections.forEach(function (sec, i) { html += renderSectionBlock(i, sec); });
+      html += '</div>';
+      html += '<button class="btn-add" onclick="addSection()">+ Ajouter une section</button>';
+      html += metaBoxClose();
+    }
 
     // Prepas (prepa pages only)
     if (type === 'prepa') {
@@ -584,14 +598,16 @@
       html += metaBoxClose();
     }
 
-    // FAQ
-    var faq = d.faq || [];
-    html += metaBoxOpen('FAQ (' + faq.length + ' questions)', true);
-    html += '<div id="faq-list">';
-    faq.forEach(function (item, i) { html += renderFaqBlock(i, item); });
-    html += '</div>';
-    html += '<button class="btn-add" onclick="addFaq()">+ Ajouter une question</button>';
-    html += metaBoxClose();
+    // FAQ (not for articles — FAQ is a block type in block editor)
+    if (type !== 'article') {
+      var faq = d.faq || [];
+      html += metaBoxOpen('FAQ (' + faq.length + ' questions)', true);
+      html += '<div id="faq-list">';
+      faq.forEach(function (item, i) { html += renderFaqBlock(i, item); });
+      html += '</div>';
+      html += '<button class="btn-add" onclick="addFaq()">+ Ajouter une question</button>';
+      html += metaBoxClose();
+    }
 
     html += '</div>'; // end content
 
@@ -600,18 +616,22 @@
 
     // Publish box
     var isPublished = d.published || false;
+    var isScheduled = !isPublished && d.scheduled_at && new Date(d.scheduled_at) > new Date();
+    var statusLabel = isPublished ? 'Publié' : (isScheduled ? 'Planifié' : 'Brouillon');
+    var statusClass = isPublished ? 'pub-green' : (isScheduled ? 'pub-blue' : 'pub-orange');
     html += '<div class="admin-publish-box">';
     html += '<div class="admin-publish-box-header">Publier</div>';
     html += '<div class="admin-publish-box-body">';
     if (type === 'article') {
-      html += '<div class="pub-info">Statut : <strong class="pub-status-label ' + (isPublished ? 'pub-green' : 'pub-orange') + '">' + (isPublished ? 'Publié' : 'Brouillon') + '</strong></div>';
+      html += '<div class="pub-info">Statut : <strong class="pub-status-label ' + statusClass + '">' + statusLabel + '</strong></div>';
       if (d.published_at) html += '<div class="pub-info">Publié le : <strong>' + formatDate(d.published_at) + '</strong></div>';
+      if (isScheduled) html += '<div class="pub-info">Planifié le : <strong>' + formatDateTime(d.scheduled_at) + '</strong></div>';
     } else {
       html += '<div class="pub-info">Statut : <strong>' + (state.pageData ? 'Configuré' : 'Brouillon') + '</strong></div>';
     }
     if (d.updated_at) html += '<div class="pub-info">Modifié : <strong>' + formatDate(d.updated_at) + '</strong></div>';
     html += '<div class="pub-info">Type : <strong>' + type + '</strong></div>';
-    // Article-specific: category + excerpt
+    // Article-specific: category + excerpt + scheduling
     if (type === 'article') {
       html += '<div class="admin-field" style="margin-top:12px;"><label>Catégorie</label>';
       html += '<select name="article_category" onchange="markUnsaved()">';
@@ -622,6 +642,23 @@
       html += '</select></div>';
       html += '<div class="admin-field"><label>Extrait (blog)</label>';
       html += '<textarea name="article_excerpt" rows="3" oninput="markUnsaved()" placeholder="Court résumé affiché sur la page blog...">' + esc(d.excerpt || '') + '</textarea></div>';
+      // Scheduling
+      if (!isPublished) {
+        html += '<div class="admin-schedule-box">';
+        html += '<div class="admin-schedule-header" onclick="toggleSchedulePanel()">';
+        html += '<span class="schedule-icon">&#128197;</span> Planifier la publication';
+        html += '<span class="schedule-chevron' + (isScheduled ? ' open' : '') + '">&#9662;</span>';
+        html += '</div>';
+        html += '<div class="admin-schedule-body" id="schedule-body" style="display:' + (isScheduled ? 'block' : 'none') + ';">';
+        var scheduledVal = d.scheduled_at ? new Date(d.scheduled_at).toISOString().slice(0, 16) : '';
+        html += '<div class="admin-field"><label>Date et heure de publication</label>';
+        html += '<input type="datetime-local" name="scheduled_at" value="' + scheduledVal + '" onchange="markUnsaved()" min="' + new Date().toISOString().slice(0, 16) + '">';
+        html += '<div class="admin-field-hint">L\'article sera publié automatiquement à cette date.</div></div>';
+        if (isScheduled) {
+          html += '<button class="btn-cancel-schedule" onclick="cancelSchedule(\'' + type + '\')">Annuler la planification</button>';
+        }
+        html += '</div></div>';
+      }
     }
     html += '</div>';
     html += '<div class="admin-publish-box-footer">';
@@ -629,8 +666,12 @@
       if (isPublished) {
         html += '<button class="btn-unpublish" onclick="togglePublish(false,\'' + type + '\')">Dépublier</button>';
         html += '<button class="btn-primary" onclick="savePage(\'' + type + '\')" id="btn-save">Mettre à jour</button>';
+      } else if (isScheduled) {
+        html += '<button class="btn-save-draft" onclick="savePage(\'' + type + '\')" id="btn-save">Mettre à jour</button>';
+        html += '<button class="btn-publish" onclick="togglePublish(true,\'' + type + '\')">Publier maintenant</button>';
       } else {
         html += '<button class="btn-save-draft" onclick="savePage(\'' + type + '\')" id="btn-save">Enregistrer brouillon</button>';
+        html += '<button class="btn-schedule" onclick="scheduleArticle(\'' + type + '\')">Planifier</button>';
         html += '<button class="btn-publish" onclick="togglePublish(true,\'' + type + '\')">Publier</button>';
       }
     } else {
@@ -638,15 +679,10 @@
     }
     html += '</div></div>';
 
-    // Score panel (article only)
+    // Score panel (article only) — uses advanced block-aware scoring
     if (type === 'article') {
-      html += '<div class="admin-score-panel" id="score-panel">';
-      html += '<div class="admin-meta-box-header">Optimisation</div>';
-      html += '<div class="score-panel-body">';
-      html += '<div class="score-summary" id="score-summary"></div>';
-      html += '<button class="btn-improve" onclick="improveArticle()">&#10024; Améliorer avec l\'IA</button>';
-      html += '<div class="score-checks" id="score-checks"></div>';
-      html += '</div></div>';
+      window._pageData = d; // Pass page data for score panel rendering
+      html += window.renderAdvancedScorePanel();
     }
 
     // Coup de coeur (prepa only)
@@ -667,7 +703,13 @@
 
     main.innerHTML = html;
     main.scrollTop = 0;
-    if (type === 'article') { updateScorePanel(); bindScoreUpdates(); }
+    if (type === 'article') {
+      // Use advanced block-aware scoring
+      if (window.updateAdvancedScorePanel) { window.updateAdvancedScorePanel(); window.bindAdvancedScoreUpdates(); }
+      // Add wider layout class for block editor
+      var editorEl = document.querySelector('.admin-editor');
+      if (editorEl) editorEl.classList.add('has-blocks');
+    }
   }
 
   /* ─── Meta Box helpers ─── */
@@ -925,13 +967,19 @@
           if (aiData.error) {
             showToast('IA: ' + aiData.error + ' — page créée vide', 'error');
           } else {
-            // Update record with AI content
+            // Update record with AI content — convert to blocks
+            var aiSections = aiData.sections || [];
+            var aiFaq = aiData.faq || [];
+            if (window.convertLegacyToBlocks) {
+              aiSections = window.convertLegacyToBlocks({ sections: aiSections, faq: aiFaq });
+              aiFaq = []; // FAQ absorbed into blocks
+            }
             var update = {
               title: aiData.title || title,
               meta_description: aiData.meta_description || null,
               subtitle: aiData.subtitle || null,
-              sections: aiData.sections || [],
-              faq: aiData.faq || []
+              sections: aiSections,
+              faq: aiFaq
             };
             var ur = await sb.from('page_content').update(update).eq('page_slug', fullSlug);
             if (ur.error) console.error('Update error:', ur.error);
@@ -1001,13 +1049,19 @@
         return;
       }
 
-      // Update in DB
+      // Update in DB — convert to blocks
+      var regenSections = aiData.sections || [];
+      var regenFaq = aiData.faq || [];
+      if (window.convertLegacyToBlocks) {
+        regenSections = window.convertLegacyToBlocks({ sections: regenSections, faq: regenFaq });
+        regenFaq = [];
+      }
       var update = {
         title: aiData.title || title.value.trim(),
         meta_description: aiData.meta_description || null,
         subtitle: aiData.subtitle || null,
-        sections: aiData.sections || [],
-        faq: aiData.faq || []
+        sections: regenSections,
+        faq: regenFaq
       };
       var r = await sb.from('page_content').update(update).eq('page_slug', state.currentSlug);
       if (r.error) throw r.error;
@@ -1110,16 +1164,46 @@
   /* ─── Improve Article with AI ─── */
   window.improveArticle = async function () {
     if (!state.currentSlug) return;
-    var d = collectFormData();
+    // Collect data from block editor if available
+    var d;
+    if (window.collectFormDataFromBlocks && document.getElementById('blocks-list')) {
+      d = window.collectFormDataFromBlocks();
+    } else {
+      d = collectFormData();
+    }
     if (!d.title) { showToast('Titre requis pour améliorer', 'error'); return; }
     if (!confirm('Améliorer l\'article avec l\'IA ? Le contenu sera réécrit et humanisé.')) return;
 
-    var seo = calculateSEO(d);
-    var geo = calculateGEO(d);
+    var seo = window._lastSEOScore || calculateSEO(d);
+    var geo = window._lastGEOScore || calculateGEO(d);
 
     showAIOverlay('Amélioration et humanisation en cours...<br><small>~30-40 secondes</small>');
 
     try {
+      // Convert blocks back to legacy format for the AI edge function
+      var sectionsForAI = d.sections || [];
+      var faqForAI = d.faq || [];
+      // If sections are in block format, flatten for AI
+      if (sectionsForAI.length && sectionsForAI[0] && sectionsForAI[0].type) {
+        var legacySections = [];
+        var legacyFaq = [];
+        sectionsForAI.forEach(function (block) {
+          if (block.type === 'heading') {
+            legacySections.push({ heading: block.text || '', html: '' });
+          } else if (block.type === 'paragraph') {
+            if (legacySections.length && !legacySections[legacySections.length - 1].html) {
+              legacySections[legacySections.length - 1].html = block.html || '';
+            } else {
+              legacySections.push({ heading: '', html: block.html || '' });
+            }
+          } else if (block.type === 'faq') {
+            legacyFaq = legacyFaq.concat(block.items || []);
+          }
+        });
+        sectionsForAI = legacySections;
+        faqForAI = legacyFaq;
+      }
+
       var aiRes = await fetch(SUPABASE_URL + '/functions/v1/improve-article', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -1127,8 +1211,8 @@
           title: d.title,
           meta_description: d.meta_description,
           subtitle: d.subtitle,
-          sections: d.sections,
-          faq: d.faq,
+          sections: sectionsForAI,
+          faq: faqForAI,
           scores: { seo: seo, geo: geo }
         })
       });
@@ -1140,13 +1224,19 @@
         return;
       }
 
-      // Update in DB
+      // Update in DB — convert AI response back to blocks
+      var improveSections = aiData.sections || [];
+      var improveFaq = aiData.faq || [];
+      if (window.convertLegacyToBlocks) {
+        improveSections = window.convertLegacyToBlocks({ sections: improveSections, faq: improveFaq });
+        improveFaq = [];
+      }
       var update = {
         title: aiData.title || d.title,
         meta_description: aiData.meta_description || null,
         subtitle: aiData.subtitle || null,
-        sections: aiData.sections || [],
-        faq: aiData.faq || []
+        sections: improveSections,
+        faq: improveFaq
       };
       var r = await sb.from('page_content').update(update).eq('page_slug', state.currentSlug);
       if (r.error) throw r.error;
@@ -1156,6 +1246,210 @@
       editPage(state.currentSlug, 'article');
     } catch (err) {
       hideAIOverlay();
+      showToast('Erreur : ' + (err.message || 'Échec'), 'error');
+    }
+  };
+
+  /* ─── AI Feedback ─── */
+  window.showFeedbackModal = function () {
+    if (!state.currentSlug) return;
+    var html = '<div class="admin-modal-overlay" id="feedback-modal" onclick="if(event.target===this)closeFeedbackModal()">';
+    html += '<div class="admin-modal admin-modal-wide">';
+    html += '<h3>💬 Donner un retour à l\'IA</h3>';
+    html += '<p style="color:#50575e;font-size:12px;margin-bottom:12px;">Décrivez ce qu\'il faut corriger ou améliorer. L\'IA réécrira l\'article en tenant compte de vos instructions.</p>';
+    html += '<div class="admin-field"><label>Vos instructions</label>';
+    html += '<textarea id="ai-feedback-text" rows="5" placeholder="Ex: En Terminale on garde 2 spécialités, pas 3. Ajouter plus d\'infos sur Parcoursup. Le ton est trop formel, rendre plus accessible..."></textarea></div>';
+    html += '<div class="feedback-suggestions">';
+    html += '<span class="feedback-chip" onclick="addFeedback(\'Corriger les erreurs factuelles\')">Corriger les erreurs</span>';
+    html += '<span class="feedback-chip" onclick="addFeedback(\'Rendre le ton plus accessible et bienveillant\')">Ton plus accessible</span>';
+    html += '<span class="feedback-chip" onclick="addFeedback(\'Ajouter plus de liens internes vers les outils AFEM\')">Plus de liens internes</span>';
+    html += '<span class="feedback-chip" onclick="addFeedback(\'Allonger l article avec plus de détails concrets\')">Plus de contenu</span>';
+    html += '<span class="feedback-chip" onclick="addFeedback(\'Ajouter un tableau comparatif\')">Ajouter un tableau</span>';
+    html += '</div>';
+    html += '<div class="admin-modal-actions">';
+    html += '<button class="btn-secondary" onclick="closeFeedbackModal()">Annuler</button>';
+    html += '<button class="btn-primary" onclick="submitFeedback()">🤖 Appliquer les retours</button>';
+    html += '</div></div></div>';
+    document.body.insertAdjacentHTML('beforeend', html);
+    document.getElementById('ai-feedback-text').focus();
+  };
+
+  window.closeFeedbackModal = function () {
+    var m = document.getElementById('feedback-modal');
+    if (m) m.remove();
+  };
+
+  window.addFeedback = function (text) {
+    var ta = document.getElementById('ai-feedback-text');
+    if (!ta) return;
+    ta.value = (ta.value ? ta.value + '\n' : '') + text;
+  };
+
+  window.submitFeedback = async function () {
+    var feedback = document.getElementById('ai-feedback-text').value.trim();
+    if (!feedback) { showToast('Écrivez vos instructions', 'error'); return; }
+    if (!confirm('Appliquer ces retours ? L\'IA va réécrire l\'article.')) return;
+
+    closeFeedbackModal();
+
+    // Collect current article data
+    var d;
+    if (window.collectFormDataFromBlocks && document.getElementById('blocks-list')) {
+      d = window.collectFormDataFromBlocks();
+    } else {
+      d = collectFormData();
+    }
+
+    showAIOverlay('Application des retours en cours...<br><small>~30-40 secondes</small>');
+
+    try {
+      // Convert blocks to legacy for AI
+      var sectionsForAI = d.sections || [];
+      var faqForAI = d.faq || [];
+      if (sectionsForAI.length && sectionsForAI[0] && sectionsForAI[0].type) {
+        var legacySections = [];
+        var legacyFaq = [];
+        sectionsForAI.forEach(function (block) {
+          if (block.type === 'heading') {
+            legacySections.push({ heading: block.text || '', html: '' });
+          } else if (block.type === 'paragraph') {
+            if (legacySections.length && !legacySections[legacySections.length - 1].html) {
+              legacySections[legacySections.length - 1].html = block.html || '';
+            } else {
+              legacySections.push({ heading: '', html: block.html || '' });
+            }
+          } else if (block.type === 'faq') {
+            legacyFaq = legacyFaq.concat(block.items || []);
+          }
+        });
+        sectionsForAI = legacySections;
+        faqForAI = legacyFaq;
+      }
+
+      var aiRes = await fetch(SUPABASE_URL + '/functions/v1/improve-article', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: d.title,
+          meta_description: d.meta_description,
+          subtitle: d.subtitle,
+          sections: sectionsForAI,
+          faq: faqForAI,
+          scores: { seo: window._lastSEOScore || 0, geo: window._lastGEOScore || 0 },
+          feedback: feedback
+        })
+      });
+      var aiData = await aiRes.json();
+
+      if (aiData.error) {
+        hideAIOverlay();
+        showToast('Erreur IA: ' + aiData.error, 'error');
+        return;
+      }
+
+      // Update in DB
+      var improveSections = aiData.sections || [];
+      var improveFaq = aiData.faq || [];
+      if (window.convertLegacyToBlocks) {
+        improveSections = window.convertLegacyToBlocks({ sections: improveSections, faq: improveFaq });
+        improveFaq = [];
+      }
+      var update = {
+        title: aiData.title || d.title,
+        meta_description: aiData.meta_description || null,
+        subtitle: aiData.subtitle || null,
+        sections: improveSections,
+        faq: improveFaq
+      };
+      var r = await sb.from('page_content').update(update).eq('page_slug', state.currentSlug);
+      if (r.error) throw r.error;
+
+      hideAIOverlay();
+      showToast('Retours appliqués avec succès', 'success');
+      editPage(state.currentSlug, 'article');
+    } catch (err) {
+      hideAIOverlay();
+      showToast('Erreur : ' + (err.message || 'Échec'), 'error');
+    }
+  };
+
+  /* ─── Schedule article ─── */
+  window.toggleSchedulePanel = function () {
+    var body = document.getElementById('schedule-body');
+    if (body) {
+      body.style.display = body.style.display === 'none' ? 'block' : 'none';
+      var chevron = body.parentElement.querySelector('.schedule-chevron');
+      if (chevron) chevron.classList.toggle('open');
+    }
+  };
+
+  window.scheduleArticle = async function (type) {
+    var scheduledAt = getVal('scheduled_at');
+    if (!scheduledAt) {
+      // Open the schedule panel if closed
+      var body = document.getElementById('schedule-body');
+      if (body && body.style.display === 'none') { toggleSchedulePanel(); }
+      showToast('Sélectionnez une date de publication', 'error');
+      return;
+    }
+    var scheduledDate = new Date(scheduledAt);
+    if (scheduledDate <= new Date()) {
+      showToast('La date doit être dans le futur', 'error');
+      return;
+    }
+    if (!getVal('title')) { showToast('Titre requis', 'error'); return; }
+
+    try {
+      var data = {
+        page_slug: state.currentSlug, page_type: type,
+        title: getVal('title') || null,
+        meta_description: getVal('meta_description') || null,
+        subtitle: getVal('subtitle') || null,
+        sections: [], faq: [], coup_de_coeur: {},
+        category: getVal('article_category') || 'other',
+        excerpt: getVal('article_excerpt') || null,
+        focus_keyword: getVal('focus_keyword') || null,
+        published: false,
+        scheduled_at: scheduledDate.toISOString()
+      };
+      if (window.collectAllBlocks && document.getElementById('blocks-list')) {
+        data.sections = window.collectAllBlocks();
+        data.faq = [];
+        if (window._lastSEOScore !== undefined) data.seo_score = window._lastSEOScore;
+        if (window._lastGEOScore !== undefined) data.geo_score = window._lastGEOScore;
+      } else {
+        document.querySelectorAll('#sections-list .admin-content-section').forEach(function (el) {
+          var h = el.querySelector('[name^="section_heading_"]');
+          var c = el.querySelector('[name^="section_html_"]');
+          if (h || c) data.sections.push({ heading: h ? h.value.trim() : '', html: c ? c.value.trim() : '' });
+        });
+        document.querySelectorAll('#faq-list .admin-faq-item').forEach(function (el) {
+          var q = el.querySelector('[name^="faq_q_"]');
+          var a = el.querySelector('[name^="faq_a_"]');
+          if (q && a && (q.value.trim() || a.value.trim())) data.faq.push({ question: q.value.trim(), answer: a.value.trim() });
+        });
+      }
+
+      var r = await sb.from('page_content').upsert(data, { onConflict: 'page_slug' });
+      if (r.error) throw r.error;
+
+      state.unsaved = false;
+      showToast('Article planifié pour le ' + formatDateTime(scheduledDate.toISOString()), 'success');
+      editPage(state.currentSlug, type);
+    } catch (err) {
+      console.error(err);
+      showToast('Erreur : ' + (err.message || 'Échec'), 'error');
+    }
+  };
+
+  window.cancelSchedule = async function (type) {
+    if (!confirm('Annuler la planification ? L\'article repassera en brouillon.')) return;
+    try {
+      var r = await sb.from('page_content').update({ scheduled_at: null }).eq('page_slug', state.currentSlug);
+      if (r.error) throw r.error;
+      showToast('Planification annulée', 'success');
+      editPage(state.currentSlug, type);
+    } catch (err) {
       showToast('Erreur : ' + (err.message || 'Échec'), 'error');
     }
   };
@@ -1198,19 +1492,28 @@
         sections: [], faq: [], coup_de_coeur: {},
         category: getVal('article_category') || 'other',
         excerpt: getVal('article_excerpt') || null,
+        focus_keyword: getVal('focus_keyword') || null,
         published: publish,
         published_at: publish ? new Date().toISOString() : null
       };
-      document.querySelectorAll('#sections-list .admin-content-section').forEach(function (el) {
-        var h = el.querySelector('[name^="section_heading_"]');
-        var c = el.querySelector('[name^="section_html_"]');
-        if (h || c) data.sections.push({ heading: h ? h.value.trim() : '', html: c ? c.value.trim() : '' });
-      });
-      document.querySelectorAll('#faq-list .admin-faq-item').forEach(function (el) {
-        var q = el.querySelector('[name^="faq_q_"]');
-        var a = el.querySelector('[name^="faq_a_"]');
-        if (q && a && (q.value.trim() || a.value.trim())) data.faq.push({ question: q.value.trim(), answer: a.value.trim() });
-      });
+      // Use block editor for articles
+      if (window.collectAllBlocks && document.getElementById('blocks-list')) {
+        data.sections = window.collectAllBlocks();
+        data.faq = [];
+        if (window._lastSEOScore !== undefined) data.seo_score = window._lastSEOScore;
+        if (window._lastGEOScore !== undefined) data.geo_score = window._lastGEOScore;
+      } else {
+        document.querySelectorAll('#sections-list .admin-content-section').forEach(function (el) {
+          var h = el.querySelector('[name^="section_heading_"]');
+          var c = el.querySelector('[name^="section_html_"]');
+          if (h || c) data.sections.push({ heading: h ? h.value.trim() : '', html: c ? c.value.trim() : '' });
+        });
+        document.querySelectorAll('#faq-list .admin-faq-item').forEach(function (el) {
+          var q = el.querySelector('[name^="faq_q_"]');
+          var a = el.querySelector('[name^="faq_a_"]');
+          if (q && a && (q.value.trim() || a.value.trim())) data.faq.push({ question: q.value.trim(), answer: a.value.trim() });
+        });
+      }
 
       var r = await sb.from('page_content').upsert(data, { onConflict: 'page_slug' });
       if (r.error) throw r.error;
@@ -1238,21 +1541,30 @@
         subtitle: getVal('subtitle') || null,
         sections: [], faq: [], coup_de_coeur: {}
       };
-      // Article-specific fields
+      // Article-specific: use block editor + advanced scoring
       if (type === 'article') {
         data.category = getVal('article_category') || 'other';
         data.excerpt = getVal('article_excerpt') || null;
+        data.focus_keyword = getVal('focus_keyword') || null;
+        if (window.collectAllBlocks) {
+          data.sections = window.collectAllBlocks();
+          data.faq = []; // FAQ is inside blocks for articles
+        }
+        if (window._lastSEOScore !== undefined) data.seo_score = window._lastSEOScore;
+        if (window._lastGEOScore !== undefined) data.geo_score = window._lastGEOScore;
+      } else {
+        // Legacy section collection for prepa/faculte/root
+        document.querySelectorAll('#sections-list .admin-content-section').forEach(function (el) {
+          var h = el.querySelector('[name^="section_heading_"]');
+          var c = el.querySelector('[name^="section_html_"]');
+          if (h || c) data.sections.push({ heading: h ? h.value.trim() : '', html: c ? c.value.trim() : '' });
+        });
+        document.querySelectorAll('#faq-list .admin-faq-item').forEach(function (el) {
+          var q = el.querySelector('[name^="faq_q_"]');
+          var a = el.querySelector('[name^="faq_a_"]');
+          if (q && a && (q.value.trim() || a.value.trim())) data.faq.push({ question: q.value.trim(), answer: a.value.trim() });
+        });
       }
-      document.querySelectorAll('#sections-list .admin-content-section').forEach(function (el) {
-        var h = el.querySelector('[name^="section_heading_"]');
-        var c = el.querySelector('[name^="section_html_"]');
-        if (h || c) data.sections.push({ heading: h ? h.value.trim() : '', html: c ? c.value.trim() : '' });
-      });
-      document.querySelectorAll('#faq-list .admin-faq-item').forEach(function (el) {
-        var q = el.querySelector('[name^="faq_q_"]');
-        var a = el.querySelector('[name^="faq_a_"]');
-        if (q && a && (q.value.trim() || a.value.trim())) data.faq.push({ question: q.value.trim(), answer: a.value.trim() });
-      });
       if (type === 'prepa') {
         data.coup_de_coeur = { title: getVal('cdc_title') || null, description: getVal('cdc_description') || null, link: getVal('cdc_link') || null };
       }
@@ -1305,6 +1617,11 @@
     if (!iso) return '—';
     var d = new Date(iso);
     return d.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
+  }
+  function formatDateTime(iso) {
+    if (!iso) return '—';
+    var d = new Date(iso);
+    return d.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' }) + ' à ' + d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
   }
   function showToast(msg, type) {
     var t = document.getElementById('admin-toast');
