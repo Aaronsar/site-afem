@@ -981,6 +981,7 @@
               sections: aiSections,
               faq: aiFaq
             };
+            if (aiData.focus_keyword) update.focus_keyword = aiData.focus_keyword;
             var ur = await sb.from('page_content').update(update).eq('page_slug', fullSlug);
             if (ur.error) console.error('Update error:', ur.error);
             else showToast('Article généré par l\'IA ✨', 'success');
@@ -1063,6 +1064,7 @@
         sections: regenSections,
         faq: regenFaq
       };
+      if (aiData.focus_keyword) update.focus_keyword = aiData.focus_keyword;
       var r = await sb.from('page_content').update(update).eq('page_slug', state.currentSlug);
       if (r.error) throw r.error;
 
@@ -1238,6 +1240,7 @@
         sections: improveSections,
         faq: improveFaq
       };
+      if (aiData.focus_keyword) update.focus_keyword = aiData.focus_keyword;
       var r = await sb.from('page_content').update(update).eq('page_slug', state.currentSlug);
       if (r.error) throw r.error;
 
@@ -1361,6 +1364,7 @@
         sections: improveSections,
         faq: improveFaq
       };
+      if (aiData.focus_keyword) update.focus_keyword = aiData.focus_keyword;
       var r = await sb.from('page_content').update(update).eq('page_slug', state.currentSlug);
       if (r.error) throw r.error;
 
