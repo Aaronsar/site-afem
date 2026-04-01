@@ -390,6 +390,7 @@
           <h4>Ressources</h4>
           <a href="blog.html">Blog</a>
           <a href="facultes.html">Facultés de médecine</a>
+          <a href="plan-du-site.html">Plan du site</a>
           <a href="qui-sommes-nous.html">Qui sommes-nous</a>
           <a href="mentions-legales.html">Mentions légales</a>
         </div>
@@ -494,6 +495,20 @@
           });
         });
       } catch(e) { console.error('Blog loader:', e); }
+
+      // Sort ALL cards (static + dynamic) by date, newest first
+      var MONTHS_FR = {'janvier':0,'février':1,'mars':2,'avril':3,'mai':4,'juin':5,'juillet':6,'août':7,'septembre':8,'octobre':9,'novembre':10,'décembre':11};
+      var allCards = Array.from(grid.querySelectorAll('.blog-card'));
+      allCards.sort(function(a, b) {
+        function parseDate(el) {
+          var txt = (el.querySelector('.blog-date') || {}).textContent || '';
+          var m = txt.match(/(\d{1,2})\s+(\S+)\s+(\d{4})/);
+          if (!m) return 0;
+          return new Date(parseInt(m[3]), MONTHS_FR[m[2].toLowerCase()] || 0, parseInt(m[1])).getTime();
+        }
+        return parseDate(b) - parseDate(a);
+      });
+      allCards.forEach(function(card) { grid.appendChild(card); });
     });
   })();
   </script>
