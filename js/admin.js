@@ -473,8 +473,10 @@
       html += '<td class="page-title-cell" onclick="editPage(\'' + p.slug + '\',\'' + cat.type + '\')">' + esc(p.label) + '</td>';
       if (isArticle) {
         var d = contentMap[p.slug];
-        html += '<td>' + (d ? scoreBadge(calculateSEO(d)) : '<span class="score-badge score-na">—</span>') + '</td>';
-        html += '<td>' + (d ? scoreBadge(calculateGEO(d)) : '<span class="score-badge score-na">—</span>') + '</td>';
+        var seoScore = d ? (window.calculateAdvancedSEO ? window.calculateAdvancedSEO(d) : calculateSEO(d)) : 0;
+        var geoScore = d ? (window.calculateAdvancedGEO ? window.calculateAdvancedGEO(d) : calculateGEO(d)) : 0;
+        html += '<td>' + (d ? scoreBadge(seoScore) : '<span class="score-badge score-na">—</span>') + '</td>';
+        html += '<td>' + (d ? scoreBadge(geoScore) : '<span class="score-badge score-na">—</span>') + '</td>';
       }
       // Status: Published/Scheduled/Draft for articles, Configured/Not for others
       if (isArticle) {
