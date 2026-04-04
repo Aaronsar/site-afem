@@ -451,9 +451,22 @@
     html += '<table class="admin-table">';
     html += '<thead><tr><th>Page</th>';
     if (isArticle) html += '<th>SEO</th><th>GEO</th>';
-    html += '<th>Statut</th><th>Dernière modification</th><th>Actions</th></tr></thead>';
+    html += '<th>Statut</th>';
+    if (isArticle) html += '<th>Date de publication</th><th>Date de programmation</th>';
+    else html += '<th>Dernière modification</th>';
+    html += '<th>Actions</th></tr></thead>';
     html += '<tbody>';
-    cat.pages.forEach(function (p) {
+    // Sort articles: newest first by published_at, then scheduled_at, then updated_at
+    var sortedPages = cat.pages.slice();
+    if (isArticle) {
+      sortedPages.sort(function (a, b) {
+        var da = contentMap[a.slug], db = contentMap[b.slug];
+        var dateA = (da && da.published_at) || (da && da.scheduled_at) || (configured[a.slug]) || '';
+        var dateB = (db && db.published_at) || (db && db.scheduled_at) || (configured[b.slug]) || '';
+        return new Date(dateB || 0) - new Date(dateA || 0);
+      });
+    }
+    sortedPages.forEach(function (p) {
       var hasData = configured[p.slug];
       var viewUrl = '/' + p.slug;
       html += '<tr>';
@@ -476,7 +489,13 @@
       } else {
         html += '<td><span class="status-dot ' + (hasData ? 'configured' : 'empty') + '"></span>' + (hasData ? 'Configuré' : 'Non configuré') + '</td>';
       }
-      html += '<td>' + (hasData ? formatDate(configured[p.slug]) : '—') + '</td>';
+      if (isArticle) {
+        var artD = contentMap[p.slug];
+        html += '<td>' + (artD && artD.published_at ? formatDate(artD.published_at) : '—') + '</td>';
+        html += '<td>' + (artD && artD.scheduled_at ? formatDateTime(artD.scheduled_at) : '—') + '</td>';
+      } else {
+        html += '<td>' + (hasData ? formatDate(configured[p.slug]) : '—') + '</td>';
+      }
       html += '<td class="row-actions"><a href="javascript:void(0)" onclick="editPage(\'' + p.slug + '\',\'' + cat.type + '\')">Modifier</a>';
       html += '<a href="' + viewUrl + '" target="_blank">Voir</a>';
       if (p.dynamic) html += '<a href="javascript:void(0)" class="action-delete" onclick="deletePage(\'' + p.slug + '\',\'' + cat.id + '\')">Supprimer</a>';
