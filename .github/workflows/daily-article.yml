@@ -1,0 +1,60 @@
+name: Daily Article Bot
+
+# Publie un article par jour sur le site AFEM (Supabase + Vercel).
+#
+# Cron : tous les jours a 06:30 UTC = 08:30 Europe/Paris (heure d'ete)
+#                                    = 07:30 Europe/Paris (heure d'hiver).
+# Tu peux aussi le lancer a la main depuis l'onglet "Actions" -> "Run workflow".
+
+on:
+  schedule:
+    - cron: '30 6 * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Mode dry-run (n'ecrit rien dans Supabase)"
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
+
+concurrency:
+  group: daily-article-bot
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: scripts/package.json
+
+      - name: Install dependencies
+        working-directory: scripts
+        run: npm install --no-audit --no-fund
+
+      - name: Run daily article bot
+        working-directory: scripts
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            node daily-article-bot.mjs --dry-run
+          else
+            node daily-article-bot.mjs
+          fi
