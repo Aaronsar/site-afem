@@ -277,12 +277,12 @@ async function saveToSupabase(supabase, topic, article, scores, visible) {
     focus_keyword: article.focus_keyword || topic.focus_keyword,
     seo_score: scores.seo,
     geo_score: scores.geo,
-    publication_date: visible ? todayDate() : null,
-    visible,
+    published_at: visible ? todayIso() : null,
+    published: visible,
     updated_at: todayIso(),
   };
   if (DRY_RUN) {
-    log('[DRY RUN] Insertion simulee :', { slug: row.page_slug, visible: row.visible, seo: row.seo_score, geo: row.geo_score });
+    log('[DRY RUN] Insertion simulee :', { slug: row.page_slug, published: row.published, seo: row.seo_score, geo: row.geo_score });
     return row;
   }
   const { data, error } = await supabase
