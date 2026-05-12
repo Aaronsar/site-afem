@@ -32,6 +32,7 @@ import { fileURLToPath } from 'node:url';
 import Anthropic from '@anthropic-ai/sdk';
 import { createClient } from '@supabase/supabase-js';
 import { analyzeSEO, analyzeGEO, failuresHumanReadable } from './seo-geo-scorer.mjs';
+import { buildSitemap } from './sitemap-builder.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const TOPICS_PATH = path.join(__dirname, 'topics.json');
@@ -355,6 +356,17 @@ async function main() {
   log(`Termine. Article ${visible ? 'PUBLIE' : 'EN BROUILLON'} : ${topic.slug} (SEO ${finalSeo} / GEO ${finalGeo})`);
   if (saved && saved.page_slug) {
     log(`URL : https://www.afem-edu.fr/${saved.page_slug}`);
+  }
+
+  // Regenere le sitemap.xml (sauf en dry-run)
+  if (!DRY_RUN && visible) {
+    try {
+      const sitemapPath = path.join(__dirname, '..', 'sitemap.xml');
+      const r = await buildSitemap(supabase, sitemapPath);
+      log(`sitemap.xml regenere : ${r.count} URLs -> ${r.path}`);
+    } catch (e) {
+      warn('Regeneration sitemap echouee :', e.message);
+    }
   }
 }
 

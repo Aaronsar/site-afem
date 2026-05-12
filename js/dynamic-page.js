@@ -24,6 +24,57 @@
     return new Date(iso).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
   }
 
+  /* ─── SEO meta updater (canonical, OG, JSON-LD) ─── */
+  function updateSeoMeta(page) {
+    var origin = 'https://www.afem-edu.fr';
+    var url = origin + '/' + (page.page_slug || path);
+    var title = page.title ? (page.title + ' | AFEM') : document.title;
+    var desc = page.meta_description || '';
+
+    function setAttr(id, attr, val) {
+      var el = document.getElementById(id);
+      if (el) el.setAttribute(attr, val);
+    }
+    setAttr('page-canonical', 'href', url);
+    setAttr('og-title', 'content', title);
+    setAttr('og-description', 'content', desc);
+    setAttr('og-url', 'content', url);
+
+    // JSON-LD
+    var jsonld;
+    if (page.page_type === 'article') {
+      jsonld = {
+        '@context': 'https://schema.org',
+        '@type': 'Article',
+        headline: page.title || '',
+        description: desc,
+        datePublished: page.published_at || page.created_at || null,
+        dateModified: page.updated_at || page.published_at || page.created_at || null,
+        inLanguage: 'fr-FR',
+        mainEntityOfPage: { '@type': 'WebPage', '@id': url },
+        author: { '@type': 'Organization', name: 'AFEM', url: origin },
+        publisher: {
+          '@type': 'Organization',
+          name: 'AFEM',
+          url: origin,
+          logo: { '@type': 'ImageObject', url: origin + '/assets/logo.png' }
+        }
+      };
+    } else {
+      jsonld = {
+        '@context': 'https://schema.org',
+        '@type': 'WebPage',
+        name: page.title || '',
+        description: desc,
+        url: url,
+        inLanguage: 'fr-FR',
+        isPartOf: { '@type': 'WebSite', name: 'AFEM', url: origin }
+      };
+    }
+    var ldEl = document.getElementById('page-jsonld');
+    if (ldEl) ldEl.textContent = JSON.stringify(jsonld);
+  }
+
   // Fetch page content
   apiGet('page_content', 'page_slug=eq.' + encodeURIComponent(path) + '&select=*')
     .then(function (rows) {
@@ -41,6 +92,9 @@
       if (page.title) document.title = page.title + ' | AFEM';
       var metaDesc = document.querySelector('meta[name="description"]');
       if (metaDesc && page.meta_description) metaDesc.setAttribute('content', page.meta_description);
+
+      // SEO: canonical, OG, JSON-LD
+      updateSeoMeta(page);
 
       var type = page.page_type;
       if (type === 'article') renderArticle(page);
