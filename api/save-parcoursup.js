@@ -167,7 +167,8 @@ export default async function handler(req, res) {
     source_url: req.headers.referer || 'https://www.afem-edu.fr/resultats-parcoursup-2026',
     meta: {
       form_version: 'afem-parcoursup-2026',
-      submission_mode: data.submission_mode === 'early' ? 'early' : 'full',
+      stage: typeof data.stage === 'string' ? data.stage : 'complet',
+      submission_mode: ['early', 'full', 'partial'].includes(data.submission_mode) ? data.submission_mode : 'full',
       q1_proposition: q1.proposition || null,
       q1_formations: q1.formations.slice(0, 3),
       q1_va_valider: q1.va_valider || null,

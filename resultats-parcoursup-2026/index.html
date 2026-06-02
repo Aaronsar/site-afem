@@ -678,6 +678,7 @@
         if (!isPhone(id.telephone)) { setState({ validationError: 'Numéro de téléphone invalide.' }); return; }
         if (!id.classe_actuelle) { setState({ validationError: 'Indique ta classe actuelle.' }); return; }
         if (!id.departement) { setState({ validationError: 'Indique ton département.' }); return; }
+        pushPartial('identite'); // capture du lead dès l'étape 1 validée
         setState({ step: 1, validationError: null });
       });
 
@@ -694,7 +695,10 @@
         p.addEventListener('click', () => setState({ q1_va_valider: p.dataset.validateVal, validationError: null }));
       });
       $('afem-pcs-q1-back')?.addEventListener('click', () => setState({ step: 0, validationError: null }));
-      $('afem-pcs-q1-next')?.addEventListener('click', () => setState({ step: 2, validationError: null }));
+      $('afem-pcs-q1-next')?.addEventListener('click', () => {
+        pushPartial('propositions'); // maj du lead avec les réponses Q1
+        setState({ step: 2, validationError: null });
+      });
       $('afem-pcs-validate-early')?.addEventListener('click', () => submitForm('early'));
 
       // Picker
@@ -786,8 +790,62 @@
     }
 
     // ════════════════════════════════════════════════════════════════════
-    // SUBMIT
+    // SUBMIT / ENVOI CRM
     // ════════════════════════════════════════════════════════════════════
+
+    // Construit le payload complet (cumulatif) envoyé au backend → CRM.
+    // L'email est TOUJOURS présent : c'est la clé de dédoublonnage côté CRM.
+    function buildPayload(stage, mode) {
+      const s = _state;
+      const voeux = s.q3_voeux
+        .filter((v) => v.formation && v.rang !== '')
+        .map((v) => ({
+          formation: v.formation,
+          mineure: v.mineure || '',
+          rang: Number(v.rang) || null,
+          rang_dernier_admis: Number(v.rang_dernier_admis) || null,
+        }));
+      return {
+        subject_id: s.subject?.id || null,
+        prenom: s.identity.prenom.trim(),
+        nom: s.identity.nom.trim(),
+        email: s.identity.email.trim(),
+        telephone: s.identity.telephone.trim() || null,
+        classe_actuelle: s.identity.classe_actuelle || null,
+        departement: s.identity.departement || null,
+        utm: s.utm,
+        pronostic: globalPronostic(s),
+        data: {
+          q1: {
+            proposition: s.q1_proposition,
+            formations: s.q1_formations,
+            va_valider: s.q1_va_valider || null,
+          },
+          q3: { voeux },
+          stage: stage,                               // 'identite' | 'propositions' | 'complet'
+          submission_mode: mode || 'partial',         // 'partial' | 'early' | 'full'
+          submitted_at: new Date().toISOString(),
+        },
+      };
+    }
+
+    // Envoi partiel "fire and forget" : capture le lead dès l'étape validée,
+    // sans bloquer la navigation. keepalive permet à la requête de survivre
+    // même si l'élève change d'étape immédiatement.
+    function pushPartial(stage) {
+      const s = _state;
+      if (!isEmail(s.identity.email)) return; // pas de clé de dédup → on saute
+      try {
+        fetch(CONFIG.API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(buildPayload(stage, 'partial')),
+          keepalive: true,
+        }).catch(() => { /* silencieux : ne jamais bloquer l'UX */ });
+      } catch (_) { /* idem */ }
+    }
+
+    // Envoi final (étape 3 complète, ou validation anticipée à l'étape 2)
     async function submitForm(mode) {
       const s = _state;
       if (mode === 'full' && s.q1_proposition !== 'non') {
@@ -799,39 +857,8 @@
       }
       _state.submitting = true; render();
 
-      const voeux = s.q3_voeux
-        .filter((v) => v.formation && v.rang !== '')
-        .map((v) => ({
-          formation: v.formation,
-          mineure: v.mineure || '',
-          rang: Number(v.rang) || null,
-          rang_dernier_admis: Number(v.rang_dernier_admis) || null,
-        }));
-
-      // Pronostic calculé côté client, envoyé au backend pour traçabilité
       const pron = globalPronostic(s);
-
-      const payload = {
-        subject_id: s.subject?.id || null,
-        prenom: s.identity.prenom.trim(),
-        nom: s.identity.nom.trim(),
-        email: s.identity.email.trim(),
-        telephone: s.identity.telephone.trim() || null,
-        classe_actuelle: s.identity.classe_actuelle || null,
-        departement: s.identity.departement || null,
-        utm: s.utm,
-        pronostic: pron,
-        data: {
-          q1: {
-            proposition: s.q1_proposition,
-            formations: s.q1_formations,
-            va_valider: s.q1_va_valider || null,
-          },
-          q3: { voeux },
-          submission_mode: mode === 'early' ? 'early' : 'full',
-          submitted_at: new Date().toISOString(),
-        },
-      };
+      const payload = buildPayload('complet', mode === 'early' ? 'early' : 'full');
 
       try {
         const res = await fetch(CONFIG.API_URL, {
