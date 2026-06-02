@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <title>Résultats Parcoursup 2026 — AFEM</title>
-  <meta name="description" content="Décode tes résultats Parcoursup PASS/LAS avec AFEM. Renseigne tes propositions et tes vœux en attente : nos conseillers t'accompagnent gratuitement dans ton choix de fac de médecine.">
+  <title>Calcule tes chances d'admission PASS / LAS — AFEM Parcoursup 2026</title>
+  <meta name="description" content="Calcule tes chances réelles d'admission en PASS / LAS sur Parcoursup 2026. Renseigne tes vœux et tes rangs : AFEM analyse ta situation et t'indique les facs où tu passes vraiment.">
   <meta name="robots" content="index, follow, max-image-preview:large">
   <link rel="canonical" href="https://www.afem-edu.fr/resultats-parcoursup-2026">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="AFEM">
   <meta property="og:locale" content="fr_FR">
-  <meta property="og:title" content="Résultats Parcoursup 2026 — Accompagnement AFEM">
-  <meta property="og:description" content="Renseigne tes propositions et vœux en attente. Nos conseillers AFEM t'aident à décoder Parcoursup et choisir ta fac de médecine.">
+  <meta property="og:title" content="Calcule tes chances d'admission PASS / LAS — AFEM">
+  <meta property="og:description" content="Renseigne tes vœux et rangs Parcoursup, AFEM te dit dans quelles facs PASS / LAS tu as vraiment tes chances.">
   <meta property="og:url" content="https://www.afem-edu.fr/resultats-parcoursup-2026">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" type="image/png" href="/favicon.png">
@@ -195,9 +195,9 @@
       app.innerHTML = `
         <main class="afem-pcs-shell">
           <div class="afem-pcs-hero">
-            <span class="afem-pcs-eyebrow">Accompagnement gratuit AFEM</span>
-            <h1 class="afem-pcs-title">Tes résultats Parcoursup, décodés.</h1>
-            <p class="afem-pcs-subtitle">Renseigne ta situation en quelques minutes. Nos conseillers te rappellent pour t'aider à choisir ta fac de médecine.</p>
+            <span class="afem-pcs-eyebrow">Calculateur AFEM — 100 % gratuit</span>
+            <h1 class="afem-pcs-title">Calcule tes chances d'admission PASS / LAS.</h1>
+            <p class="afem-pcs-subtitle">Indique tes vœux et tes rangs Parcoursup : on analyse ta situation et on te dit où tu as réellement tes chances.</p>
           </div>
           ${renderProgress()}
           <div class="afem-pcs-card">
@@ -240,7 +240,7 @@
         <div class="afem-pcs-step-head">
           <span class="afem-pcs-step-num">Étape 1<small> / 3</small></span>
           <h2 class="afem-pcs-step-h">Présente-toi en 30 secondes</h2>
-          <p class="afem-pcs-step-sub">Pour que nos conseillers puissent te recontacter avec les bons conseils.</p>
+          <p class="afem-pcs-step-sub">On a besoin de ces infos pour personnaliser le calcul de tes chances.</p>
         </div>
         ${renderErrToast()}
         <div class="afem-pcs-form-grid">
@@ -259,6 +259,7 @@
           <div class="afem-pcs-field afem-pcs-field-wide">
             <label for="afem-id-tel">Téléphone *</label>
             <input id="afem-id-tel" type="tel" data-id-field="telephone" value="${esc(id.telephone)}" placeholder="06 12 34 56 78" autocomplete="tel" maxlength="30">
+            <span class="afem-pcs-field-hint">Pour t'envoyer ton estimation par SMS (et pas pour te spammer).</span>
           </div>
           <div class="afem-pcs-field">
             <label for="afem-id-classe">Classe actuelle *</label>
@@ -324,7 +325,7 @@
         <div class="afem-pcs-step-head">
           <span class="afem-pcs-step-num">Étape 2<small> / 3</small></span>
           <h2 class="afem-pcs-step-h">Tes propositions d'admission</h2>
-          <p class="afem-pcs-step-sub">Réponse obligatoire. Sois honnête : ça nous aide à mieux te conseiller.</p>
+          <p class="afem-pcs-step-sub">Sois honnête : ces réponses sont la base du calcul de tes chances.</p>
         </div>
         ${renderErrToast()}
 
@@ -487,7 +488,7 @@
         </div>
         ${renderErrToast()}
         <div class="afem-pcs-callout afem-pcs-callout-info">
-          <strong>Astuce conseiller :</strong> commence par tes 3 vœux préférés. Tu pourras en ajouter jusqu'à 10 si nécessaire.
+          <strong>Important pour le calcul :</strong> commence par tes 3 vœux préférés et remplis ton rang + celui du dernier admis 2025. Plus tu en renseignes, plus l'estimation est précise.
         </div>
         <div class="afem-pcs-voeu-list">${cards}</div>
         ${canAdd ? `<button class="afem-pcs-add-voeu" id="afem-pcs-add-voeu"><span class="afem-pcs-add-voeu-plus">+</span> Ajouter un vœu</button>` : ''}
@@ -509,8 +510,8 @@
           <div class="afem-pcs-state-card afem-pcs-state-success">
             <div class="afem-pcs-state-icon">✓</div>
             <h1>Merci ${esc(prenom)} !</h1>
-            <p>Tes informations sont bien arrivées. Un conseiller AFEM va analyser ta situation Parcoursup et te rappeler d'ici 48h.</p>
-            <p class="afem-pcs-state-detail">Une question urgente ? Écris-nous à <strong>${esc(CONFIG.CONTACT_EMAIL)}</strong></p>
+            <p>Tes résultats sont enregistrés. On analyse tes rangs et on te renvoie une estimation chiffrée de tes chances d'admission dans chaque fac.</p>
+            <p class="afem-pcs-state-detail">Une question ? Écris-nous à <strong>${esc(CONFIG.CONTACT_EMAIL)}</strong></p>
             <div class="afem-pcs-state-actions">
               <a href="/blog" class="afem-pcs-btn afem-pcs-btn-outline">Lire nos guides PASS / LAS</a>
               <a href="/facultes" class="afem-pcs-btn afem-pcs-btn-primary">Découvrir les facs</a>
@@ -527,7 +528,7 @@
           <div class="afem-pcs-state-card afem-pcs-state-success">
             <div class="afem-pcs-state-icon">✓</div>
             <h1>Tes résultats sont déjà enregistrés</h1>
-            <p>Bonjour ${esc(prenom)}, nous avons bien reçu ta situation Parcoursup. Notre équipe l'analyse.</p>
+            <p>Bonjour ${esc(prenom)}, ta situation Parcoursup est déjà dans notre calculateur.</p>
             <p class="afem-pcs-state-detail">Besoin de modifier une réponse ? Écris-nous à <strong>${esc(CONFIG.CONTACT_EMAIL)}</strong></p>
           </div>
         </main>
@@ -540,8 +541,8 @@
         <main class="afem-pcs-shell">
           <div class="afem-pcs-state-card afem-pcs-state-success">
             <div class="afem-pcs-state-icon">🎓</div>
-            <h1>Excellent choix ${esc(prenom)} !</h1>
-            <p>Ta proposition est enregistrée. Un conseiller AFEM te rappelle rapidement pour t'accompagner sur ta rentrée et préparer la suite.</p>
+            <h1>Bravo ${esc(prenom)} !</h1>
+            <p>Ta proposition est enregistrée. Tu es validé sur ce vœu, plus rien à calculer de ce côté-là. Bonne suite !</p>
             <p class="afem-pcs-state-detail">Formation retenue : <strong>${esc(_state.q1_va_valider)}</strong></p>
             <div class="afem-pcs-state-actions">
               <a href="/" class="afem-pcs-btn afem-pcs-btn-primary">Retour à l'accueil</a>
