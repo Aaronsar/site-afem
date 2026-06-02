@@ -1,28 +1,29 @@
 // Vercel Serverless Function — /api/save-parcoursup
 //
-// Receives the AFEM Parcoursup form submission, stores it in Supabase,
-// and (optionally) forwards it as a webhook to the AFEM internal CRM.
+// Reçoit la soumission du formulaire AFEM "Résultats Parcoursup", la
+// transmet au CRM Diploma (cible principale), et — si configuré — la
+// stocke aussi dans Supabase comme filet de sécurité / audit.
 //
-// Env vars required (set in Vercel project settings):
-//   SUPABASE_URL                 — same as the rest of the site
-//   SUPABASE_SERVICE_ROLE_KEY    — secret, server-side only
-//   CRM_WEBHOOK_URL              — optional, AFEM internal CRM endpoint
-//   CRM_WEBHOOK_TOKEN            — optional, sent as `Authorization: Bearer ...`
+// Env vars :
+//   AFEM_WEBHOOK_TOKEN           (REQUIS) — Bearer token du CRM Diploma
+//   CRM_WEBHOOK_URL              (optionnel) — override de l'URL CRM
+//   SUPABASE_URL                 (optionnel) — filet de sécurité
+//   SUPABASE_SERVICE_ROLE_KEY    (optionnel) — filet de sécurité
 //
-// Endpoint contract (POST application/json):
-//   {
-//     subject_id?: string,
-//     prenom: string, nom: string, email: string, telephone?: string,
-//     utm?: { source, medium, campaign },
-//     data: {
-//       q1: { proposition: 'oui'|'non', formations: string[], va_valider: string|null },
-//       q3: { voeux: [{ formation, mineure, rang, rang_dernier_admis }] },
-//       submission_mode: 'early'|'full',
-//       submitted_at: string
-//     }
-//   }
+// Si Supabase n'est pas configuré, on envoie uniquement au CRM.
 
-import { createClient } from '@supabase/supabase-js';
+const CRM_URL_DEFAULT = 'https://crm.diplomasante.com/api/webhooks/afem-form';
+
+// Mapping classe interne AFEM → libellés reconnus par le CRM
+const CLASSE_MAP = {
+  terminale: 'Terminale',
+  cesure: 'Autres',
+  reorientation: 'Etudes Sup.',
+  autre: 'Autres',
+};
+
+// Mapping niveau de pronostic → score numérique pour le CRM
+const PRON_SCORE = { top: 95, good: 85, jouable: 70, analyse: 55, expert: 42 };
 
 function corsHeaders(origin) {
   return {
@@ -53,6 +54,14 @@ function clientIp(req) {
   return req.socket?.remoteAddress || null;
 }
 
+// "PASS - Sorbonne Université (Paris)" → { formation, etablissement, ville }
+function parseFormation(label) {
+  const s = String(label || '').trim();
+  const m = s.match(/^([\wÀ-ÿ]+)\s*-\s*(.+?)(?:\s*\(([^)]*)\))?$/);
+  if (!m) return { formation: '', etablissement: s, ville: '' };
+  return { formation: m[1], etablissement: (m[2] || '').trim(), ville: m[3] || '' };
+}
+
 export default async function handler(req, res) {
   const origin = req.headers.origin;
   const cors = corsHeaders(isAllowedOrigin(origin) ? origin : '');
@@ -70,17 +79,16 @@ export default async function handler(req, res) {
     res.status(405).json({ error: 'Method not allowed' });
     return;
   }
-
   if (!isAllowedOrigin(origin)) {
     res.status(403).json({ error: 'Origin not allowed' });
     return;
   }
 
-  const SUPABASE_URL = process.env.SUPABASE_URL;
-  const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-    console.error('Missing Supabase env vars');
-    res.status(500).json({ error: 'Server misconfigured' });
+  const CRM_TOKEN = process.env.AFEM_WEBHOOK_TOKEN;
+  const CRM_URL = process.env.CRM_WEBHOOK_URL || CRM_URL_DEFAULT;
+  if (!CRM_TOKEN) {
+    console.error('Missing AFEM_WEBHOOK_TOKEN');
+    res.status(500).json({ error: 'Server misconfigured (token CRM manquant)' });
     return;
   }
 
@@ -94,7 +102,7 @@ export default async function handler(req, res) {
     return;
   }
 
-  // Validation
+  // ─── Validation ───
   const { subject_id, prenom, nom, email, telephone, classe_actuelle, departement, utm, pronostic, data } = body;
   if (!isStr(prenom, 80)) { res.status(400).json({ error: 'prenom invalide' }); return; }
   if (!isStr(nom, 80)) { res.status(400).json({ error: 'nom invalide' }); return; }
@@ -118,77 +126,124 @@ export default async function handler(req, res) {
   if (!Array.isArray(q3.voeux)) { res.status(400).json({ error: 'q3.voeux invalide' }); return; }
   if (q3.voeux.length > 10) { res.status(400).json({ error: 'trop de voeux' }); return; }
 
-  const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
-    auth: { persistSession: false },
-  });
-
-  const row = {
-    subject_id: subject_id || null,
-    prenom: prenom.trim().slice(0, 80),
-    nom: nom.trim().slice(0, 80),
-    email: email.trim().toLowerCase().slice(0, 200),
-    telephone: telephone ? String(telephone).trim().slice(0, 30) : null,
-    classe_actuelle: classe_actuelle ? String(classe_actuelle).trim().slice(0, 40) : null,
-    departement: departement ? String(departement).trim().slice(0, 12) : null,
-    source: 'afem-edu.fr',
-    utm_source: utm?.source ? String(utm.source).slice(0, 80) : null,
-    utm_medium: utm?.medium ? String(utm.medium).slice(0, 80) : null,
-    utm_campaign: utm?.campaign ? String(utm.campaign).slice(0, 120) : null,
-    pronostic: (pronostic && typeof pronostic === 'object') ? pronostic : null,
-    q1_proposition: q1.proposition || null,
-    q1_formations: q1.formations.slice(0, 3),
-    q1_va_valider: q1.va_valider ? String(q1.va_valider).slice(0, 300) : null,
-    q3_voeux: q3.voeux.slice(0, 10).map((v) => ({
-      formation: String(v?.formation || '').slice(0, 300),
-      mineure: String(v?.mineure || '').slice(0, 200),
+  // ─── Normalisation des données ───
+  const cleanVoeux = q3.voeux.slice(0, 10).map((v, i) => {
+    const parsed = parseFormation(v?.formation);
+    return {
       rang: Number.isFinite(+v?.rang) ? +v.rang : null,
       rang_dernier_admis: Number.isFinite(+v?.rang_dernier_admis) ? +v.rang_dernier_admis : null,
-    })),
-    submission_mode: data.submission_mode === 'early' ? 'early' : 'full',
-    user_agent: (req.headers['user-agent'] || '').slice(0, 500) || null,
-    ip_address: clientIp(req),
+      etablissement: parsed.etablissement,
+      formation: parsed.formation,
+      ville: parsed.ville,
+      mineure: String(v?.mineure || '').slice(0, 200),
+      libelle: String(v?.formation || '').slice(0, 300),
+      ordre: i + 1,
+    };
+  });
+
+  // Pronostic → format CRM { score, label, details }
+  let crmPronostic = null;
+  if (pronostic && typeof pronostic === 'object') {
+    crmPronostic = {
+      score: PRON_SCORE[pronostic.level] ?? null,
+      label: pronostic.title || null,
+      details: pronostic.message || null,
+      niveau: pronostic.level || null,
+    };
+  }
+
+  const classeLabel = classe_actuelle ? (CLASSE_MAP[classe_actuelle] || 'Autres') : null;
+
+  // ─── Payload CRM Diploma ───
+  const crmPayload = {
+    firstname: prenom.trim().slice(0, 80),
+    lastname: nom.trim().slice(0, 80),
+    email: email.trim().toLowerCase().slice(0, 200),
+    phone: telephone ? String(telephone).trim().slice(0, 30) : null,
+    classe_actuelle: classeLabel,
+    departement: departement ? String(departement).trim().slice(0, 12) : null,
+    parcoursup_voeux: cleanVoeux,
+    pronostic: crmPronostic,
+    source_url: req.headers.referer || 'https://www.afem-edu.fr/resultats-parcoursup-2026',
+    meta: {
+      form_version: 'afem-parcoursup-2026',
+      submission_mode: data.submission_mode === 'early' ? 'early' : 'full',
+      q1_proposition: q1.proposition || null,
+      q1_formations: q1.formations.slice(0, 3),
+      q1_va_valider: q1.va_valider || null,
+      utm_source: utm?.source || null,
+      utm_medium: utm?.medium || null,
+      utm_campaign: utm?.campaign || null,
+      subject_id: subject_id || null,
+    },
   };
 
-  const { data: inserted, error: insertError } = await supabase
-    .from('parcoursup_submissions')
-    .insert(row)
-    .select('id')
-    .single();
-
-  if (insertError) {
-    console.error('Supabase insert error:', insertError);
-    res.status(500).json({ error: 'Erreur enregistrement' });
+  // ─── Envoi au CRM (cible principale, obligatoire) ───
+  let crmResult;
+  try {
+    const crmRes = await fetch(CRM_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + CRM_TOKEN,
+      },
+      body: JSON.stringify(crmPayload),
+      signal: AbortSignal.timeout(8000),
+    });
+    const text = await crmRes.text();
+    let json = {};
+    try { json = text ? JSON.parse(text) : {}; } catch { /* réponse non-JSON */ }
+    if (!crmRes.ok) {
+      console.error('CRM error', crmRes.status, text);
+      res.status(502).json({ error: 'CRM upstream', status: crmRes.status });
+      return;
+    }
+    crmResult = json;
+  } catch (e) {
+    console.error('CRM forward failed:', e?.message || e);
+    res.status(502).json({ error: 'CRM injoignable' });
     return;
   }
 
-  // Optional CRM forward (fire and forget, but track success)
-  let crmStatus = 'skipped';
-  const crmUrl = process.env.CRM_WEBHOOK_URL;
-  if (crmUrl) {
+  // ─── Filet Supabase (best-effort, uniquement si configuré) ───
+  const SUPABASE_URL = process.env.SUPABASE_URL;
+  const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY) {
     try {
-      const crmPayload = { submission_id: inserted.id, ...row };
-      const headers = { 'Content-Type': 'application/json' };
-      if (process.env.CRM_WEBHOOK_TOKEN) {
-        headers['Authorization'] = 'Bearer ' + process.env.CRM_WEBHOOK_TOKEN;
-      }
-      const crmRes = await fetch(crmUrl, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify(crmPayload),
-        signal: AbortSignal.timeout(5000),
+      const { createClient } = await import('@supabase/supabase-js');
+      const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, { auth: { persistSession: false } });
+      await supabase.from('parcoursup_submissions').insert({
+        subject_id: subject_id || null,
+        prenom: crmPayload.firstname,
+        nom: crmPayload.lastname,
+        email: crmPayload.email,
+        telephone: crmPayload.phone,
+        classe_actuelle: classe_actuelle || null,
+        departement: crmPayload.departement,
+        source: 'afem-edu.fr',
+        utm_source: utm?.source || null,
+        utm_medium: utm?.medium || null,
+        utm_campaign: utm?.campaign || null,
+        pronostic: (pronostic && typeof pronostic === 'object') ? pronostic : null,
+        q1_proposition: q1.proposition || null,
+        q1_formations: q1.formations.slice(0, 3),
+        q1_va_valider: q1.va_valider ? String(q1.va_valider).slice(0, 300) : null,
+        q3_voeux: cleanVoeux,
+        submission_mode: data.submission_mode === 'early' ? 'early' : 'full',
+        user_agent: (req.headers['user-agent'] || '').slice(0, 500) || null,
+        ip_address: clientIp(req),
+        forwarded_to_crm: true,
+        forwarded_at: new Date().toISOString(),
       });
-      crmStatus = crmRes.ok ? 'ok' : `http_${crmRes.status}`;
-      if (crmRes.ok) {
-        await supabase
-          .from('parcoursup_submissions')
-          .update({ forwarded_to_crm: true, forwarded_at: new Date().toISOString() })
-          .eq('id', inserted.id);
-      }
     } catch (e) {
-      console.error('CRM forward failed:', e?.message || e);
-      crmStatus = 'error';
+      // Le CRM a déjà reçu la donnée : on ne bloque pas la réponse.
+      console.error('Supabase backup failed (non bloquant):', e?.message || e);
     }
   }
 
-  res.status(200).json({ ok: true, id: inserted.id, crm: crmStatus });
+  res.status(200).json({
+    ok: true,
+    contact_id: crmResult?.contact_id || null,
+    action: crmResult?.action || null,
+  });
 }
