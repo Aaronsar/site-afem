@@ -46,6 +46,8 @@ Body JSON :
   "nom": "Dupont",
   "email": "marie.dupont@email.fr",
   "telephone": "0612345678",
+  "classe_actuelle": "terminale",
+  "departement": "75",
   "source": "afem-edu.fr",
   "utm_source": "facebook",
   "utm_medium": "cpc",
@@ -84,7 +86,9 @@ Body JSON :
 | `subject_id` | string \| null | non | UUID externe si le lien arrive d'un CRM externe (ignoré côté AFEM pour l'instant) |
 | `prenom`, `nom` | string | oui | Identité de l'élève (saisie dans le form, ou pré-remplie via URL) |
 | `email` | string | oui | Email validé côté serveur, normalisé en lowercase |
-| `telephone` | string \| null | non | Format brut tel que saisi (peut contenir espaces, points, indicatifs) |
+| `telephone` | string \| null | oui (form rend obligatoire) | Format brut tel que saisi (peut contenir espaces, points, indicatifs) |
+| `classe_actuelle` | string \| null | oui | Une des valeurs : `terminale`, `cesure`, `reorientation`, `autre` |
+| `departement` | string \| null | oui | Code département : `01` à `95`, `2A`, `2B`, `971`-`976`, ou `etranger` |
 | `source` | string | oui | Toujours `"afem-edu.fr"` |
 | `utm_source/medium/campaign` | string \| null | non | Si l'URL contenait des UTM (campagne Meta, mail, etc.) |
 | `q1_proposition` | `"oui"` \| `"non"` \| null | oui | Réponse à "As-tu reçu une proposition d'admission ?" |

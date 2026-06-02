@@ -95,12 +95,18 @@ export default async function handler(req, res) {
   }
 
   // Validation
-  const { subject_id, prenom, nom, email, telephone, utm, data } = body;
+  const { subject_id, prenom, nom, email, telephone, classe_actuelle, departement, utm, data } = body;
   if (!isStr(prenom, 80)) { res.status(400).json({ error: 'prenom invalide' }); return; }
   if (!isStr(nom, 80)) { res.status(400).json({ error: 'nom invalide' }); return; }
   if (!isEmail(email)) { res.status(400).json({ error: 'email invalide' }); return; }
   if (telephone !== undefined && telephone !== null && telephone !== '' && !isStr(telephone, 30)) {
     res.status(400).json({ error: 'telephone invalide' }); return;
+  }
+  if (classe_actuelle !== undefined && classe_actuelle !== null && classe_actuelle !== '' && !isStr(classe_actuelle, 40)) {
+    res.status(400).json({ error: 'classe_actuelle invalide' }); return;
+  }
+  if (departement !== undefined && departement !== null && departement !== '' && !isStr(departement, 12)) {
+    res.status(400).json({ error: 'departement invalide' }); return;
   }
   if (!data || typeof data !== 'object') { res.status(400).json({ error: 'data manquant' }); return; }
   const q1 = data.q1 || {};
@@ -122,6 +128,8 @@ export default async function handler(req, res) {
     nom: nom.trim().slice(0, 80),
     email: email.trim().toLowerCase().slice(0, 200),
     telephone: telephone ? String(telephone).trim().slice(0, 30) : null,
+    classe_actuelle: classe_actuelle ? String(classe_actuelle).trim().slice(0, 40) : null,
+    departement: departement ? String(departement).trim().slice(0, 12) : null,
     source: 'afem-edu.fr',
     utm_source: utm?.source ? String(utm.source).slice(0, 80) : null,
     utm_medium: utm?.medium ? String(utm.medium).slice(0, 80) : null,
