@@ -165,6 +165,72 @@
       return digits.length >= 9 && digits.length <= 15;
     }
 
+    /* ─── Moteur de pronostic ─────────────────────────────────────────────
+       Toujours positif : aucun verdict ne décourage l'élève. Les paliers
+       servent à colorer l'indicateur et à orienter le discours de
+       l'expert AFEM qui rappelle ensuite. */
+    function voeuPronostic(rang, rangDernier) {
+      const r = Number(rang), d = Number(rangDernier);
+      if (!Number.isFinite(r) || !Number.isFinite(d) || r <= 0 || d <= 0) return null;
+      const ratio = r / d;
+      if (ratio <= 0.6)  return { ratio, level: 'top',     label: 'Très bon présage',     short: 'Très bon' };
+      if (ratio <= 0.9)  return { ratio, level: 'good',    label: 'Bon présage',          short: 'Bon' };
+      if (ratio <= 1.1)  return { ratio, level: 'jouable', label: 'Tout est jouable',     short: 'Jouable' };
+      if (ratio <= 1.5)  return { ratio, level: 'analyse', label: 'À analyser de près',   short: 'À analyser' };
+      return                  { ratio, level: 'expert',  label: 'À étudier avec un expert', short: 'À étudier' };
+    }
+
+    function globalPronostic(s) {
+      const voeuxFilled = s.q3_voeux
+        .filter((v) => v.formation && v.rang && v.rang_dernier_admis)
+        .map((v) => ({ ...v, pron: voeuPronostic(v.rang, v.rang_dernier_admis) }))
+        .filter((v) => v.pron);
+
+      const hasProposition = s.q1_proposition === 'oui' && s.q1_formations.length > 0;
+      const bestLevel = voeuxFilled.reduce((acc, v) => {
+        const order = { top: 5, good: 4, jouable: 3, analyse: 2, expert: 1 };
+        return order[v.pron.level] > order[acc] ? v.pron.level : acc;
+      }, 'expert');
+
+      // Verdict global TOUJOURS positif. Le wording change selon le niveau,
+      // mais aucune formulation ne ferme la porte.
+      let title, message;
+      if (hasProposition && bestLevel === 'top') {
+        title = 'Tu es très bien placé !';
+        message = 'Tu as déjà une admission garantie et plusieurs vœux très bien placés. Un expert AFEM va analyser ta situation et t\'aider à faire le meilleur choix.';
+      } else if (hasProposition) {
+        title = 'Profil solide';
+        message = 'Tu as déjà une admission garantie et des vœux à étudier de près. Un expert AFEM t\'appelle pour analyser chaque option et t\'aider à choisir la meilleure.';
+      } else if (bestLevel === 'top' || bestLevel === 'good') {
+        title = 'Profil prometteur';
+        message = 'Plusieurs de tes vœux sont en très bonne position. Un expert AFEM va analyser ta situation en détail et t\'expliquer comment maximiser tes chances.';
+      } else if (bestLevel === 'jouable') {
+        title = 'Tout est encore jouable';
+        message = 'Tu as des vœux sur la corde, ce qui veut dire que tout se joue dans les prochaines semaines. Un expert AFEM va analyser ta situation et te dévoiler les leviers pour passer.';
+      } else if (bestLevel === 'analyse') {
+        title = 'Profil à analyser avec précision';
+        message = 'Ta situation mérite un regard d\'expert : les rangs renseignés laissent une vraie marge de manœuvre selon les désistements. Un conseiller AFEM va analyser tes chances et te présenter toutes les options.';
+      } else {
+        title = 'On va analyser ça ensemble';
+        message = 'Ton profil est unique et mérite une analyse personnalisée. Un expert AFEM va analyser ta situation et te révéler les pistes que tu n\'as peut-être pas vues : facs en montée, options moins demandées, plan B solides.';
+      }
+
+      return {
+        level: bestLevel,
+        title,
+        message,
+        hasProposition,
+        voeux: voeuxFilled.map((v) => ({
+          formation: v.formation,
+          rang: Number(v.rang),
+          rang_dernier_admis: Number(v.rang_dernier_admis),
+          ratio: v.pron.ratio,
+          level: v.pron.level,
+          label: v.pron.label,
+        })),
+      };
+    }
+
     // ════════════════════════════════════════════════════════════════════
     // RENDU
     // ════════════════════════════════════════════════════════════════════
@@ -432,6 +498,7 @@
 
       const cards = s.q3_voeux.slice(0, visible).map((v, idx) => {
         const fac = findFacByLabel(v.formation);
+        const pron = voeuPronostic(v.rang, v.rang_dernier_admis);
         const opts = fac && fac.o.length ? `
           <div class="afem-pcs-voeu-row">
             <label class="afem-pcs-voeu-label">${fac.type === 'PASS' ? 'Mineure PASS' : 'Majeure / parcours'}</label>
@@ -471,6 +538,12 @@
                   <input type="text" inputmode="numeric" pattern="[0-9]*" class="afem-pcs-voeu-input" data-voeu-idx="${idx}" data-voeu-field="rang_dernier_admis" placeholder="ex : 1 135" autocomplete="off" value="${esc(v.rang_dernier_admis)}">
                 </div>
               </div>
+              ${pron ? `
+                <div class="afem-pcs-voeu-pron afem-pcs-pron-${pron.level}">
+                  <span class="afem-pcs-voeu-pron-dot"></span>
+                  <span class="afem-pcs-voeu-pron-label">${pron.label}</span>
+                </div>
+              ` : ''}
             </div>
           </div>
         `;
@@ -505,13 +578,43 @@
     // ─── ÉCRANS FINAUX ──────────────────────────────────────────────────
     function renderConfirmation() {
       const prenom = _state.identity.prenom || _state.subject?.first_name || 'l\'étudiant';
+      const p = _state.lastPronostic || globalPronostic(_state);
+
+      const voeuxHtml = p.voeux.length ? `
+        <div class="afem-pcs-pron-voeux-title">Analyse vœu par vœu</div>
+        <div class="afem-pcs-pron-voeux">
+          ${p.voeux.map((v, i) => `
+            <div class="afem-pcs-pron-voeu afem-pcs-pron-${v.level}">
+              <div class="afem-pcs-pron-voeu-top">
+                <span class="afem-pcs-pron-voeu-num">${i + 1}</span>
+                <span class="afem-pcs-pron-voeu-name">${esc(v.formation)}</span>
+                <span class="afem-pcs-pron-voeu-tag">${v.label}</span>
+              </div>
+              <div class="afem-pcs-pron-voeu-meta">Ton rang ${v.rang.toLocaleString('fr-FR')} · dernier admis ${v.rang_dernier_admis.toLocaleString('fr-FR')}</div>
+            </div>
+          `).join('')}
+        </div>
+      ` : '';
+
       return `
         <main class="afem-pcs-shell">
-          <div class="afem-pcs-state-card afem-pcs-state-success">
-            <div class="afem-pcs-state-icon">✓</div>
-            <h1>Merci ${esc(prenom)} !</h1>
-            <p>Tes résultats sont enregistrés. On analyse tes rangs et on te renvoie une estimation chiffrée de tes chances d'admission dans chaque fac.</p>
-            <p class="afem-pcs-state-detail">Une question ? Écris-nous à <strong>${esc(CONFIG.CONTACT_EMAIL)}</strong></p>
+          <div class="afem-pcs-pron-card">
+            <div class="afem-pcs-pron-eyebrow">Ton pronostic AFEM</div>
+            <h1 class="afem-pcs-pron-title">${esc(p.title)} ${esc(prenom)} 🎯</h1>
+            <p class="afem-pcs-pron-message">${esc(p.message)}</p>
+
+            ${voeuxHtml}
+
+            <div class="afem-pcs-pron-cta-box">
+              <div class="afem-pcs-pron-cta-ico">📞</div>
+              <div>
+                <h3>Un expert AFEM va t'appeler</h3>
+                <p>Sous 24h ouvrées, sur le numéro que tu as renseigné. Il analyse ta situation en détail avec des données qu'aucun simulateur ne calcule (désistements, montée en liste d'attente, mineures stratégiques) et t'explique exactement ce qu'il faut faire pour maximiser tes chances.</p>
+              </div>
+            </div>
+
+            <p class="afem-pcs-pron-mini">100 % gratuit, sans engagement. Tu peux aussi nous écrire à <strong>${esc(CONFIG.CONTACT_EMAIL)}</strong>.</p>
+
             <div class="afem-pcs-state-actions">
               <a href="/blog" class="afem-pcs-btn afem-pcs-btn-outline">Lire nos guides PASS / LAS</a>
               <a href="/facultes" class="afem-pcs-btn afem-pcs-btn-primary">Découvrir les facs</a>
@@ -659,6 +762,11 @@
             _state.q3_voeux = _state.q3_voeux.map((v, i) => i === idx ? { ...v, [field]: el.value } : v);
             _state.validationError = null;
           });
+          // Le badge pronostic apparait/maj au blur (perte de focus)
+          // pour ne pas faire clignoter l'UI à chaque chiffre tapé.
+          if (field === 'rang' || field === 'rang_dernier_admis') {
+            el.addEventListener('blur', () => render());
+          }
         }
       });
       document.querySelectorAll('.afem-pcs-voeu-del').forEach((btn) => {
@@ -700,6 +808,9 @@
           rang_dernier_admis: Number(v.rang_dernier_admis) || null,
         }));
 
+      // Pronostic calculé côté client, envoyé au backend pour traçabilité
+      const pron = globalPronostic(s);
+
       const payload = {
         subject_id: s.subject?.id || null,
         prenom: s.identity.prenom.trim(),
@@ -709,6 +820,7 @@
         classe_actuelle: s.identity.classe_actuelle || null,
         departement: s.identity.departement || null,
         utm: s.utm,
+        pronostic: pron,
         data: {
           q1: {
             proposition: s.q1_proposition,
@@ -731,7 +843,7 @@
           const err = await res.json().catch(() => ({}));
           throw new Error(err.error || `HTTP ${res.status}`);
         }
-        setState({ step: mode === 'early' ? 'early' : 3, submitting: false });
+        setState({ step: mode === 'early' ? 'early' : 3, submitting: false, lastPronostic: pron });
         if (typeof window !== 'undefined' && typeof window.scrollTo === 'function') {
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }

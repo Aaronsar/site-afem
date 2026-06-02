@@ -95,7 +95,7 @@ export default async function handler(req, res) {
   }
 
   // Validation
-  const { subject_id, prenom, nom, email, telephone, classe_actuelle, departement, utm, data } = body;
+  const { subject_id, prenom, nom, email, telephone, classe_actuelle, departement, utm, pronostic, data } = body;
   if (!isStr(prenom, 80)) { res.status(400).json({ error: 'prenom invalide' }); return; }
   if (!isStr(nom, 80)) { res.status(400).json({ error: 'nom invalide' }); return; }
   if (!isEmail(email)) { res.status(400).json({ error: 'email invalide' }); return; }
@@ -134,6 +134,7 @@ export default async function handler(req, res) {
     utm_source: utm?.source ? String(utm.source).slice(0, 80) : null,
     utm_medium: utm?.medium ? String(utm.medium).slice(0, 80) : null,
     utm_campaign: utm?.campaign ? String(utm.campaign).slice(0, 120) : null,
+    pronostic: (pronostic && typeof pronostic === 'object') ? pronostic : null,
     q1_proposition: q1.proposition || null,
     q1_formations: q1.formations.slice(0, 3),
     q1_va_valider: q1.va_valider ? String(q1.va_valider).slice(0, 300) : null,

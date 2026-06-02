@@ -972,6 +972,211 @@
   flex-wrap: wrap;
 }
 
+/* ─── Pronostic inline (Q3 card) ──────────────────────────────────────── */
+.afem-pcs-voeu-pron {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: var(--afem-radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 4px;
+  animation: afem-pcs-fadein 0.25s ease-out;
+}
+
+.afem-pcs-voeu-pron-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Couleurs pronostic — toujours douces, jamais agressives.
+   Aucun rouge "alerte" pour ne pas décourager. */
+.afem-pcs-pron-top      { background: rgba(101, 189, 125, 0.18); color: #2f6b40; }
+.afem-pcs-pron-top      .afem-pcs-voeu-pron-dot { background: #2f9c4f; box-shadow: 0 0 0 3px rgba(47, 156, 79, 0.2); }
+
+.afem-pcs-pron-good     { background: rgba(101, 189, 125, 0.14); color: #386b48; }
+.afem-pcs-pron-good     .afem-pcs-voeu-pron-dot { background: #65bd7d; }
+
+.afem-pcs-pron-jouable  { background: rgba(255, 196, 102, 0.18); color: #7a5314; }
+.afem-pcs-pron-jouable  .afem-pcs-voeu-pron-dot { background: #f0a838; }
+
+.afem-pcs-pron-analyse  { background: rgba(96, 165, 250, 0.16); color: #1e4374; }
+.afem-pcs-pron-analyse  .afem-pcs-voeu-pron-dot { background: #4a90e2; }
+
+.afem-pcs-pron-expert   { background: rgba(140, 110, 200, 0.14); color: #4d3a7a; }
+.afem-pcs-pron-expert   .afem-pcs-voeu-pron-dot { background: #8b6dc9; }
+
+/* ─── Écran pronostic final ───────────────────────────────────────────── */
+.afem-pcs-pron-card {
+  background: var(--afem-card-bg);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  border-radius: var(--afem-radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: var(--afem-shadow);
+  padding: 48px 40px;
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  .afem-pcs-pron-card { padding: 32px 22px; }
+}
+
+.afem-pcs-pron-eyebrow {
+  display: inline-block;
+  padding: 6px 14px;
+  background: var(--afem-green);
+  color: #fff;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 18px;
+}
+
+.afem-pcs-pron-title {
+  font-size: clamp(26px, 4vw, 36px);
+  font-weight: 800;
+  color: var(--afem-text);
+  margin: 0 0 14px;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+.afem-pcs-pron-message {
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--afem-text-muted);
+  max-width: 580px;
+  margin: 0 auto 32px;
+}
+
+.afem-pcs-pron-voeux-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--afem-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 14px;
+  text-align: left;
+  padding: 0 4px;
+}
+
+.afem-pcs-pron-voeux {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 32px;
+  text-align: left;
+}
+
+.afem-pcs-pron-voeu {
+  padding: 14px 16px;
+  border-radius: var(--afem-radius-sm);
+  border-left: 4px solid;
+}
+
+.afem-pcs-pron-voeu.afem-pcs-pron-top      { border-left-color: #2f9c4f; }
+.afem-pcs-pron-voeu.afem-pcs-pron-good     { border-left-color: #65bd7d; }
+.afem-pcs-pron-voeu.afem-pcs-pron-jouable  { border-left-color: #f0a838; }
+.afem-pcs-pron-voeu.afem-pcs-pron-analyse  { border-left-color: #4a90e2; }
+.afem-pcs-pron-voeu.afem-pcs-pron-expert   { border-left-color: #8b6dc9; }
+
+.afem-pcs-pron-voeu-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.afem-pcs-pron-voeu-num {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--afem-green-soft);
+  color: var(--afem-green-dark);
+  font-weight: 700;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.afem-pcs-pron-voeu-name {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--afem-text);
+  min-width: 200px;
+}
+
+.afem-pcs-pron-voeu-tag {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--afem-text);
+}
+
+.afem-pcs-pron-voeu-meta {
+  font-size: 13px;
+  color: var(--afem-text-muted);
+  margin-top: 6px;
+  padding-left: 34px;
+}
+
+.afem-pcs-pron-cta-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  padding: 24px;
+  background: linear-gradient(135deg, var(--afem-green-soft), #fff);
+  border: 1.5px solid rgba(101, 189, 125, 0.3);
+  border-radius: var(--afem-radius);
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+.afem-pcs-pron-cta-ico {
+  font-size: 32px;
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  background: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--afem-shadow-sm);
+}
+
+.afem-pcs-pron-cta-box h3 {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0 0 6px;
+  color: var(--afem-text);
+}
+
+.afem-pcs-pron-cta-box p {
+  font-size: 14px;
+  color: var(--afem-text-muted);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.afem-pcs-pron-mini {
+  font-size: 13px;
+  color: var(--afem-text-muted);
+  margin: 0 auto 20px;
+  max-width: 500px;
+}
+
 /* ─── RGPD note ───────────────────────────────────────────────────────── */
 .afem-pcs-rgpd-note {
   font-size: 12px;
