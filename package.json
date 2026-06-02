@@ -1,0 +1,12 @@
+{
+  "name": "site-afem",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Site AFEM (afem-edu.fr) — Vercel + Supabase. Le repertoire /api contient les fonctions serverless. Les /scripts contiennent le bot d'articles quotidien (avec son propre package.json).",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.4"
+  }
+}

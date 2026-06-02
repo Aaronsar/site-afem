@@ -6,6 +6,16 @@
       "has": [{ "type": "host", "value": "site-afem.vercel.app" }],
       "destination": "https://www.afem-edu.fr/:path",
       "permanent": true
+    },
+    {
+      "source": "/résultats-parcoursup-2026",
+      "destination": "/resultats-parcoursup-2026",
+      "permanent": false
+    },
+    {
+      "source": "/résultats-parcoursup-2026/:path*",
+      "destination": "/resultats-parcoursup-2026/:path*",
+      "permanent": false
     }
   ],
   "rewrites": [

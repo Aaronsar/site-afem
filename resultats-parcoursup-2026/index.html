@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Résultats Parcoursup 2026 — AFEM</title>
+  <meta name="description" content="Décode tes résultats Parcoursup PASS/LAS avec AFEM. Renseigne tes propositions et tes vœux en attente : nos conseillers t'accompagnent gratuitement dans ton choix de fac de médecine.">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <link rel="canonical" href="https://www.afem-edu.fr/resultats-parcoursup-2026">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="AFEM">
+  <meta property="og:locale" content="fr_FR">
+  <meta property="og:title" content="Résultats Parcoursup 2026 — Accompagnement AFEM">
+  <meta property="og:description" content="Renseigne tes propositions et vœux en attente. Nos conseillers AFEM t'aident à décoder Parcoursup et choisir ta fac de médecine.">
+  <meta property="og:url" content="https://www.afem-edu.fr/resultats-parcoursup-2026">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.min.css">
+  <link rel="stylesheet" href="/resultats-parcoursup-2026/form.css">
+</head>
+<body>
+  <div class="bg-blobs">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <nav class="navbar">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">
+        <img loading="lazy" src="/assets/logo.png" alt="AFEM">
+      </a>
+      <div class="nav-links">
+        <a href="/">Accueil</a>
+        <a href="/qui-sommes-nous">Qui sommes-nous</a>
+        <a href="/blog">Blog</a>
+      </div>
+    </div>
+  </nav>
+
+  <div id="app">
+    <main class="afem-pcs-shell">
+      <div class="afem-pcs-loading-screen">
+        <div class="afem-pcs-spinner"></div>
+        <p>Chargement…</p>
+      </div>
+    </main>
+  </div>
+
+  <script type="module">
+    // ════════════════════════════════════════════════════════════════════
+    // ⚙️ CONFIGURATION
+    // ════════════════════════════════════════════════════════════════════
+    const CONFIG = {
+      API_URL: '/api/save-parcoursup',
+      API_GET_LINK: null,
+      CONTACT_EMAIL: 'contact@afem-edu.fr',
+      BRAND_NAME: 'AFEM',
+    };
+
+    import { FACS_FRANCE } from '/resultats-parcoursup-2026/facs-france.js';
+
+    // ════════════════════════════════════════════════════════════════════
+    // ÉTAT
+    //   step 0 = identité (NOUVEAU vs Diploma — obligatoire)
+    //   step 1 = propositions admission (Q1)
+    //   step 2 = classement vœux en attente (Q3)
+    //   step 3 = confirmation
+    //   step 'early' = confirmation anticipée (proposition validée à Q1)
+    // ════════════════════════════════════════════════════════════════════
+    let _state = {
+      subject: null,
+      step: 0,
+      loading: true,
+      error: null,
+      submitting: false,
+      validationError: null,
+
+      // Étape 0 — Identité (toujours obligatoire pour AFEM)
+      identity: { prenom: '', nom: '', email: '', telephone: '' },
+      identityLocked: { prenom: false, nom: false, email: false }, // si l'URL pré-remplit
+
+      // Étape 1 — Q1 propositions (toujours obligatoire pour AFEM)
+      q1_proposition: null,
+      q1_formations: [],
+      q1_va_valider: '',
+
+      // Étape 2 — Q3 vœux en attente
+      q3_voeux: Array(10).fill(null).map(() => ({ formation: '', mineure: '', rang: '', rang_dernier_admis: '' })),
+      q3_visible_count: 3,
+
+      pickerOpen: null,
+      pickerQuery: '',
+
+      utm: { source: null, medium: null, campaign: null },
+    };
+
+    const $ = (id) => document.getElementById(id);
+    const esc = (s) => String(s ?? '')
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+
+    const TOTAL_STEPS = 3; // 0 Identité, 1 Q1, 2 Q3
+
+    function facLabel(f) {
+      const com = (f.c && f.c.length) ? ` (${f.c.join(', ')})` : '';
+      return `${f.type} - ${f.u}${com}`;
+    }
+    function filterFacs(query) {
+      const q = (query || '').trim().toLowerCase();
+      if (!q) return FACS_FRANCE;
+      const tokens = q.split(/\s+/).filter(Boolean);
+      return FACS_FRANCE.filter((f) => {
+        const hay = `${f.type} ${f.u} ${(f.c || []).join(' ')} ${f.r}`.toLowerCase();
+        return tokens.every((t) => hay.includes(t));
+      });
+    }
+    function findFacByLabel(label) {
+      if (!label) return null;
+      const norm = String(label).trim().toLowerCase();
+      return FACS_FRANCE.find((f) => facLabel(f).toLowerCase() === norm) || null;
+    }
+    function isEmail(v) {
+      return typeof v === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+    }
+    function isPhone(v) {
+      if (!v) return true; // optionnel : on accepte vide
+      const digits = String(v).replace(/[^\d+]/g, '');
+      return digits.length >= 9 && digits.length <= 15;
+    }
+
+    // ════════════════════════════════════════════════════════════════════
+    // RENDU
+    // ════════════════════════════════════════════════════════════════════
+    function render() {
+      const app = $('app');
+      const s = _state;
+
+      if (s.loading) {
+        app.innerHTML = `<main class="afem-pcs-shell"><div class="afem-pcs-loading-screen"><div class="afem-pcs-spinner"></div><p>Chargement…</p></div></main>`;
+        return;
+      }
+      if (s.error) {
+        app.innerHTML = `<main class="afem-pcs-shell"><div class="afem-pcs-state-card afem-pcs-state-error"><div class="afem-pcs-state-icon">!</div><h2>Lien invalide</h2><p>${esc(s.error)}</p><a href="/" class="afem-pcs-btn afem-pcs-btn-outline">Retour à l'accueil</a></div></main>`;
+        return;
+      }
+      if (s.subject?.submitted) {
+        app.innerHTML = renderAlreadySubmitted();
+        return;
+      }
+      if (s.step === 'early') { app.innerHTML = renderEarly(); return; }
+      if (s.step === 3)       { app.innerHTML = renderConfirmation(); return; }
+
+      let stepContent = '';
+      if (s.step === 0) stepContent = renderStepIdentity();
+      else if (s.step === 1) stepContent = renderStepQ1();
+      else if (s.step === 2) stepContent = renderStepQ3();
+
+      app.innerHTML = `
+        <main class="afem-pcs-shell">
+          <div class="afem-pcs-hero">
+            <span class="afem-pcs-eyebrow">Accompagnement gratuit AFEM</span>
+            <h1 class="afem-pcs-title">Tes résultats Parcoursup, décodés.</h1>
+            <p class="afem-pcs-subtitle">Renseigne ta situation en quelques minutes. Nos conseillers te rappellent pour t'aider à choisir ta fac de médecine.</p>
+          </div>
+          ${renderProgress()}
+          <div class="afem-pcs-card">
+            ${stepContent}
+          </div>
+          <p class="afem-pcs-rgpd-note">En soumettant ce formulaire, tu acceptes d'être recontacté par l'AFEM. Tes données sont stockées en France et ne sont jamais revendues.</p>
+        </main>
+      `;
+      attachListeners();
+    }
+
+    function renderProgress() {
+      const s = _state;
+      const steps = [
+        { k: 0, l: 'Toi' },
+        { k: 1, l: 'Propositions' },
+        { k: 2, l: 'Vœux en attente' },
+      ];
+      const items = steps.map((st, i) => {
+        const isDone = s.step > st.k;
+        const isCurrent = s.step === st.k;
+        const dot = isDone ? '✓' : (i + 1);
+        const cls = isDone ? 'done' : isCurrent ? 'current' : '';
+        const connector = i < steps.length - 1 ? `<div class="afem-pcs-progress-line"></div>` : '';
+        return `<div class="afem-pcs-progress-step ${cls}"><div class="afem-pcs-progress-bubble">${dot}</div><div class="afem-pcs-progress-label">${st.l}</div></div>${connector}`;
+      }).join('');
+      return `<div class="afem-pcs-progress"><div class="afem-pcs-progress-track">${items}</div></div>`;
+    }
+
+    function renderErrToast() {
+      return _state.validationError
+        ? `<div class="afem-pcs-error-toast">${esc(_state.validationError)}</div>`
+        : '';
+    }
+
+    // ─── ÉTAPE 0 : IDENTITÉ (obligatoire) ────────────────────────────────
+    function renderStepIdentity() {
+      const s = _state, id = s.identity, lock = s.identityLocked;
+      return `
+        <div class="afem-pcs-step-head">
+          <span class="afem-pcs-step-num">Étape 1<small> / 3</small></span>
+          <h2 class="afem-pcs-step-h">Présente-toi en 30 secondes</h2>
+          <p class="afem-pcs-step-sub">Pour que nos conseillers puissent te recontacter avec les bons conseils.</p>
+        </div>
+        ${renderErrToast()}
+        <div class="afem-pcs-form-grid">
+          <div class="afem-pcs-field">
+            <label for="afem-id-prenom">Prénom *</label>
+            <input id="afem-id-prenom" type="text" data-id-field="prenom" value="${esc(id.prenom)}" placeholder="Marie" autocomplete="given-name" maxlength="80" ${lock.prenom ? 'readonly' : ''}>
+          </div>
+          <div class="afem-pcs-field">
+            <label for="afem-id-nom">Nom *</label>
+            <input id="afem-id-nom" type="text" data-id-field="nom" value="${esc(id.nom)}" placeholder="Dupont" autocomplete="family-name" maxlength="80" ${lock.nom ? 'readonly' : ''}>
+          </div>
+          <div class="afem-pcs-field afem-pcs-field-wide">
+            <label for="afem-id-email">Email *</label>
+            <input id="afem-id-email" type="email" data-id-field="email" value="${esc(id.email)}" placeholder="marie.dupont@email.fr" autocomplete="email" maxlength="200" ${lock.email ? 'readonly' : ''}>
+          </div>
+          <div class="afem-pcs-field afem-pcs-field-wide">
+            <label for="afem-id-tel">Téléphone <span class="afem-pcs-field-hint">(pour qu'on te rappelle)</span></label>
+            <input id="afem-id-tel" type="tel" data-id-field="telephone" value="${esc(id.telephone)}" placeholder="06 12 34 56 78" autocomplete="tel" maxlength="30">
+          </div>
+        </div>
+        <div class="afem-pcs-nav">
+          <span class="afem-pcs-nav-info">Champs obligatoires marqués *</span>
+          <button type="button" class="afem-pcs-btn afem-pcs-btn-primary" id="afem-pcs-id-next">
+            Continuer
+            <span class="afem-pcs-btn-arrow">→</span>
+          </button>
+        </div>
+      `;
+    }
+
+    // ─── ÉTAPE 1 : Q1 PROPOSITIONS (obligatoire — pas de raccourci "non") ─
+    function renderStepQ1() {
+      const s = _state;
+      const showChecklist = s.q1_proposition === 'oui';
+      const showValidate = showChecklist && s.q1_formations.length > 0;
+
+      let validateHtml = '';
+      if (showValidate) {
+        const pills = [...s.q1_formations, 'pas-encore'].map((val) => {
+          const isPasEncore = val === 'pas-encore';
+          const label = isPasEncore
+            ? "Pas encore décidé / j'attends d'autres propositions"
+            : esc(val);
+          const selected = s.q1_va_valider === val;
+          let cls = 'afem-pcs-pill';
+          if (selected) cls += isPasEncore ? ' selected-neutral' : ' selected';
+          return `<button type="button" class="${cls}" data-validate-val="${esc(val)}"><span class="afem-pcs-pill-check">${selected ? '✓' : ''}</span>${label}</button>`;
+        }).join('');
+        validateHtml = `
+          <div class="afem-pcs-subq">
+            <h3 class="afem-pcs-subq-title">Laquelle vas-tu valider définitivement ?</h3>
+            <div class="afem-pcs-pills">${pills}</div>
+          </div>
+        `;
+      }
+
+      let actionBtn = '';
+      if (s.q1_proposition === 'non') {
+        actionBtn = `<button type="button" class="afem-pcs-btn afem-pcs-btn-primary" id="afem-pcs-q1-next">Continuer<span class="afem-pcs-btn-arrow">→</span></button>`;
+      } else if (showValidate && s.q1_va_valider && s.q1_va_valider !== 'pas-encore') {
+        actionBtn = `<button type="button" class="afem-pcs-btn afem-pcs-btn-primary" id="afem-pcs-validate-early"${s.submitting ? ' disabled' : ''}>${s.submitting ? '<span class="afem-pcs-spin"></span> Envoi…' : 'Valider mes résultats'}<span class="afem-pcs-btn-arrow">→</span></button>`;
+      } else if (showValidate && s.q1_va_valider === 'pas-encore') {
+        actionBtn = `<button type="button" class="afem-pcs-btn afem-pcs-btn-primary" id="afem-pcs-q1-next">Continuer<span class="afem-pcs-btn-arrow">→</span></button>`;
+      }
+
+      return `
+        <div class="afem-pcs-step-head">
+          <span class="afem-pcs-step-num">Étape 2<small> / 3</small></span>
+          <h2 class="afem-pcs-step-h">Tes propositions d'admission</h2>
+          <p class="afem-pcs-step-sub">Réponse obligatoire. Sois honnête : ça nous aide à mieux te conseiller.</p>
+        </div>
+        ${renderErrToast()}
+
+        <div class="afem-pcs-q-block">
+          <h3 class="afem-pcs-q-title">As-tu reçu au moins une proposition d'admission sur Parcoursup ? *</h3>
+          ${radioGroup('q1_proposition', s.q1_proposition)}
+        </div>
+
+        ${showChecklist ? `
+          <div class="afem-pcs-subq afem-pcs-subq-reveal">
+            <h3 class="afem-pcs-subq-title">Pour quelle(s) formation(s) ?</h3>
+            <p class="afem-pcs-subq-sub">Sélectionne jusqu'à <strong>3 formations</strong> parmi tes propositions actuelles.</p>
+            ${facListQ1(s.q1_formations)}
+            ${validateHtml}
+          </div>
+        ` : ''}
+
+        <div class="afem-pcs-nav">
+          <button type="button" class="afem-pcs-btn afem-pcs-btn-outline" id="afem-pcs-q1-back">← Retour</button>
+          ${actionBtn || '<span class="afem-pcs-nav-info">Réponds à la question pour continuer</span>'}
+        </div>
+      `;
+    }
+
+    function radioGroup(key, value) {
+      return `
+        <div class="afem-pcs-yes-no">
+          <button type="button" class="afem-pcs-yn afem-pcs-yn-yes${value === 'oui' ? ' selected' : ''}" data-radio-key="${key}" data-radio-val="oui">
+            <span class="afem-pcs-yn-icon">✓</span>
+            <span class="afem-pcs-yn-label">Oui</span>
+          </button>
+          <button type="button" class="afem-pcs-yn afem-pcs-yn-no${value === 'non' ? ' selected' : ''}" data-radio-key="${key}" data-radio-val="non">
+            <span class="afem-pcs-yn-icon">✕</span>
+            <span class="afem-pcs-yn-label">Non, aucune pour l'instant</span>
+          </button>
+        </div>
+      `;
+    }
+
+    function facListQ1(selected) {
+      const items = selected.map((val, i) => `
+        <div class="afem-pcs-q1-chip">
+          <span class="afem-pcs-q1-chip-num">${i + 1}</span>
+          <span class="afem-pcs-q1-chip-label">${esc(val)}</span>
+          <button type="button" class="afem-pcs-q1-chip-del" data-q1-remove="${i}" aria-label="Retirer">×</button>
+        </div>
+      `).join('');
+      const canAdd = selected.length < 3;
+      return `
+        <div class="afem-pcs-q1-wrap">
+          <div class="afem-pcs-q1-meta">
+            <span><strong>${selected.length}</strong> / 3 sélectionnée${selected.length > 1 ? 's' : ''}</span>
+          </div>
+          ${selected.length > 0 ? `<div class="afem-pcs-q1-list">${items}</div>` : ''}
+          ${canAdd ? renderFacPickerTrigger('q1') : '<div class="afem-pcs-q1-full">Tu as atteint 3 formations. Retires-en une pour en changer.</div>'}
+        </div>
+      `;
+    }
+
+    function renderFacPickerTrigger(pickerKey) {
+      const isQ1 = pickerKey === 'q1';
+      const open = (isQ1 && _state.pickerOpen === 'q1')
+        || (!isQ1 && typeof _state.pickerOpen === 'object' && _state.pickerOpen?.q3 === pickerKey.q3);
+      return `
+        <button type="button" class="afem-pcs-fac-trigger${open ? ' open' : ''}" data-fac-trigger='${JSON.stringify(pickerKey)}'>
+          <span class="afem-pcs-fac-trigger-ico">🎓</span>
+          <span class="afem-pcs-fac-trigger-text">Rechercher une formation…</span>
+          <span class="afem-pcs-fac-trigger-chev">${open ? '▴' : '▾'}</span>
+        </button>
+        ${open ? renderFacPicker(pickerKey, _state.pickerQuery, isQ1 ? _state.q1_formations : []) : ''}
+      `;
+    }
+
+    function renderFacPicker(pickerKey, currentQuery, alreadySelected) {
+      const filtered = filterFacs(currentQuery);
+      const items = filtered.slice(0, 300).map((f) => {
+        const label = facLabel(f);
+        const taken = alreadySelected.includes(label);
+        return `
+          <button type="button" class="afem-pcs-fac-row${taken ? ' taken' : ''}" data-fac-pick='${JSON.stringify({ key: pickerKey, label })}' ${taken ? 'disabled' : ''}>
+            <span class="afem-pcs-fac-row-type afem-pcs-fac-row-type-${(f.type || '').toLowerCase()}">${f.type}</span>
+            <span class="afem-pcs-fac-row-name">${esc(f.u)}</span>
+            ${f.c && f.c.length ? `<span class="afem-pcs-fac-row-city">${esc(f.c.join(', '))}</span>` : ''}
+          </button>
+        `;
+      }).join('');
+      return `
+        <div class="afem-pcs-fac-picker">
+          <div class="afem-pcs-fac-search">
+            <span class="afem-pcs-fac-search-ico">🔍</span>
+            <input type="text" class="afem-pcs-fac-input" placeholder="Tape l'université ou la ville (« bordeaux », « pass lyon »)…" autocomplete="off" value="${esc(currentQuery)}">
+          </div>
+          <div class="afem-pcs-fac-list">${items || '<div class="afem-pcs-fac-empty">Aucune formation trouvée.</div>'}</div>
+          <div class="afem-pcs-fac-footer">${filtered.length} formation${filtered.length > 1 ? 's' : ''} parmi ${FACS_FRANCE.length}</div>
+        </div>
+      `;
+    }
+
+    // ─── ÉTAPE 2 : Q3 VŒUX EN ATTENTE ────────────────────────────────────
+    function renderStepQ3() {
+      const s = _state;
+      const visible = s.q3_visible_count;
+      const canAdd = visible < 10;
+
+      const cards = s.q3_voeux.slice(0, visible).map((v, idx) => {
+        const fac = findFacByLabel(v.formation);
+        const opts = fac && fac.o.length ? `
+          <div class="afem-pcs-voeu-row">
+            <label class="afem-pcs-voeu-label">${fac.type === 'PASS' ? 'Mineure PASS' : 'Majeure / parcours'}</label>
+            <select class="afem-pcs-voeu-input" data-voeu-idx="${idx}" data-voeu-field="mineure">
+              <option value="">— Sélectionner —</option>
+              ${fac.o.map((o) => `<option value="${esc(o)}"${v.mineure === o ? ' selected' : ''}>${esc(o)}</option>`).join('')}
+            </select>
+          </div>` : '';
+
+        return `
+          <div class="afem-pcs-voeu-card">
+            <div class="afem-pcs-voeu-head">
+              <div class="afem-pcs-voeu-head-left">
+                <span class="afem-pcs-voeu-badge">Vœu</span>
+                <span class="afem-pcs-voeu-num">${idx + 1}</span>
+              </div>
+              <button class="afem-pcs-voeu-del" data-voeu-idx="${idx}" title="Supprimer ce vœu" aria-label="Supprimer">×</button>
+            </div>
+            <div class="afem-pcs-voeu-body">
+              <div class="afem-pcs-voeu-row">
+                <label class="afem-pcs-voeu-label">Formation</label>
+                ${v.formation
+                  ? `<div class="afem-pcs-voeu-chosen">
+                      <span class="afem-pcs-voeu-chosen-label">${esc(v.formation)}</span>
+                      <button type="button" class="afem-pcs-voeu-change" data-voeu-fac-change="${idx}">Changer</button>
+                    </div>`
+                  : renderFacPickerTrigger({ q3: idx })}
+              </div>
+              ${opts}
+              <div class="afem-pcs-voeu-grid">
+                <div class="afem-pcs-voeu-row">
+                  <label class="afem-pcs-voeu-label">Ton rang</label>
+                  <input type="text" inputmode="numeric" pattern="[0-9]*" class="afem-pcs-voeu-input" data-voeu-idx="${idx}" data-voeu-field="rang" placeholder="ex : 321" autocomplete="off" value="${esc(v.rang)}">
+                </div>
+                <div class="afem-pcs-voeu-row">
+                  <label class="afem-pcs-voeu-label">Rang du dernier admis (2025)</label>
+                  <input type="text" inputmode="numeric" pattern="[0-9]*" class="afem-pcs-voeu-input" data-voeu-idx="${idx}" data-voeu-field="rang_dernier_admis" placeholder="ex : 1 135" autocomplete="off" value="${esc(v.rang_dernier_admis)}">
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      const submitLabel = s.submitting
+        ? '<span class="afem-pcs-spin"></span> Envoi…'
+        : 'Envoyer mes résultats';
+
+      return `
+        <div class="afem-pcs-step-head">
+          <span class="afem-pcs-step-num">Étape 3<small> / 3</small></span>
+          <h2 class="afem-pcs-step-h">Tes vœux en attente</h2>
+          <p class="afem-pcs-step-sub">Renseigne tes vœux les plus prometteurs avec ton rang et celui du dernier admis l'an passé. Ces deux chiffres figurent sur ta fiche Parcoursup.</p>
+        </div>
+        ${renderErrToast()}
+        <div class="afem-pcs-callout afem-pcs-callout-info">
+          <strong>Astuce conseiller :</strong> commence par tes 3 vœux préférés. Tu pourras en ajouter jusqu'à 10 si nécessaire.
+        </div>
+        <div class="afem-pcs-voeu-list">${cards}</div>
+        ${canAdd ? `<button class="afem-pcs-add-voeu" id="afem-pcs-add-voeu"><span class="afem-pcs-add-voeu-plus">+</span> Ajouter un vœu</button>` : ''}
+        <div class="afem-pcs-nav">
+          <button type="button" class="afem-pcs-btn afem-pcs-btn-outline" id="afem-pcs-q3-back">← Retour</button>
+          <button type="button" class="afem-pcs-btn afem-pcs-btn-primary" id="afem-pcs-submit"${s.submitting ? ' disabled' : ''}>
+            ${submitLabel}
+            <span class="afem-pcs-btn-arrow">→</span>
+          </button>
+        </div>
+      `;
+    }
+
+    // ─── ÉCRANS FINAUX ──────────────────────────────────────────────────
+    function renderConfirmation() {
+      const prenom = _state.identity.prenom || _state.subject?.first_name || 'l\'étudiant';
+      return `
+        <main class="afem-pcs-shell">
+          <div class="afem-pcs-state-card afem-pcs-state-success">
+            <div class="afem-pcs-state-icon">✓</div>
+            <h1>Merci ${esc(prenom)} !</h1>
+            <p>Tes informations sont bien arrivées. Un conseiller AFEM va analyser ta situation Parcoursup et te rappeler d'ici 48h.</p>
+            <p class="afem-pcs-state-detail">Une question urgente ? Écris-nous à <strong>${esc(CONFIG.CONTACT_EMAIL)}</strong></p>
+            <div class="afem-pcs-state-actions">
+              <a href="/blog" class="afem-pcs-btn afem-pcs-btn-outline">Lire nos guides PASS / LAS</a>
+              <a href="/facultes" class="afem-pcs-btn afem-pcs-btn-primary">Découvrir les facs</a>
+            </div>
+          </div>
+        </main>
+      `;
+    }
+
+    function renderAlreadySubmitted() {
+      const prenom = _state.subject?.first_name || '';
+      return `
+        <main class="afem-pcs-shell">
+          <div class="afem-pcs-state-card afem-pcs-state-success">
+            <div class="afem-pcs-state-icon">✓</div>
+            <h1>Tes résultats sont déjà enregistrés</h1>
+            <p>Bonjour ${esc(prenom)}, nous avons bien reçu ta situation Parcoursup. Notre équipe l'analyse.</p>
+            <p class="afem-pcs-state-detail">Besoin de modifier une réponse ? Écris-nous à <strong>${esc(CONFIG.CONTACT_EMAIL)}</strong></p>
+          </div>
+        </main>
+      `;
+    }
+
+    function renderEarly() {
+      const prenom = _state.identity.prenom || _state.subject?.first_name || 'à toi';
+      return `
+        <main class="afem-pcs-shell">
+          <div class="afem-pcs-state-card afem-pcs-state-success">
+            <div class="afem-pcs-state-icon">🎓</div>
+            <h1>Excellent choix ${esc(prenom)} !</h1>
+            <p>Ta proposition est enregistrée. Un conseiller AFEM te rappelle rapidement pour t'accompagner sur ta rentrée et préparer la suite.</p>
+            <p class="afem-pcs-state-detail">Formation retenue : <strong>${esc(_state.q1_va_valider)}</strong></p>
+            <div class="afem-pcs-state-actions">
+              <a href="/" class="afem-pcs-btn afem-pcs-btn-primary">Retour à l'accueil</a>
+            </div>
+          </div>
+        </main>
+      `;
+    }
+
+    // ════════════════════════════════════════════════════════════════════
+    // LISTENERS
+    // ════════════════════════════════════════════════════════════════════
+    function setState(patch) { Object.assign(_state, patch); render(); }
+
+    function attachListeners() {
+      // Identité
+      document.querySelectorAll('[data-id-field]').forEach((inp) => {
+        inp.addEventListener('input', () => {
+          _state.identity = { ..._state.identity, [inp.dataset.idField]: inp.value };
+          _state.validationError = null;
+        });
+      });
+      $('afem-pcs-id-next')?.addEventListener('click', () => {
+        const id = _state.identity;
+        if (!id.prenom.trim()) { setState({ validationError: 'Renseigne ton prénom.' }); return; }
+        if (!id.nom.trim()) { setState({ validationError: 'Renseigne ton nom.' }); return; }
+        if (!isEmail(id.email)) { setState({ validationError: 'Email invalide.' }); return; }
+        if (!isPhone(id.telephone)) { setState({ validationError: 'Numéro de téléphone invalide.' }); return; }
+        setState({ step: 1, validationError: null });
+      });
+
+      // Q1 radios
+      document.querySelectorAll('[data-radio-key]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const key = btn.dataset.radioKey, val = btn.dataset.radioVal;
+          const patch = { [key]: val, validationError: null };
+          if (key === 'q1_proposition' && val === 'non') { patch.q1_formations = []; patch.q1_va_valider = ''; }
+          setState(patch);
+        });
+      });
+      document.querySelectorAll('[data-validate-val]').forEach((p) => {
+        p.addEventListener('click', () => setState({ q1_va_valider: p.dataset.validateVal, validationError: null }));
+      });
+      $('afem-pcs-q1-back')?.addEventListener('click', () => setState({ step: 0, validationError: null }));
+      $('afem-pcs-q1-next')?.addEventListener('click', () => setState({ step: 2, validationError: null }));
+      $('afem-pcs-validate-early')?.addEventListener('click', () => submitForm('early'));
+
+      // Picker
+      document.querySelectorAll('[data-fac-trigger]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const key = JSON.parse(btn.dataset.facTrigger);
+          const isQ1 = key === 'q1';
+          const same = isQ1 ? _state.pickerOpen === 'q1'
+            : (typeof _state.pickerOpen === 'object' && _state.pickerOpen?.q3 === key.q3);
+          setState({ pickerOpen: same ? null : key, pickerQuery: '' });
+          if (!same) setTimeout(() => document.querySelector('.afem-pcs-fac-input')?.focus(), 60);
+        });
+      });
+      document.querySelectorAll('.afem-pcs-fac-input').forEach((input) => {
+        input.addEventListener('input', () => {
+          _state.pickerQuery = input.value;
+          const pos = input.selectionStart;
+          render();
+          const ni = document.querySelector('.afem-pcs-fac-input');
+          if (ni) { ni.focus(); ni.setSelectionRange(pos, pos); }
+        });
+      });
+      document.querySelectorAll('[data-fac-pick]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const { key, label } = JSON.parse(btn.dataset.facPick);
+          if (key === 'q1') {
+            const cur = [..._state.q1_formations];
+            if (cur.length >= 3 || cur.includes(label)) { setState({ pickerOpen: null, pickerQuery: '' }); return; }
+            cur.push(label);
+            setState({ q1_formations: cur, pickerOpen: null, pickerQuery: '', validationError: null });
+          } else if (typeof key.q3 === 'number') {
+            const voeux = _state.q3_voeux.map((v, i) => i === key.q3 ? { ...v, formation: label, mineure: '' } : v);
+            setState({ q3_voeux: voeux, pickerOpen: null, pickerQuery: '', validationError: null });
+          }
+        });
+      });
+      document.querySelectorAll('[data-q1-remove]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const idx = +btn.dataset.q1Remove;
+          const cur = [..._state.q1_formations];
+          const removed = cur.splice(idx, 1)[0];
+          const patch = { q1_formations: cur, validationError: null };
+          if (_state.q1_va_valider === removed) patch.q1_va_valider = '';
+          setState(patch);
+        });
+      });
+
+      // Q3 vœux
+      document.querySelectorAll('[data-voeu-fac-change]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const idx = +btn.dataset.voeuFacChange;
+          const voeux = _state.q3_voeux.map((v, i) => i === idx ? { ...v, formation: '', mineure: '' } : v);
+          setState({ q3_voeux: voeux, pickerOpen: { q3: idx }, pickerQuery: '' });
+        });
+      });
+      document.querySelectorAll('[data-voeu-idx]').forEach((el) => {
+        const idx = +el.dataset.voeuIdx, field = el.dataset.voeuField;
+        if (el.tagName === 'SELECT') {
+          el.addEventListener('change', () => {
+            _state.q3_voeux = _state.q3_voeux.map((v, i) => i === idx ? { ...v, [field]: el.value } : v);
+            _state.validationError = null;
+          });
+        } else if (el.tagName === 'INPUT') {
+          el.addEventListener('input', () => {
+            _state.q3_voeux = _state.q3_voeux.map((v, i) => i === idx ? { ...v, [field]: el.value } : v);
+            _state.validationError = null;
+          });
+        }
+      });
+      document.querySelectorAll('.afem-pcs-voeu-del').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const idx = +btn.dataset.voeuIdx;
+          const voeux = _state.q3_voeux.map((v, i) => i === idx ? { formation: '', mineure: '', rang: '', rang_dernier_admis: '' } : v);
+          const nonEmpty = voeux.filter((v) => v.formation || v.rang);
+          const empty = voeux.filter((v) => !v.formation && !v.rang);
+          setState({ q3_voeux: [...nonEmpty, ...empty], validationError: null });
+        });
+      });
+      $('afem-pcs-add-voeu')?.addEventListener('click', () => {
+        if (_state.q3_visible_count < 10) setState({ q3_visible_count: _state.q3_visible_count + 1 });
+      });
+      $('afem-pcs-q3-back')?.addEventListener('click', () => setState({ step: 1, validationError: null }));
+      $('afem-pcs-submit')?.addEventListener('click', () => submitForm('full'));
+    }
+
+    // ════════════════════════════════════════════════════════════════════
+    // SUBMIT
+    // ════════════════════════════════════════════════════════════════════
+    async function submitForm(mode) {
+      const s = _state;
+      if (mode === 'full' && s.q1_proposition !== 'non') {
+        const filled = s.q3_voeux.filter((v) => v.formation && v.rang);
+        if (filled.length === 0) {
+          setState({ validationError: 'Renseigne au moins un vœu en attente avec ton rang.' });
+          return;
+        }
+      }
+      _state.submitting = true; render();
+
+      const voeux = s.q3_voeux
+        .filter((v) => v.formation && v.rang !== '')
+        .map((v) => ({
+          formation: v.formation,
+          mineure: v.mineure || '',
+          rang: Number(v.rang) || null,
+          rang_dernier_admis: Number(v.rang_dernier_admis) || null,
+        }));
+
+      const payload = {
+        subject_id: s.subject?.id || null,
+        prenom: s.identity.prenom.trim(),
+        nom: s.identity.nom.trim(),
+        email: s.identity.email.trim(),
+        telephone: s.identity.telephone.trim() || null,
+        utm: s.utm,
+        data: {
+          q1: {
+            proposition: s.q1_proposition,
+            formations: s.q1_formations,
+            va_valider: s.q1_va_valider || null,
+          },
+          q3: { voeux },
+          submission_mode: mode === 'early' ? 'early' : 'full',
+          submitted_at: new Date().toISOString(),
+        },
+      };
+
+      try {
+        const res = await fetch(CONFIG.API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.error || `HTTP ${res.status}`);
+        }
+        setState({ step: mode === 'early' ? 'early' : 3, submitting: false });
+        if (typeof window !== 'undefined' && typeof window.scrollTo === 'function') {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      } catch (e) {
+        setState({ submitting: false, validationError: 'Erreur réseau : ' + e.message });
+      }
+    }
+
+    // ════════════════════════════════════════════════════════════════════
+    // INIT
+    // ════════════════════════════════════════════════════════════════════
+    async function init() {
+      const params = new URLSearchParams(location.search);
+      const id = params.get('id');
+
+      // UTM tracking (passe directement à la base si présent dans l'URL)
+      _state.utm = {
+        source: params.get('utm_source'),
+        medium: params.get('utm_medium'),
+        campaign: params.get('utm_campaign'),
+      };
+
+      // Mode 1 — endpoint de lookup configuré
+      if (CONFIG.API_GET_LINK && id) {
+        try {
+          const res = await fetch(CONFIG.API_GET_LINK + encodeURIComponent(id));
+          const json = await res.json();
+          if (!res.ok) throw new Error(json.error || 'Lien invalide');
+          _state.subject = json;
+          _state.identity = {
+            prenom: json.first_name || '',
+            nom: json.last_name || '',
+            email: json.email || '',
+            telephone: json.phone || '',
+          };
+          _state.identityLocked = {
+            prenom: !!json.first_name,
+            nom: !!json.last_name,
+            email: !!json.email,
+          };
+          _state.loading = false;
+        } catch (e) {
+          _state.loading = false; _state.error = e.message;
+        }
+      } else {
+        // Mode 2 — query params (mode Diploma-compatible)
+        const prenom = params.get('prenom') || '';
+        const nom = params.get('nom') || '';
+        const email = params.get('email') || '';
+        _state.subject = { id, first_name: prenom, last_name: nom, email, submitted: false };
+        _state.identity = { prenom, nom, email, telephone: '' };
+        // Pré-rempli mais éditable (l'élève peut corriger)
+        _state.identityLocked = { prenom: false, nom: false, email: false };
+        _state.loading = false;
+      }
+      render();
+    }
+
+    init();
+  </script>
+</body>
+</html>
