@@ -12,7 +12,7 @@
 //
 // Si Supabase n'est pas configuré, on envoie uniquement au CRM.
 
-const CRM_URL_DEFAULT = 'https://crm.diplomasante.com/api/webhooks/afem-form';
+const CRM_URL_DEFAULT = 'https://hub.diploma-sante.fr/api/webhooks/afem-form';
 
 // Mapping classe interne AFEM → libellés reconnus par le CRM
 const CLASSE_MAP = {
