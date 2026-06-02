@@ -67,64 +67,103 @@
   margin-right: 6px;
 }
 
-/* ─── Hero ─────────────────────────────────────────────────────────────── */
-.afem-pcs-hero {
-  text-align: center;
-  margin-bottom: 40px;
+/* ─── Layout 2 colonnes (timeline verticale + contenu) ─────────────────── */
+.afem-pcs-shell-split {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 40px;
+  align-items: start;
+  max-width: 1060px;
 }
+
+@media (max-width: 880px) {
+  .afem-pcs-shell-split {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}
+
+/* Rail latéral gauche */
+.afem-pcs-rail {
+  position: sticky;
+  top: 110px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+@media (max-width: 880px) {
+  .afem-pcs-rail { position: static; gap: 18px; }
+}
+
+.afem-pcs-rail-top { display: flex; flex-direction: column; }
 
 .afem-pcs-eyebrow {
   display: inline-block;
+  align-self: flex-start;
   padding: 6px 14px;
   background: var(--afem-green-soft);
   color: var(--afem-green-dark);
   border-radius: 999px;
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.01em;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   margin-bottom: 16px;
 }
 
-.afem-pcs-title {
-  font-size: clamp(28px, 4.8vw, 42px);
-  line-height: 1.15;
+.afem-pcs-rail-title {
+  font-size: clamp(24px, 3vw, 30px);
+  line-height: 1.2;
   font-weight: 800;
   color: var(--afem-text);
-  margin: 0 0 14px;
+  margin: 0 0 12px;
   letter-spacing: -0.02em;
 }
 
-.afem-pcs-subtitle {
-  font-size: 17px;
+.afem-pcs-rail-sub {
+  font-size: 15px;
   line-height: 1.55;
   color: var(--afem-text-muted);
-  max-width: 580px;
-  margin: 0 auto;
+  margin: 0;
 }
 
-/* ─── Progress ─────────────────────────────────────────────────────────── */
-.afem-pcs-progress {
-  margin-bottom: 32px;
-}
-
-.afem-pcs-progress-track {
+.afem-pcs-rail-foot {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0;
-  max-width: 540px;
-  margin: 0 auto;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
-.afem-pcs-progress-step {
+.afem-pcs-rail-badge {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: #fff;
+  border: 1px solid var(--afem-border);
+  color: var(--afem-text-muted);
+}
+
+/* ─── Timeline verticale ───────────────────────────────────────────────── */
+.afem-pcs-timeline {
+  display: flex;
+  flex-direction: column;
+}
+
+.afem-pcs-tl-step {
+  display: flex;
+  gap: 16px;
+  min-height: 64px;
+}
+
+.afem-pcs-tl-marker {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  flex: 0 0 auto;
+  flex-shrink: 0;
 }
 
-.afem-pcs-progress-bubble {
+.afem-pcs-tl-bubble {
   width: 36px;
   height: 36px;
   border-radius: 50%;
@@ -138,42 +177,70 @@
   font-size: 15px;
   transition: all var(--afem-transition);
   box-shadow: var(--afem-shadow-sm);
+  z-index: 1;
 }
 
-.afem-pcs-progress-step.current .afem-pcs-progress-bubble {
+.afem-pcs-tl-line {
+  flex: 1 1 auto;
+  width: 2px;
+  min-height: 22px;
+  background: var(--afem-border);
+  margin: 4px 0;
+}
+
+.afem-pcs-tl-text { padding-top: 6px; }
+
+.afem-pcs-tl-label {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--afem-text-muted);
+  transition: color var(--afem-transition);
+}
+
+.afem-pcs-tl-desc {
+  font-size: 13px;
+  color: var(--afem-text-muted);
+  opacity: 0.7;
+  margin-top: 2px;
+}
+
+/* États timeline */
+.afem-pcs-tl-step.current .afem-pcs-tl-bubble {
   background: var(--afem-green);
   border-color: var(--afem-green);
   color: #fff;
-  transform: scale(1.08);
   box-shadow: 0 0 0 6px rgba(101, 189, 125, 0.15);
 }
+.afem-pcs-tl-step.current .afem-pcs-tl-label { color: var(--afem-text); }
 
-.afem-pcs-progress-step.done .afem-pcs-progress-bubble {
+.afem-pcs-tl-step.done .afem-pcs-tl-bubble {
   background: var(--afem-green-dark);
   border-color: var(--afem-green-dark);
   color: #fff;
 }
+.afem-pcs-tl-step.done .afem-pcs-tl-line { background: var(--afem-green); }
+.afem-pcs-tl-step.done .afem-pcs-tl-label { color: var(--afem-text); }
 
-.afem-pcs-progress-label {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--afem-text-muted);
-  white-space: nowrap;
+/* Timeline compacte horizontale en mobile */
+@media (max-width: 880px) {
+  .afem-pcs-timeline {
+    flex-direction: row;
+    justify-content: space-between;
+    background: #fff;
+    border: 1px solid var(--afem-border);
+    border-radius: var(--afem-radius);
+    padding: 14px 16px;
+  }
+  .afem-pcs-tl-step { flex-direction: column; align-items: center; gap: 6px; min-height: 0; text-align: center; flex: 1; }
+  .afem-pcs-tl-line { display: none; }
+  .afem-pcs-tl-text { padding-top: 0; }
+  .afem-pcs-tl-desc { display: none; }
+  .afem-pcs-tl-label { font-size: 12px; }
+  .afem-pcs-tl-bubble { width: 30px; height: 30px; font-size: 13px; }
 }
 
-.afem-pcs-progress-step.current .afem-pcs-progress-label,
-.afem-pcs-progress-step.done .afem-pcs-progress-label {
-  color: var(--afem-text);
-}
-
-.afem-pcs-progress-line {
-  flex: 1 1 0;
-  height: 2px;
-  background: var(--afem-border);
-  margin: 0 12px 18px;
-  border-radius: 2px;
-  min-width: 32px;
-}
+/* Section contenu droite */
+.afem-pcs-main { min-width: 0; }
 
 /* ─── Card ─────────────────────────────────────────────────────────────── */
 .afem-pcs-card {

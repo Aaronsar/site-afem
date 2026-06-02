@@ -259,17 +259,25 @@
       else if (s.step === 2) stepContent = renderStepQ3();
 
       app.innerHTML = `
-        <main class="afem-pcs-shell">
-          <div class="afem-pcs-hero">
-            <span class="afem-pcs-eyebrow">Calculateur AFEM — 100 % gratuit</span>
-            <h1 class="afem-pcs-title">Calcule tes chances d'admission PASS / LAS.</h1>
-            <p class="afem-pcs-subtitle">Indique tes vœux et tes rangs Parcoursup : on analyse ta situation et on te dit où tu as réellement tes chances.</p>
-          </div>
-          ${renderProgress()}
-          <div class="afem-pcs-card">
-            ${stepContent}
-          </div>
-          <p class="afem-pcs-rgpd-note">En soumettant ce formulaire, tu acceptes d'être recontacté par l'AFEM. Tes données sont stockées en France et ne sont jamais revendues.</p>
+        <main class="afem-pcs-shell afem-pcs-shell-split">
+          <aside class="afem-pcs-rail">
+            <div class="afem-pcs-rail-top">
+              <span class="afem-pcs-eyebrow">Calculateur AFEM</span>
+              <h1 class="afem-pcs-rail-title">Calcule tes chances d'admission PASS / LAS</h1>
+              <p class="afem-pcs-rail-sub">On analyse tes vœux et tes rangs Parcoursup, et on te dit où tu as vraiment tes chances.</p>
+            </div>
+            ${renderProgress()}
+            <div class="afem-pcs-rail-foot">
+              <span class="afem-pcs-rail-badge">100 % gratuit</span>
+              <span class="afem-pcs-rail-badge">Données en France</span>
+            </div>
+          </aside>
+          <section class="afem-pcs-main">
+            <div class="afem-pcs-card">
+              ${stepContent}
+            </div>
+            <p class="afem-pcs-rgpd-note">En soumettant ce formulaire, tu acceptes d'être recontacté par l'AFEM. Tes données sont stockées en France et ne sont jamais revendues.</p>
+          </section>
         </main>
       `;
       attachListeners();
@@ -278,19 +286,28 @@
     function renderProgress() {
       const s = _state;
       const steps = [
-        { k: 0, l: 'Toi' },
-        { k: 1, l: 'Propositions' },
-        { k: 2, l: 'Vœux en attente' },
+        { k: 0, l: 'Toi',              d: 'Tes coordonnées' },
+        { k: 1, l: 'Propositions',     d: 'Admissions reçues' },
+        { k: 2, l: 'Vœux en attente',  d: 'Rangs & classement' },
       ];
       const items = steps.map((st, i) => {
         const isDone = s.step > st.k;
         const isCurrent = s.step === st.k;
         const dot = isDone ? '✓' : (i + 1);
         const cls = isDone ? 'done' : isCurrent ? 'current' : '';
-        const connector = i < steps.length - 1 ? `<div class="afem-pcs-progress-line"></div>` : '';
-        return `<div class="afem-pcs-progress-step ${cls}"><div class="afem-pcs-progress-bubble">${dot}</div><div class="afem-pcs-progress-label">${st.l}</div></div>${connector}`;
+        return `
+          <div class="afem-pcs-tl-step ${cls}">
+            <div class="afem-pcs-tl-marker">
+              <div class="afem-pcs-tl-bubble">${dot}</div>
+              ${i < steps.length - 1 ? '<div class="afem-pcs-tl-line"></div>' : ''}
+            </div>
+            <div class="afem-pcs-tl-text">
+              <div class="afem-pcs-tl-label">${st.l}</div>
+              <div class="afem-pcs-tl-desc">${st.d}</div>
+            </div>
+          </div>`;
       }).join('');
-      return `<div class="afem-pcs-progress"><div class="afem-pcs-progress-track">${items}</div></div>`;
+      return `<nav class="afem-pcs-timeline">${items}</nav>`;
     }
 
     function renderErrToast() {
