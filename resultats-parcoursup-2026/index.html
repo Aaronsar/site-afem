@@ -21,6 +21,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.min.css">
   <link rel="stylesheet" href="/resultats-parcoursup-2026/form.css">
+  <script src="/js/meta-pixel.js"></script>
 </head>
 <body>
   <div class="bg-blobs">
@@ -715,6 +716,10 @@
         if (!id.classe_actuelle) { setState({ validationError: 'Indique ta classe actuelle.' }); return; }
         if (!id.departement) { setState({ validationError: 'Indique ton département.' }); return; }
         pushPartial('identite'); // capture du lead dès l'étape 1 validée
+        // Conversion Meta Pixel : le lead (coordonnées complètes) est capté ici
+        if (typeof window.fbq === 'function') {
+          try { window.fbq('track', 'Lead', { content_name: 'Simulateur Parcoursup AFEM', content_category: 'etape-1-infos' }); } catch (_) { /* noop */ }
+        }
         setState({ step: 1, validationError: null });
       });
 
@@ -733,6 +738,9 @@
       $('afem-pcs-q1-back')?.addEventListener('click', () => setState({ step: 0, validationError: null }));
       $('afem-pcs-q1-next')?.addEventListener('click', () => {
         pushPartial('propositions'); // maj du lead avec les réponses Q1
+        if (typeof window.fbq === 'function') {
+          try { window.fbq('trackCustom', 'FormStep_Propositions'); } catch (_) { /* noop */ }
+        }
         setState({ step: 2, validationError: null });
       });
       $('afem-pcs-validate-early')?.addEventListener('click', () => submitForm('early'));
@@ -905,6 +913,10 @@
         if (!res.ok) {
           const err = await res.json().catch(() => ({}));
           throw new Error(err.error || `HTTP ${res.status}`);
+        }
+        // Conversion Meta Pixel — funnel complété (distinct du Lead de l'étape 1)
+        if (typeof window.fbq === 'function') {
+          try { window.fbq('track', 'CompleteRegistration', { content_name: 'Simulateur Parcoursup AFEM', status: pron.level || 'complet' }); } catch (_) { /* noop */ }
         }
         setState({ step: mode === 'early' ? 'early' : 3, submitting: false, lastPronostic: pron });
         if (typeof window !== 'undefined' && typeof window.scrollTo === 'function') {
