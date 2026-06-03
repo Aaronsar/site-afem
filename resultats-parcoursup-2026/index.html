@@ -675,7 +675,26 @@
     // ════════════════════════════════════════════════════════════════════
     // LISTENERS
     // ════════════════════════════════════════════════════════════════════
-    function setState(patch) { Object.assign(_state, patch); render(); }
+    // Fragment d'URL par étape (cosmétique + bouton retour navigateur + tracking)
+    const STEP_HASH = { 0: 'mes-infos', 1: 'mes-propositions', 2: 'mes-voeux', 3: 'mon-resultat', early: 'mon-resultat' };
+
+    function syncUrl(step, replace) {
+      const frag = STEP_HASH[step] || 'mes-infos';
+      const url = location.pathname + location.search + '#' + frag;
+      try {
+        if (replace) history.replaceState({ afemStep: step }, '', url);
+        else history.pushState({ afemStep: step }, '', url);
+      } catch (_) { /* environnements sans history API */ }
+    }
+
+    function setState(patch) {
+      const prevStep = _state.step;
+      Object.assign(_state, patch);
+      render();
+      if (Object.prototype.hasOwnProperty.call(patch, 'step') && patch.step !== prevStep) {
+        syncUrl(_state.step);
+      }
+    }
 
     function attachListeners() {
       // Identité (input + change pour <select>)
@@ -943,6 +962,23 @@
         _state.identityLocked = { prenom: false, nom: false, email: false };
         _state.loading = false;
       }
+
+      // URL : on démarre toujours à l'étape 1 (le hash est purement cosmétique
+      // pendant la session, on n'autorise pas le deep-link direct à une étape
+      // qui n'a pas de données). On pose une entrée d'historique initiale pour
+      // que le bouton retour fonctionne entre les étapes.
+      syncUrl(0, true);
+
+      // Bouton retour / avancer du navigateur → on resynchronise l'étape
+      window.addEventListener('popstate', (e) => {
+        if (_state.loading || _state.error) return;
+        const target = (e.state && typeof e.state.afemStep !== 'undefined') ? e.state.afemStep : 0;
+        // On ne restaure que des étapes du parcours (pas les écrans finaux via retour)
+        _state.step = target;
+        _state.validationError = null;
+        render();
+      });
+
       render();
     }
 
