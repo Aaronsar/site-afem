@@ -81,7 +81,13 @@ async function pickTopic(supabase) {
     warn('Tous les sujets de topics.json sont deja publies. Ajoute-en de nouveaux.');
     return null;
   }
-  // Light shuffle to avoid always taking the first one in fixed order
+  // Sujets prioritaires : publies en premier, dans l'ordre de la liste.
+  const priority = remaining.filter((t) => t.priority);
+  if (priority.length) {
+    log(`Sujet prioritaire (${priority.length} restant${priority.length > 1 ? 's' : ''}).`);
+    return priority[0];
+  }
+  // Sinon : leger aleatoire parmi les 8 premiers pour eviter un ordre fige.
   const idx = Math.floor(Math.random() * Math.min(remaining.length, 8));
   return remaining[idx];
 }

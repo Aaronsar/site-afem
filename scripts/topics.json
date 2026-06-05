@@ -1,6 +1,16 @@
 {
-  "_comment": "Liste de sujets pour la generation automatique d'articles. Le bot prend le premier sujet dont le slug n'existe pas encore dans Supabase. Categories valides: pass-las, parcoursup, prepa, orientation, methode, vie-etudiante, debouches.",
+  "_comment": "Liste de sujets pour la generation automatique d'articles. Les sujets avec \"priority\": true sont publies EN PREMIER, dans l'ordre. Ensuite le bot reprend sa selection normale. Categories valides: pass-las, parcoursup, prepa, orientation, methode, vie-etudiante, debouches.",
   "topics": [
+    { "slug": "articles/resultats-parcoursup-pass-las-comment-les-lire", "title": "Resultats Parcoursup PASS LAS : comment les lire et les comprendre", "category": "parcoursup", "focus_keyword": "resultats Parcoursup PASS LAS", "priority": true },
+    { "slug": "articles/liste-attente-pass-las-comment-ca-marche", "title": "Liste d'attente PASS LAS : comment ca marche vraiment", "category": "parcoursup", "focus_keyword": "liste attente PASS LAS", "priority": true },
+    { "slug": "articles/voeux-en-attente-medecine-que-faire", "title": "Voeux en attente en medecine : que faire et comment reagir", "category": "parcoursup", "focus_keyword": "voeux en attente medecine", "priority": true },
+    { "slug": "articles/rang-dernier-appele-pass-las-comprendre", "title": "Rang du dernier appele en PASS LAS : comprendre tes chances", "category": "parcoursup", "focus_keyword": "rang dernier appele PASS LAS", "priority": true },
+    { "slug": "articles/remontee-liste-attente-pass-las-delais", "title": "Remontee dans la liste d'attente PASS LAS : delais et chances", "category": "parcoursup", "focus_keyword": "remontee liste attente PASS LAS", "priority": true },
+    { "slug": "articles/repondre-propositions-admission-parcoursup-medecine", "title": "Repondre aux propositions d'admission Parcoursup en medecine", "category": "parcoursup", "focus_keyword": "propositions admission Parcoursup medecine", "priority": true },
+    { "slug": "articles/desistements-pass-las-impact-liste-attente", "title": "Desistements en PASS LAS : leur impact sur la liste d'attente", "category": "parcoursup", "focus_keyword": "desistements PASS LAS", "priority": true },
+    { "slug": "articles/calculer-chances-etre-appele-liste-attente-medecine", "title": "Calculer ses chances d'etre appele sur liste d'attente en medecine", "category": "parcoursup", "focus_keyword": "chances liste attente medecine", "priority": true },
+    { "slug": "articles/phase-complementaire-parcoursup-medecine", "title": "Phase complementaire Parcoursup : une seconde chance pour medecine", "category": "parcoursup", "focus_keyword": "phase complementaire Parcoursup medecine", "priority": true },
+    { "slug": "articles/refus-parcoursup-medecine-les-alternatives", "title": "Refus Parcoursup en medecine : les alternatives qui marchent", "category": "orientation", "focus_keyword": "refus Parcoursup medecine", "priority": true },
     { "slug": "articles/comment-reussir-le-concours-pass", "title": "Comment reussir le concours PASS du premier coup", "category": "pass-las", "focus_keyword": "concours PASS" },
     { "slug": "articles/difference-pass-las-quelle-voie-choisir", "title": "PASS ou LAS : quelle voie choisir pour devenir medecin", "category": "pass-las", "focus_keyword": "PASS ou LAS" },
     { "slug": "articles/planning-revision-pass-semaine-type", "title": "Planning de revision PASS : la semaine type qui marche", "category": "methode", "focus_keyword": "planning revision PASS" },
