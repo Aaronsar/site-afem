@@ -237,14 +237,21 @@ async function generateScoredArticle(claude, topic) {
   let lastReport = null;
   for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
     log(`Generation : tentative ${attempt}/${MAX_ATTEMPTS}…`);
-    const userPrompt = attempt === 1
+    const userPrompt = (attempt === 1 || !lastReport)
       ? buildGenerationUserPrompt(topic)
       : buildRetryPrompt(topic, lastReport.failures);
-    const raw = await callClaudeForJson(claude, {
-      system: buildGenerationSystemPrompt(),
-      user: userPrompt,
-    });
-    const article = ensureArticleShape(raw);
+    let article;
+    try {
+      const raw = await callClaudeForJson(claude, {
+        system: buildGenerationSystemPrompt(),
+        user: userPrompt,
+      });
+      article = ensureArticleShape(raw);
+    } catch (e) {
+      // JSON malforme ou reponse invalide : on logge et on retente
+      warn(`  -> reponse invalide (${e.message}), nouvel essai…`);
+      continue;
+    }
     article.focus_keyword = topic.focus_keyword;
     const report = failuresHumanReadable(article);
     log(`  -> SEO ${report.seo} / GEO ${report.geo} / mots ${report.totalWords}`);
@@ -254,6 +261,9 @@ async function generateScoredArticle(claude, topic) {
       return { article, report, attempt, ok: true };
     }
     log('  -> seuil 80/80 non atteint, manques :', report.failures.slice(0, 6).join(' | '));
+  }
+  if (!lastArticle) {
+    return { article: null, report: { seo: 0, geo: 0, failures: ['generation JSON invalide sur toutes les tentatives'] }, attempt: MAX_ATTEMPTS, ok: false };
   }
   return { article: lastArticle, report: lastReport, attempt: MAX_ATTEMPTS, ok: false };
 }
@@ -324,6 +334,10 @@ async function main() {
   // 1+2+3+4 : generation avec score gating
   const gen = await generateScoredArticle(claude, topic);
   if (!gen.ok) {
+    if (!gen.article) {
+      err(`Generation impossible (JSON invalide sur ${MAX_ATTEMPTS} tentatives) pour ${topic.slug}. Rien sauvegarde, le sujet sera repris au prochain run.`);
+      process.exit(1);
+    }
     warn(`Score 80/80 non atteint apres ${MAX_ATTEMPTS} tentatives. Sauvegarde en brouillon.`);
     await saveToSupabase(supabase, topic, gen.article, { seo: gen.report.seo, geo: gen.report.geo }, false);
     log('Brouillon sauvegarde (visible=false). A revoir manuellement dans /admin.');
