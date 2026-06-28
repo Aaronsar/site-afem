@@ -228,10 +228,68 @@
     return faqHtml;
   }
 
+  /* ─── CTA "Recevoir le rapport complet" (pages prepa) ─── */
+  function cityFromSlug(slug) {
+    var seg = String(slug || '').split('/').pop() || '';
+    return seg.split('-').map(function (w) {
+      return w ? w.charAt(0).toUpperCase() + w.slice(1) : w;
+    }).join('-');
+  }
+
+  function prepaCtaHtml(city, variant) {
+    var label = 'Recevoir le rapport complet des prépas de ' + esc(city);
+    var wrapCls = 'afem-prepa-cta' + (variant === 'hero' ? ' afem-prepa-cta-hero' : '');
+    var kicker = variant === 'hero'
+      ? '<p class="afem-prepa-cta-kicker">Comparatif complet · tarifs · avis · 100 % gratuit</p>'
+      : '<p class="afem-prepa-cta-kicker">Gratuit, sans engagement</p>';
+    return '<div class="' + wrapCls + '">'
+      + kicker
+      + '<button type="button" class="btn btn-primary btn-lg afem-prepa-cta-btn" data-prepa-cta>'
+      + '\u{1F4C4} ' + label + '</button>'
+      + '</div>';
+  }
+
+  function initPrepaLeadModal(city) {
+    var modal = document.getElementById('prepa-lead-modal');
+    if (!modal || modal.dataset.bound) return;
+    modal.dataset.bound = '1';
+    var titleEl = document.getElementById('prepa-lead-title');
+    if (titleEl) titleEl.textContent = 'Reçois le rapport complet des prépas de ' + city;
+    var hsLoaded = false;
+    function openModal() {
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      if (!hsLoaded) {
+        hsLoaded = true;
+        (function createHs() {
+          if (window.hbspt && window.hbspt.forms) {
+            window.hbspt.forms.create({
+              portalId: '26711031',
+              formId: '89c3a74e-207c-4234-9e69-d2f26321577c',
+              region: 'eu1',
+              target: '#prepa-hubspot-form'
+            });
+          } else { setTimeout(createHs, 300); }
+        })();
+      }
+      if (window.fbq) { try { window.fbq('trackCustom', 'PrepaReportCTA', { ville: city }); } catch (e) {} }
+    }
+    function closeModal() { modal.classList.remove('active'); document.body.style.overflow = ''; }
+    document.addEventListener('click', function (e) {
+      var trigger = e.target.closest ? e.target.closest('[data-prepa-cta]') : null;
+      if (trigger) { e.preventDefault(); openModal(); }
+    });
+    modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
+    var closeBtn = modal.querySelector('.modal-close');
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+  }
+
   function renderPrepa(page) {
+    var city = cityFromSlug(page.page_slug || path);
     var html = '<section class="page-header"><div class="container">';
     html += '<h1>' + esc(page.title || '') + '</h1>';
     if (page.subtitle) html += '<p class="fac-subtitle">' + esc(page.subtitle) + '</p>';
+    html += prepaCtaHtml(city, 'hero');
     html += '</div></section>';
 
     if (page.sections && page.sections.length) {
@@ -242,6 +300,9 @@
         html += '</div></section>';
       });
     }
+
+    // CTA apres les sections de contenu
+    html += '<section class="fac-section"><div class="container">' + prepaCtaHtml(city, 'mid') + '</div></section>';
 
     // Load prepas
     apiGet('prepas', 'page_slug=eq.' + encodeURIComponent(path) + '&order=sort_order')
@@ -272,6 +333,8 @@
           if (p.price) tableHtml += '<span class="prepa-tarif">' + esc(p.price) + '</span>';
           tableHtml += '</div>';
         });
+        // CTA juste apres le detail des prepas
+        tableHtml += prepaCtaHtml(city, 'mid');
         tableHtml += '</div></section>';
 
         document.getElementById('dynamic-content').insertAdjacentHTML('beforeend', tableHtml);
@@ -289,7 +352,11 @@
       html += '</div></section>';
     }
 
+    // CTA final
+    html += '<section class="fac-section"><div class="container">' + prepaCtaHtml(city, 'mid') + '</div></section>';
+
     document.getElementById('dynamic-content').innerHTML = html;
+    initPrepaLeadModal(city);
   }
 
   function renderFaculte(page) {
