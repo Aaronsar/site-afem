@@ -82,6 +82,7 @@
       loading: true, error: null, submitting: false, submitted: false,
       identity: { firstname: '', lastname: '', email: '', phone: '', departement: '', classe_actuelle: '' },
       hubspot_contact_id: null, greeting: '', utm_campaign: 'last-chance-medecine',
+      commence_pass_las: null,
       prepa_prevue: null, prepa_choix: null, prepa_choix_libre: '',
       prepa_non_raison: null, prepa_non_raison_libre: '',
       validationError: null,
@@ -114,9 +115,12 @@
       }
       if (state.submitted) {
         var pre = state.greeting || state.identity.firstname || '';
+        var msg = state.commence_pass_las === 'non'
+          ? 'Merci pour ta participation\u202F! On te souhaite une belle réussite dans la voie que tu as choisie.'
+          : 'C\'est noté. Un conseiller AFEM peut te recontacter si besoin pour t\'aider dans ton choix de prépa.';
         app.innerHTML = '<div class="rq-card"><div class="rq-state"><div class="rq-state-icon">\u2713</div>'
           + '<h2>Merci ' + esc(pre) + '\u202F!</h2>'
-          + '<p>C\'est noté. Un conseiller AFEM peut te recontacter si besoin pour t\'aider dans ton choix de prépa.</p></div></div>';
+          + '<p>' + msg + '</p></div></div>';
         return;
       }
 
@@ -130,31 +134,44 @@
 
       if (state.validationError) html += '<div class="rq-error">' + esc(state.validationError) + '</div>';
 
-      // Q1
-      html += '<div class="rq-q"><h3 class="rq-q-title">Prévois-tu de prendre une prépa médecine (PASS/LAS) cette année\u202F?</h3>'
+      // Q0 — entrée en PASS/LAS à la rentrée ?
+      html += '<div class="rq-q"><h3 class="rq-q-title">Vas-tu commencer une année de PASS / LAS à la rentrée de septembre\u202F?</h3>'
         + '<div class="rq-yesno">'
-        + optBtn('q1', 'oui', 'Oui', state.prepa_prevue === 'oui')
-        + optBtn('q1', 'non', 'Non', state.prepa_prevue === 'non')
-        + '</div>';
+        + optBtn('q0', 'oui', 'Oui', state.commence_pass_las === 'oui')
+        + optBtn('q0', 'non', 'Non', state.commence_pass_las === 'non')
+        + '</div></div>';
 
-      // Q2a / Q2b
-      if (state.prepa_prevue === 'oui') {
-        html += '<div class="rq-sub-q"><h3 class="rq-q-title">Laquelle\u202F?</h3><div class="rq-options">';
-        CHOIX.forEach(function (c) { html += optBtn('q2a', c.v, c.l, state.prepa_choix === c.v); });
-        html += '</div>';
-        if (state.prepa_choix === 'autre') html += '<input type="text" class="rq-text-input" id="rq-choix-libre" placeholder="Précise laquelle\u2026" maxlength="200" value="' + esc(state.prepa_choix_libre) + '">';
-        html += '</div>';
-      } else if (state.prepa_prevue === 'non') {
-        html += '<div class="rq-sub-q"><h3 class="rq-q-title">Pourquoi\u202F?</h3><div class="rq-options">';
-        RAISON.forEach(function (c) { html += optBtn('q2b', c.v, c.l, state.prepa_non_raison === c.v); });
-        html += '</div>';
-        if (state.prepa_non_raison === 'autre') html += '<input type="text" class="rq-text-input" id="rq-raison-libre" placeholder="Précise\u2026" maxlength="300" value="' + esc(state.prepa_non_raison_libre) + '">';
-        html += '</div>';
+      // Suite uniquement si OUI
+      if (state.commence_pass_las === 'oui') {
+        // Q1
+        html += '<div class="rq-q"><h3 class="rq-q-title">Prévois-tu de prendre une prépa médecine (PASS/LAS) cette année\u202F?</h3>'
+          + '<div class="rq-yesno">'
+          + optBtn('q1', 'oui', 'Oui', state.prepa_prevue === 'oui')
+          + optBtn('q1', 'non', 'Non', state.prepa_prevue === 'non')
+          + '</div>';
+
+        // Q2a / Q2b
+        if (state.prepa_prevue === 'oui') {
+          html += '<div class="rq-sub-q"><h3 class="rq-q-title">Laquelle\u202F?</h3><div class="rq-options">';
+          CHOIX.forEach(function (c) { html += optBtn('q2a', c.v, c.l, state.prepa_choix === c.v); });
+          html += '</div>';
+          if (state.prepa_choix === 'autre') html += '<input type="text" class="rq-text-input" id="rq-choix-libre" placeholder="Précise laquelle\u2026" maxlength="200" value="' + esc(state.prepa_choix_libre) + '">';
+          html += '</div>';
+        } else if (state.prepa_prevue === 'non') {
+          html += '<div class="rq-sub-q"><h3 class="rq-q-title">Pourquoi\u202F?</h3><div class="rq-options">';
+          RAISON.forEach(function (c) { html += optBtn('q2b', c.v, c.l, state.prepa_non_raison === c.v); });
+          html += '</div>';
+          if (state.prepa_non_raison === 'autre') html += '<input type="text" class="rq-text-input" id="rq-raison-libre" placeholder="Précise\u2026" maxlength="300" value="' + esc(state.prepa_non_raison_libre) + '">';
+          html += '</div>';
+        }
+        html += '</div>'; // .rq-q
       }
-      html += '</div>'; // .rq-q
 
-      html += '<button type="button" class="rq-submit" id="rq-submit"' + (state.submitting ? ' disabled' : '') + '>'
-        + (state.submitting ? 'Envoi\u2026' : 'Envoyer') + '</button>';
+      // Bouton : visible dès qu'on a répondu à Q0
+      if (state.commence_pass_las) {
+        var btnLabel = state.submitting ? 'Envoi\u2026' : (state.commence_pass_las === 'non' ? 'Terminer' : 'Envoyer');
+        html += '<button type="button" class="rq-submit" id="rq-submit"' + (state.submitting ? ' disabled' : '') + '>' + btnLabel + '</button>';
+      }
       html += '</div>'; // .rq-card
 
       app.innerHTML = html;
@@ -170,7 +187,10 @@
       app.querySelectorAll('[data-group]').forEach(function (btn) {
         btn.addEventListener('click', function () {
           var g = btn.dataset.group, v = btn.dataset.val;
-          if (g === 'q1') {
+          if (g === 'q0') {
+            // Si on repasse à "non", on reset la suite
+            setState({ commence_pass_las: v, prepa_prevue: null, prepa_choix: null, prepa_non_raison: null, prepa_choix_libre: '', prepa_non_raison_libre: '', validationError: null });
+          } else if (g === 'q1') {
             setState({ prepa_prevue: v, prepa_choix: null, prepa_non_raison: null, prepa_choix_libre: '', prepa_non_raison_libre: '', validationError: null });
           } else if (g === 'q2a') {
             setState({ prepa_choix: v, validationError: null });
@@ -189,11 +209,16 @@
 
     function submitForm() {
       if (state.submitting) return;
-      if (!state.prepa_prevue) { setState({ validationError: 'Réponds à la première question.' }); return; }
-      if (state.prepa_prevue === 'oui' && !state.prepa_choix) { setState({ validationError: 'Indique quelle prépa.' }); return; }
-      if (state.prepa_prevue === 'non' && !state.prepa_non_raison) { setState({ validationError: 'Indique pourquoi.' }); return; }
-      if (state.prepa_prevue === 'oui' && state.prepa_choix === 'autre' && !state.prepa_choix_libre.trim()) { setState({ validationError: 'Précise la prépa.' }); return; }
-      if (state.prepa_prevue === 'non' && state.prepa_non_raison === 'autre' && !state.prepa_non_raison_libre.trim()) { setState({ validationError: 'Précise la raison.' }); return; }
+      if (!state.commence_pass_las) { setState({ validationError: 'Réponds à la première question.' }); return; }
+
+      var commence = state.commence_pass_las === 'oui';
+      if (commence) {
+        if (!state.prepa_prevue) { setState({ validationError: 'Réponds à la question sur la prépa.' }); return; }
+        if (state.prepa_prevue === 'oui' && !state.prepa_choix) { setState({ validationError: 'Indique quelle prépa.' }); return; }
+        if (state.prepa_prevue === 'non' && !state.prepa_non_raison) { setState({ validationError: 'Indique pourquoi.' }); return; }
+        if (state.prepa_prevue === 'oui' && state.prepa_choix === 'autre' && !state.prepa_choix_libre.trim()) { setState({ validationError: 'Précise la prépa.' }); return; }
+        if (state.prepa_prevue === 'non' && state.prepa_non_raison === 'autre' && !state.prepa_non_raison_libre.trim()) { setState({ validationError: 'Précise la raison.' }); return; }
+      }
 
       setState({ submitting: true, validationError: null });
 
@@ -202,18 +227,19 @@
         email: state.identity.email, phone: state.identity.phone,
         departement: state.identity.departement, classe_actuelle: state.identity.classe_actuelle,
         hubspot_contact_id: state.hubspot_contact_id, utm_campaign: state.utm_campaign,
-        prepa_prevue: state.prepa_prevue,
-        prepa_choix: state.prepa_prevue === 'oui' ? state.prepa_choix : null,
-        prepa_choix_libre: (state.prepa_prevue === 'oui' && state.prepa_choix === 'autre') ? state.prepa_choix_libre.trim() : null,
-        prepa_non_raison: state.prepa_prevue === 'non' ? state.prepa_non_raison : null,
-        prepa_non_raison_libre: (state.prepa_prevue === 'non' && state.prepa_non_raison === 'autre') ? state.prepa_non_raison_libre.trim() : null,
+        commence_pass_las: state.commence_pass_las,
+        prepa_prevue: commence ? state.prepa_prevue : null,
+        prepa_choix: (commence && state.prepa_prevue === 'oui') ? state.prepa_choix : null,
+        prepa_choix_libre: (commence && state.prepa_prevue === 'oui' && state.prepa_choix === 'autre') ? state.prepa_choix_libre.trim() : null,
+        prepa_non_raison: (commence && state.prepa_prevue === 'non') ? state.prepa_non_raison : null,
+        prepa_non_raison_libre: (commence && state.prepa_prevue === 'non' && state.prepa_non_raison === 'autre') ? state.prepa_non_raison_libre.trim() : null,
       };
 
       fetch(SUBMIT_API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
         .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
         .then(function (res) {
           if (!res.ok) throw new Error(res.j && res.j.error ? res.j.error : 'Erreur serveur');
-          if (window.fbq) { try { window.fbq('track', 'Lead', { content_name: 'Requalification prepa IDF', content_category: state.prepa_prevue }); } catch (e) {} }
+          if (window.fbq) { try { window.fbq('track', 'Lead', { content_name: 'Requalification prepa IDF', content_category: state.commence_pass_las === 'non' ? 'pas-pass-las' : (state.prepa_prevue || 'pass-las') }); } catch (e) {} }
           setState({ submitted: true, submitting: false });
         })
         .catch(function (e) {

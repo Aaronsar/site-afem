@@ -70,18 +70,24 @@ export default async function handler(req, res) {
   if (!email && !phone) { res.status(400).json({ error: 'Email or phone required' }); return; }
   if (email && !isEmail(email)) { res.status(400).json({ error: 'Email invalide' }); return; }
 
-  const prepaPrevue = body.prepa_prevue === 'oui' ? 'oui' : (body.prepa_prevue === 'non' ? 'non' : null);
-  if (!prepaPrevue) { res.status(400).json({ error: 'prepa_prevue requis (oui|non)' }); return; }
+  // Q0 : commence une annee de PASS/LAS a la rentree ?
+  const commence = body.commence_pass_las === 'oui' ? 'oui' : (body.commence_pass_las === 'non' ? 'non' : null);
+  if (!commence) { res.status(400).json({ error: 'commence_pass_las requis (oui|non)' }); return; }
 
-  let prepaChoix = null, prepaChoixLibre = null, prepaNonRaison = null, prepaNonRaisonLibre = null;
-  if (prepaPrevue === 'oui') {
-    prepaChoix = PREPA_CHOIX.includes(body.prepa_choix) ? body.prepa_choix : null;
-    if (!prepaChoix) { res.status(400).json({ error: 'prepa_choix requis' }); return; }
-    if (prepaChoix === 'autre') prepaChoixLibre = str(body.prepa_choix_libre, 200);
-  } else {
-    prepaNonRaison = PREPA_RAISON.includes(body.prepa_non_raison) ? body.prepa_non_raison : null;
-    if (!prepaNonRaison) { res.status(400).json({ error: 'prepa_non_raison requis' }); return; }
-    if (prepaNonRaison === 'autre') prepaNonRaisonLibre = str(body.prepa_non_raison_libre, 300);
+  // Si l'eleve ne commence pas de PASS/LAS, les questions prepa sont ignorees.
+  let prepaPrevue = null, prepaChoix = null, prepaChoixLibre = null, prepaNonRaison = null, prepaNonRaisonLibre = null;
+  if (commence === 'oui') {
+    prepaPrevue = body.prepa_prevue === 'oui' ? 'oui' : (body.prepa_prevue === 'non' ? 'non' : null);
+    if (!prepaPrevue) { res.status(400).json({ error: 'prepa_prevue requis (oui|non)' }); return; }
+    if (prepaPrevue === 'oui') {
+      prepaChoix = PREPA_CHOIX.includes(body.prepa_choix) ? body.prepa_choix : null;
+      if (!prepaChoix) { res.status(400).json({ error: 'prepa_choix requis' }); return; }
+      if (prepaChoix === 'autre') prepaChoixLibre = str(body.prepa_choix_libre, 200);
+    } else {
+      prepaNonRaison = PREPA_RAISON.includes(body.prepa_non_raison) ? body.prepa_non_raison : null;
+      if (!prepaNonRaison) { res.status(400).json({ error: 'prepa_non_raison requis' }); return; }
+      if (prepaNonRaison === 'autre') prepaNonRaisonLibre = str(body.prepa_non_raison_libre, 300);
+    }
   }
 
   const crmPayload = {
@@ -92,6 +98,7 @@ export default async function handler(req, res) {
     departement: str(body.departement, 12),
     classe_actuelle: str(body.classe_actuelle, 40),
     source_url: 'https://www.afem-edu.fr/form',
+    commence_pass_las: commence,
     prepa_prevue: prepaPrevue,
     prepa_choix: prepaChoix,
     prepa_choix_libre: prepaChoixLibre,
