@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Où en es-tu avec ta prépa PASS/LAS ? — AFEM</title>
+  <meta name="description" content="2 questions, 30 secondes. Dis-nous où tu en es avec ta prépa médecine PASS/LAS.">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.min.css">
+  <script src="/js/meta-pixel.js"></script>
+  <style>
+    :root{
+      --afem-green:#65bd7d; --afem-green-dark:#479143; --afem-green-soft:#e8f5ec;
+      --afem-text:#212326; --afem-muted:#5a5d63; --afem-border:rgba(0,0,0,.10);
+      --afem-radius:14px;
+    }
+    .rq-nav{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid var(--afem-border);padding:14px 20px}
+    .rq-nav img{height:34px;display:block}
+    .rq-shell{max-width:560px;margin:0 auto;padding:36px 18px 80px}
+    .rq-hero{margin-bottom:26px}
+    .rq-eyebrow{display:inline-block;background:var(--afem-green-soft);color:var(--afem-green-dark);font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:6px 12px;border-radius:999px;margin-bottom:14px}
+    .rq-h1{font-size:clamp(24px,5.6vw,32px);line-height:1.2;font-weight:800;color:var(--afem-text);margin:0 0 10px;letter-spacing:-.02em}
+    .rq-sub{font-size:16px;color:var(--afem-muted);line-height:1.5;margin:0}
+    .rq-card{background:#fff;border:1px solid var(--afem-border);border-radius:18px;box-shadow:0 12px 40px rgba(0,0,0,.06);padding:26px 22px}
+    .rq-greeting{font-size:17px;font-weight:700;color:var(--afem-text);margin:0 0 4px}
+    .rq-identity{font-size:13px;color:var(--afem-muted);margin:0 0 22px;line-height:1.5}
+    .rq-identity strong{color:var(--afem-text);font-weight:600}
+    .rq-q{margin-bottom:22px}
+    .rq-q-title{font-size:17px;font-weight:700;color:var(--afem-text);margin:0 0 14px;line-height:1.4}
+    .rq-options{display:flex;flex-direction:column;gap:10px}
+    .rq-yesno{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .rq-opt{display:flex;align-items:center;gap:11px;padding:15px 16px;border:2px solid var(--afem-border);border-radius:var(--afem-radius);background:#fff;font:inherit;font-size:15px;font-weight:600;color:var(--afem-text);cursor:pointer;text-align:left;transition:all .2s;width:100%}
+    .rq-opt:hover{border-color:var(--afem-green);background:var(--afem-green-soft)}
+    .rq-opt.selected{border-color:var(--afem-green);background:var(--afem-green);color:#fff}
+    .rq-opt-radio{width:20px;height:20px;border-radius:50%;border:2px solid var(--afem-border);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s}
+    .rq-opt.selected .rq-opt-radio{border-color:#fff}
+    .rq-opt.selected .rq-opt-radio::after{content:'';width:9px;height:9px;border-radius:50%;background:#fff}
+    .rq-sub-q{margin-top:18px;padding-top:18px;border-top:1px solid var(--afem-border);animation:rqfade .25s ease-out}
+    @keyframes rqfade{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+    .rq-text-input{width:100%;font:inherit;font-size:15px;padding:13px 15px;border:1.5px solid var(--afem-border);border-radius:var(--afem-radius);margin-top:10px;box-sizing:border-box}
+    .rq-text-input:focus{outline:none;border-color:var(--afem-green);box-shadow:0 0 0 3px rgba(101,189,125,.15)}
+    .rq-submit{width:100%;margin-top:8px;background:var(--afem-green);color:#fff;border:none;border-radius:var(--afem-radius);font:inherit;font-size:17px;font-weight:700;padding:16px;cursor:pointer;transition:all .2s;box-shadow:0 6px 20px rgba(101,189,125,.35)}
+    .rq-submit:hover:not(:disabled){background:var(--afem-green-dark)}
+    .rq-submit:disabled{opacity:.6;cursor:not-allowed}
+    .rq-error{background:#fff3ef;border-left:4px solid #d97757;color:#883517;border-radius:10px;padding:12px 14px;font-size:14px;margin-bottom:16px}
+    .rq-spinner{width:34px;height:34px;border:3px solid var(--afem-green-soft);border-top-color:var(--afem-green);border-radius:50%;animation:rqspin .8s linear infinite;margin:60px auto}
+    @keyframes rqspin{to{transform:rotate(360deg)}}
+    .rq-state{text-align:center;padding:20px}
+    .rq-state-icon{width:68px;height:68px;border-radius:50%;background:var(--afem-green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 18px;box-shadow:0 12px 32px rgba(101,189,125,.3)}
+    .rq-state-error .rq-state-icon{background:#d97757}
+    .rq-state h2{font-size:24px;font-weight:800;color:var(--afem-text);margin:0 0 10px}
+    .rq-state p{font-size:16px;color:var(--afem-muted);line-height:1.55;margin:0}
+    .rq-foot{font-size:12px;color:var(--afem-muted);text-align:center;margin-top:18px;line-height:1.5}
+  </style>
+</head>
+<body>
+  <nav class="rq-nav"><img src="/assets/logo.png" alt="AFEM"></nav>
+  <main class="rq-shell">
+    <div class="rq-hero">
+      <span class="rq-eyebrow">AFEM · 30 secondes</span>
+      <h1 class="rq-h1">Où en es-tu avec ta prépa PASS/LAS&nbsp;?</h1>
+      <p class="rq-sub">2 questions — 30 secondes. Tes coordonnées sont déjà connues, tu n'as rien à ressaisir.</p>
+    </div>
+    <div id="rq-app">
+      <div class="rq-spinner"></div>
+    </div>
+    <p class="rq-foot">AFEM — Aide aux Futurs Étudiants en Médecine. Tes données restent confidentielles.</p>
+  </main>
+
+  <script>
+  (function () {
+    'use strict';
+    var PREFILL_API = 'https://hub.diploma-sante.fr/api/forms/prefill';
+    var SUBMIT_API = '/api/submit-form';
+
+    var state = {
+      loading: true, error: null, submitting: false, submitted: false,
+      identity: { firstname: '', lastname: '', email: '', phone: '', departement: '', classe_actuelle: '' },
+      hubspot_contact_id: null, greeting: '', utm_campaign: 'last-chance-medecine',
+      prepa_prevue: null, prepa_choix: null, prepa_choix_libre: '',
+      prepa_non_raison: null, prepa_non_raison_libre: '',
+      validationError: null,
+    };
+
+    var CHOIX = [
+      { v: 'medisup', l: 'Médisup' },
+      { v: 'diploma', l: 'Diploma Santé' },
+      { v: 'antemed', l: 'AnteMed-Epsilon' },
+      { v: 'cpcm', l: 'CPCM' },
+      { v: 'autre', l: 'Autre' },
+    ];
+    var RAISON = [
+      { v: 'financier', l: 'Problème financier' },
+      { v: 'pas_le_temps', l: "Je n'ai pas encore eu le temps de me renseigner" },
+      { v: 'pas_utile', l: 'Je ne pense pas que ce soit utile' },
+      { v: 'autre', l: 'Autre' },
+    ];
+
+    var app = document.getElementById('rq-app');
+    function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+    function setState(p){ Object.assign(state, p); render(); }
+
+    function render() {
+      if (state.loading) { app.innerHTML = '<div class="rq-spinner"></div>'; return; }
+      if (state.error) {
+        app.innerHTML = '<div class="rq-card"><div class="rq-state rq-state-error"><div class="rq-state-icon">!</div><h2>Lien invalide</h2><p>'
+          + esc(state.error) + '</p></div></div>';
+        return;
+      }
+      if (state.submitted) {
+        var pre = state.greeting || state.identity.firstname || '';
+        app.innerHTML = '<div class="rq-card"><div class="rq-state"><div class="rq-state-icon">\u2713</div>'
+          + '<h2>Merci ' + esc(pre) + '\u202F!</h2>'
+          + '<p>C\'est noté. Un conseiller AFEM peut te recontacter si besoin pour t\'aider dans ton choix de prépa.</p></div></div>';
+        return;
+      }
+
+      var id = state.identity;
+      var greet = state.greeting || id.firstname || '';
+      var html = '<div class="rq-card">';
+      if (greet) html += '<p class="rq-greeting">Bonjour ' + esc(greet) + '\u202F!</p>';
+      html += '<p class="rq-identity">On utilise les infos qu\'on a déjà sur toi'
+        + (id.email ? ' (<strong>' + esc(id.email) + '</strong>)' : '')
+        + '. Rien à ressaisir.</p>';
+
+      if (state.validationError) html += '<div class="rq-error">' + esc(state.validationError) + '</div>';
+
+      // Q1
+      html += '<div class="rq-q"><h3 class="rq-q-title">Prévois-tu de prendre une prépa médecine (PASS/LAS) cette année\u202F?</h3>'
+        + '<div class="rq-yesno">'
+        + optBtn('q1', 'oui', 'Oui', state.prepa_prevue === 'oui')
+        + optBtn('q1', 'non', 'Non', state.prepa_prevue === 'non')
+        + '</div>';
+
+      // Q2a / Q2b
+      if (state.prepa_prevue === 'oui') {
+        html += '<div class="rq-sub-q"><h3 class="rq-q-title">Laquelle\u202F?</h3><div class="rq-options">';
+        CHOIX.forEach(function (c) { html += optBtn('q2a', c.v, c.l, state.prepa_choix === c.v); });
+        html += '</div>';
+        if (state.prepa_choix === 'autre') html += '<input type="text" class="rq-text-input" id="rq-choix-libre" placeholder="Précise laquelle\u2026" maxlength="200" value="' + esc(state.prepa_choix_libre) + '">';
+        html += '</div>';
+      } else if (state.prepa_prevue === 'non') {
+        html += '<div class="rq-sub-q"><h3 class="rq-q-title">Pourquoi\u202F?</h3><div class="rq-options">';
+        RAISON.forEach(function (c) { html += optBtn('q2b', c.v, c.l, state.prepa_non_raison === c.v); });
+        html += '</div>';
+        if (state.prepa_non_raison === 'autre') html += '<input type="text" class="rq-text-input" id="rq-raison-libre" placeholder="Précise\u2026" maxlength="300" value="' + esc(state.prepa_non_raison_libre) + '">';
+        html += '</div>';
+      }
+      html += '</div>'; // .rq-q
+
+      html += '<button type="button" class="rq-submit" id="rq-submit"' + (state.submitting ? ' disabled' : '') + '>'
+        + (state.submitting ? 'Envoi\u2026' : 'Envoyer') + '</button>';
+      html += '</div>'; // .rq-card
+
+      app.innerHTML = html;
+      attach();
+    }
+
+    function optBtn(group, val, label, selected) {
+      return '<button type="button" class="rq-opt' + (selected ? ' selected' : '') + '" data-group="' + group + '" data-val="' + esc(val) + '">'
+        + '<span class="rq-opt-radio"></span><span>' + esc(label) + '</span></button>';
+    }
+
+    function attach() {
+      app.querySelectorAll('[data-group]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var g = btn.dataset.group, v = btn.dataset.val;
+          if (g === 'q1') {
+            setState({ prepa_prevue: v, prepa_choix: null, prepa_non_raison: null, prepa_choix_libre: '', prepa_non_raison_libre: '', validationError: null });
+          } else if (g === 'q2a') {
+            setState({ prepa_choix: v, validationError: null });
+          } else if (g === 'q2b') {
+            setState({ prepa_non_raison: v, validationError: null });
+          }
+        });
+      });
+      var cl = document.getElementById('rq-choix-libre');
+      if (cl) cl.addEventListener('input', function () { state.prepa_choix_libre = cl.value; });
+      var rl = document.getElementById('rq-raison-libre');
+      if (rl) rl.addEventListener('input', function () { state.prepa_non_raison_libre = rl.value; });
+      var sb = document.getElementById('rq-submit');
+      if (sb) sb.addEventListener('click', submitForm);
+    }
+
+    function submitForm() {
+      if (state.submitting) return;
+      if (!state.prepa_prevue) { setState({ validationError: 'Réponds à la première question.' }); return; }
+      if (state.prepa_prevue === 'oui' && !state.prepa_choix) { setState({ validationError: 'Indique quelle prépa.' }); return; }
+      if (state.prepa_prevue === 'non' && !state.prepa_non_raison) { setState({ validationError: 'Indique pourquoi.' }); return; }
+      if (state.prepa_prevue === 'oui' && state.prepa_choix === 'autre' && !state.prepa_choix_libre.trim()) { setState({ validationError: 'Précise la prépa.' }); return; }
+      if (state.prepa_prevue === 'non' && state.prepa_non_raison === 'autre' && !state.prepa_non_raison_libre.trim()) { setState({ validationError: 'Précise la raison.' }); return; }
+
+      setState({ submitting: true, validationError: null });
+
+      var payload = {
+        firstname: state.identity.firstname, lastname: state.identity.lastname,
+        email: state.identity.email, phone: state.identity.phone,
+        departement: state.identity.departement, classe_actuelle: state.identity.classe_actuelle,
+        hubspot_contact_id: state.hubspot_contact_id, utm_campaign: state.utm_campaign,
+        prepa_prevue: state.prepa_prevue,
+        prepa_choix: state.prepa_prevue === 'oui' ? state.prepa_choix : null,
+        prepa_choix_libre: (state.prepa_prevue === 'oui' && state.prepa_choix === 'autre') ? state.prepa_choix_libre.trim() : null,
+        prepa_non_raison: state.prepa_prevue === 'non' ? state.prepa_non_raison : null,
+        prepa_non_raison_libre: (state.prepa_prevue === 'non' && state.prepa_non_raison === 'autre') ? state.prepa_non_raison_libre.trim() : null,
+      };
+
+      fetch(SUBMIT_API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
+        .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+        .then(function (res) {
+          if (!res.ok) throw new Error(res.j && res.j.error ? res.j.error : 'Erreur serveur');
+          if (window.fbq) { try { window.fbq('track', 'Lead', { content_name: 'Requalification prepa IDF', content_category: state.prepa_prevue }); } catch (e) {} }
+          setState({ submitted: true, submitting: false });
+        })
+        .catch(function (e) {
+          setState({ submitting: false, validationError: 'Une erreur est survenue : ' + e.message + '. Réessaie.' });
+        });
+    }
+
+    // ─── Préremplissage ───
+    function fillFromObject(values, greeting, contactId) {
+      state.identity = {
+        firstname: values.firstname || '', lastname: values.lastname || '',
+        email: values.email || '', phone: values.phone || '',
+        departement: values.departement || '', classe_actuelle: values.classe_actuelle || '',
+      };
+      state.greeting = greeting || values.firstname || '';
+      if (contactId) state.hubspot_contact_id = contactId;
+    }
+
+    function init() {
+      var params = new URLSearchParams(location.search);
+      if (params.get('utm_campaign')) state.utm_campaign = params.get('utm_campaign');
+      var token = params.get('t');
+
+      // Plan B : query params directs
+      var hasQuery = params.get('firstname') || params.get('email') || params.get('phone');
+
+      if (token) {
+        fetch(PREFILL_API + '?t=' + encodeURIComponent(token))
+          .then(function (r) { return r.json(); })
+          .then(function (json) {
+            if (!json || !json.ok || !json.values) throw new Error('Lien expiré ou invalide');
+            fillFromObject(json.values, json.greeting, json.hubspot_contact_id);
+            setState({ loading: false });
+          })
+          .catch(function () {
+            // Repli sur query params si présents, sinon erreur
+            if (hasQuery) { applyQuery(params); setState({ loading: false }); }
+            else setState({ loading: false, error: 'Ce lien n\'est plus valide. Reviens depuis l\'email reçu de l\'AFEM.' });
+          });
+      } else if (hasQuery) {
+        applyQuery(params);
+        setState({ loading: false });
+      } else {
+        setState({ loading: false, error: 'Ce formulaire doit être ouvert depuis le lien reçu par email. Reviens depuis ton mail AFEM.' });
+      }
+    }
+
+    function applyQuery(params) {
+      fillFromObject({
+        firstname: params.get('firstname') || '', lastname: params.get('lastname') || '',
+        email: params.get('email') || '', phone: params.get('phone') || '',
+        departement: params.get('departement') || '', classe_actuelle: params.get('classe_actuelle') || '',
+      }, params.get('firstname') || '', params.get('cid') || null);
+    }
+
+    init();
+  })();
+  </script>
+</body>
+</html>
