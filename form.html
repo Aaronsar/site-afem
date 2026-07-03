@@ -128,9 +128,6 @@
       var greet = state.greeting || id.firstname || '';
       var html = '<div class="rq-card">';
       if (greet) html += '<p class="rq-greeting">Bonjour ' + esc(greet) + '\u202F!</p>';
-      html += '<p class="rq-identity">On utilise les infos qu\'on a déjà sur toi'
-        + (id.email ? ' (<strong>' + esc(id.email) + '</strong>)' : '')
-        + '. Rien à ressaisir.</p>';
 
       if (state.validationError) html += '<div class="rq-error">' + esc(state.validationError) + '</div>';
 
