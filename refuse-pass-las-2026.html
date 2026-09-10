@@ -70,10 +70,24 @@
     details > summary::-webkit-details-marker{display:none}
     details[open] > summary > span{transform:rotate(45deg)}
     details > summary > span{transition:transform .3s cubic-bezier(.4,0,.2,1);display:inline-block}
+    .afem-hero{
+      display:grid;
+      grid-template-columns:minmax(0,1fr) 400px;
+      grid-template-areas:"intro form" "stats form";
+      gap:clamp(32px,4vw,64px);
+      align-items:center;
+    }
+    .afem-hero-intro{grid-area:intro}
+    .afem-hero-form{grid-area:form}
+    .afem-hero-stats{grid-area:stats}
     @media (max-width:1040px){
-      .afem-hero{grid-template-columns:1fr !important;gap:32px !important}
-      .afem-hero-form{order:-1}
-      .afem-hero-txt .hero-stats{margin-top:28px}
+      .afem-hero{
+        grid-template-columns:1fr;
+        grid-template-areas:"intro" "form" "stats";
+        gap:32px;
+        align-items:stretch;
+      }
+      .afem-hero-stats{margin-top:0}
     }
     @media (max-width:900px){ .afem-split{grid-template-columns:1fr !important} .afem-g3,.afem-g2{grid-template-columns:1fr !important} }
     @media (max-width:420px){ .afem-pair{grid-template-columns:1fr !important} }
@@ -114,9 +128,9 @@
   <!-- Hero -->
   <section class="hero">
     <div class="container">
-      <div class="afem-hero" style="display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:clamp(32px,4vw,64px);align-items:center">
+      <div class="afem-hero">
 
-        <div class="afem-hero-txt hero-content">
+        <div class="afem-hero-intro hero-content">
           <div class="hero-badge">
             <span class="dot"></span>
             Après les résultats Parcoursup
@@ -126,24 +140,10 @@
             <span class="gradient">ce qui reste possible</span>
           </h1>
           <p>Ne pas obtenir sa filière ne ferme pas les études de santé. <strong>Un étudiant bénévole vous rappelle</strong> et vous présente toutes les possibilités qui s’offrent à vous pour retenter médecine — y compris celles qui ne coûtent rien. Nous sommes une association : nous ne vendons rien et ne touchons aucune commission.</p>
-          <div class="hero-stats">
-            <div class="hero-stat">
-              <h3>2</h3>
-              <p>candidatures possibles</p>
-            </div>
-            <div class="hero-stat">
-              <h3>2027</h3>
-              <p>le système change</p>
-            </div>
-            <div class="hero-stat">
-              <h3>7 %</h3>
-              <p>des admis le sont en fin de procédure</p>
-            </div>
-          </div>
         </div>
 
-        <!-- FORMULAIRE — en tête de page, à droite du titre en ordinateur,
-             au-dessus du titre en mobile (order:-1) -->
+        <!-- Formulaire : à droite du titre en ordinateur,
+             juste après le chapeau en mobile -->
         <aside class="afem-hero-form" id="rappel">
           <form id="rappel-form" class="glass-card" style="background:rgba(255,255,255,.85);padding:28px">
             <div style="font-size:0.78rem;font-weight:600;text-transform:uppercase;letter-spacing:2px;color:var(--green);margin-bottom:10px">Gratuit · sans engagement</div>
@@ -202,6 +202,21 @@
             </div>
           </form>
         </aside>
+
+        <div class="afem-hero-stats hero-stats">
+          <div class="hero-stat">
+            <h3>2</h3>
+            <p>candidatures possibles</p>
+          </div>
+          <div class="hero-stat">
+            <h3>2027</h3>
+            <p>le système change</p>
+          </div>
+          <div class="hero-stat">
+            <h3>7 %</h3>
+            <p>des admis le sont en fin de procédure</p>
+          </div>
+        </div>
 
       </div>
     </div>
