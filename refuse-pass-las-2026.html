@@ -151,37 +151,43 @@
             <p style="font-size:0.9rem;color:var(--text-muted);line-height:1.6;margin-bottom:22px">Il est passé par cette première année. Il regarde votre situation et vous présente toutes les possibilités, sans en pousser aucune.</p>
 
             <div data-fields style="display:flex;flex-direction:column;gap:12px">
-              <label style="display:block">
-                <span style="display:block;font-size:0.78rem;font-weight:600;color:var(--text-muted);margin-bottom:6px">Prénom et nom</span>
-                <input type="text" name="name" placeholder="Camille Dupont" required style="width:100%;box-sizing:border-box;background:var(--bg-alt);border:1px solid var(--glass-border);border-radius:var(--radius-sm);padding:12px 15px;font-family:var(--font);font-size:0.95rem;color:var(--text)">
-              </label>
+              <div class="afem-pair" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                <label style="display:block">
+                  <span style="display:block;font-size:0.78rem;font-weight:600;color:var(--text-muted);margin-bottom:6px">Prénom</span>
+                  <input type="text" name="firstname" placeholder="Camille" required autocomplete="given-name" style="width:100%;box-sizing:border-box;background:var(--bg-alt);border:1px solid var(--glass-border);border-radius:var(--radius-sm);padding:12px 15px;font-family:var(--font);font-size:0.95rem;color:var(--text)">
+                </label>
+                <label style="display:block">
+                  <span style="display:block;font-size:0.78rem;font-weight:600;color:var(--text-muted);margin-bottom:6px">Nom</span>
+                  <input type="text" name="lastname" placeholder="Dupont" required autocomplete="family-name" style="width:100%;box-sizing:border-box;background:var(--bg-alt);border:1px solid var(--glass-border);border-radius:var(--radius-sm);padding:12px 15px;font-family:var(--font);font-size:0.95rem;color:var(--text)">
+                </label>
+              </div>
               <div class="afem-pair" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
                 <label style="display:block">
                   <span style="display:block;font-size:0.78rem;font-weight:600;color:var(--text-muted);margin-bottom:6px">Email</span>
-                  <input type="email" name="email" placeholder="camille@email.com" required style="width:100%;box-sizing:border-box;background:var(--bg-alt);border:1px solid var(--glass-border);border-radius:var(--radius-sm);padding:12px 15px;font-family:var(--font);font-size:0.95rem;color:var(--text)">
+                  <input type="email" name="email" placeholder="camille@email.com" required autocomplete="email" style="width:100%;box-sizing:border-box;background:var(--bg-alt);border:1px solid var(--glass-border);border-radius:var(--radius-sm);padding:12px 15px;font-family:var(--font);font-size:0.95rem;color:var(--text)">
                 </label>
                 <label style="display:block">
                   <span style="display:block;font-size:0.78rem;font-weight:600;color:var(--text-muted);margin-bottom:6px">Téléphone</span>
-                  <input type="tel" name="phone" placeholder="06 12 34 56 78" required style="width:100%;box-sizing:border-box;background:var(--bg-alt);border:1px solid var(--glass-border);border-radius:var(--radius-sm);padding:12px 15px;font-family:var(--font);font-size:0.95rem;color:var(--text)">
+                  <input type="tel" name="phone" placeholder="06 12 34 56 78" required autocomplete="tel" style="width:100%;box-sizing:border-box;background:var(--bg-alt);border:1px solid var(--glass-border);border-radius:var(--radius-sm);padding:12px 15px;font-family:var(--font);font-size:0.95rem;color:var(--text)">
                 </label>
               </div>
               <div class="afem-pair" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
                 <label style="display:block">
-                  <span style="display:block;font-size:0.78rem;font-weight:600;color:var(--text-muted);margin-bottom:6px">Département</span>
-                  <input type="text" name="dept" placeholder="Ex : 75" inputmode="numeric" pattern="[0-9]{2,3}" maxlength="3" required style="width:100%;box-sizing:border-box;background:var(--bg-alt);border:1px solid var(--glass-border);border-radius:var(--radius-sm);padding:12px 15px;font-family:var(--font);font-size:0.95rem;color:var(--text)">
-                </label>
-                <label style="display:block">
-                  <span style="display:block;font-size:0.78rem;font-weight:600;color:var(--text-muted);margin-bottom:6px">Situation</span>
-                  <select name="situation" required style="width:100%;box-sizing:border-box;background:var(--bg-alt);border:1px solid var(--glass-border);border-radius:var(--radius-sm);padding:12px 15px;font-family:var(--font);font-size:0.95rem;color:var(--text);appearance:none">
+                  <span style="display:block;font-size:0.78rem;font-weight:600;color:var(--text-muted);margin-bottom:6px">Classe actuelle</span>
+                  <select name="classe_actuelle" required style="width:100%;box-sizing:border-box;background:var(--bg-alt);border:1px solid var(--glass-border);border-radius:var(--radius-sm);padding:12px 15px;font-family:var(--font);font-size:0.95rem;color:var(--text);appearance:none">
                     <option value="">Choisir</option>
-                    <option>Sortie de PASS</option>
-                    <option>Sortie de LAS</option>
-                    <option>Sortie de LSPS</option>
-                    <option>Encore en attente</option>
-                    <option>Parent d’élève</option>
+                    <option value="Terminale">Terminale</option>
+                    <option value="PASS">PASS</option>
+                    <option value="LSPS 1">LSPS 1</option>
+                    <option value="Autre">Autre</option>
                   </select>
                 </label>
+                <label style="display:block">
+                  <span style="display:block;font-size:0.78rem;font-weight:600;color:var(--text-muted);margin-bottom:6px">Département</span>
+                  <input type="text" name="departement" placeholder="Ex : 75" inputmode="numeric" pattern="[0-9]{2,3}" maxlength="3" required style="width:100%;box-sizing:border-box;background:var(--bg-alt);border:1px solid var(--glass-border);border-radius:var(--radius-sm);padding:12px 15px;font-family:var(--font);font-size:0.95rem;color:var(--text)">
+                </label>
               </div>
+              <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px">
               <p data-error style="display:none;font-size:0.82rem;color:#b42318;line-height:1.5;margin:0"></p>
               <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:6px">Être rappelé →</button>
               <p style="font-size:0.72rem;color:var(--text-muted);line-height:1.5;text-align:center;margin-top:2px">Association à but non lucratif. Aucune commission, aucune donnée transmise à des tiers.</p>
@@ -520,39 +526,37 @@
     var sent = form.querySelector('[data-sent]');
     var errorEl = form.querySelector('[data-error]');
     var btn = form.querySelector('button[type="submit"]');
-
-    function splitName(name) {
-      var parts = String(name || '').trim().split(/\s+/).filter(Boolean);
-      if (!parts.length) return { firstname: '', lastname: '' };
-      if (parts.length === 1) return { firstname: parts[0], lastname: parts[0] };
-      return { firstname: parts[0], lastname: parts.slice(1).join(' ') };
-    }
-
-    function utm(key) {
-      try { return new URLSearchParams(window.location.search).get(key) || null; }
-      catch (e) { return null; }
-    }
+    var SUBMIT_URL = 'https://hub.diploma-sante.fr/api/forms/refuse-en-pass-las-2xfl/submit';
 
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       if (errorEl) { errorEl.style.display = 'none'; errorEl.textContent = ''; }
       var fd = new FormData(form);
-      var names = splitName(fd.get('name'));
-      var payload = {
-        firstname: names.firstname,
-        lastname: names.lastname,
+      var data = {
+        firstname: String(fd.get('firstname') || '').trim(),
+        lastname: String(fd.get('lastname') || '').trim(),
         email: String(fd.get('email') || '').trim(),
         phone: String(fd.get('phone') || '').trim(),
-        departement: String(fd.get('dept') || '').trim(),
-        situation: String(fd.get('situation') || '').trim(),
-        utm_source: utm('utm_source'),
-        utm_medium: utm('utm_medium'),
-        utm_campaign: utm('utm_campaign') || 'refuse-pass-las-2026'
+        classe_actuelle: String(fd.get('classe_actuelle') || '').trim(),
+        departement: String(fd.get('departement') || '').trim()
       };
+      var utm = {};
+      try {
+        var qs = new URLSearchParams(window.location.search);
+        ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'].forEach(function (k) {
+          var v = qs.get(k);
+          if (v) utm[k] = v;
+        });
+      } catch (err) {}
+      var payload = Object.assign({
+        data: data,
+        hp: String(fd.get('website') || ''),
+        source_url: window.location.href
+      }, utm);
       btn.disabled = true;
       var previousLabel = btn.textContent;
       btn.textContent = 'Envoi…';
-      fetch('/api/submit-refuse-pass', {
+      fetch(SUBMIT_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
