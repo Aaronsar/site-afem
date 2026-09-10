@@ -16,6 +16,11 @@
       "source": "/résultats-parcoursup-2026/:path*",
       "destination": "/resultats-parcoursup-2026/:path*",
       "permanent": false
+    },
+    {
+      "source": "/refuse-pass-las",
+      "destination": "/refuse-pass-las-2026",
+      "permanent": true
     }
   ],
   "rewrites": [
