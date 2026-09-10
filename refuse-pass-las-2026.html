@@ -74,20 +74,36 @@
       display:grid;
       grid-template-columns:minmax(0,1fr) 400px;
       grid-template-areas:"intro form" "stats form";
-      gap:clamp(32px,4vw,64px);
+      gap:clamp(24px,4vw,48px);
       align-items:center;
     }
     .afem-hero-intro{grid-area:intro}
     .afem-hero-form{grid-area:form}
     .afem-hero-stats{grid-area:stats}
+    .afem-hero-intro h1{margin-bottom:16px}
+    .afem-hero-intro p{margin-bottom:0;max-width:540px}
     @media (max-width:1040px){
+      .hero{
+        padding-top:88px;
+        padding-bottom:28px;
+      }
       .afem-hero{
         grid-template-columns:1fr;
         grid-template-areas:"intro" "form" "stats";
-        gap:32px;
+        gap:16px;
         align-items:stretch;
       }
-      .afem-hero-stats{margin-top:0}
+      .afem-hero-intro h1{
+        font-size:clamp(1.85rem,7.5vw,2.6rem);
+        letter-spacing:-1px;
+        margin-bottom:10px;
+      }
+      .afem-hero-intro p{
+        font-size:1rem;
+        line-height:1.55;
+      }
+      .afem-hero-stats{margin-top:8px}
+      .afem-hero-form .glass-card{padding:20px !important}
     }
     @media (max-width:900px){ .afem-split{grid-template-columns:1fr !important} .afem-g3,.afem-g2{grid-template-columns:1fr !important} }
     @media (max-width:420px){ .afem-pair{grid-template-columns:1fr !important} }
@@ -131,15 +147,11 @@
       <div class="afem-hero">
 
         <div class="afem-hero-intro hero-content">
-          <div class="hero-badge">
-            <span class="dot"></span>
-            Après les résultats Parcoursup
-          </div>
           <h1>
             Refusé en PASS ou en LAS :<br>
             <span class="gradient">ce qui reste possible</span>
           </h1>
-          <p>Ne pas obtenir sa filière ne ferme pas les études de santé. <strong>Un étudiant bénévole vous rappelle</strong> et vous présente toutes les possibilités qui s’offrent à vous pour retenter médecine — y compris celles qui ne coûtent rien. Nous sommes une association : nous ne vendons rien et ne touchons aucune commission.</p>
+          <p>Ne pas obtenir sa filière ne ferme pas les études de santé. <strong>Un étudiant bénévole vous rappelle</strong>. Nous ne vendons rien et ne touchons aucune commission.</p>
         </div>
 
         <!-- Formulaire : à droite du titre en ordinateur,
