@@ -6,7 +6,8 @@
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Simulateur Parcoursup Médecine 2026 : Calcule tes Chances | AFEM</title>
-  <meta name="description" content="Simulateur Parcoursup gratuit : calcule tes chances d'admission dans les 800 PASS et L.AS de France, à partir des résultats officiels Parcoursup 2025.">
+  <meta name="description" content="Simulateur Parcoursup gratuit : choisis tes vœux (PASS, L.AS, prépas, BUT, BTS, licences, écoles) et calcule tes chances d'admission à partir des résultats officiels Parcoursup.">
+  <link rel="preconnect" href="https://data.enseignementsup-recherche.gouv.fr" crossorigin>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -17,15 +18,15 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://www.afem-edu.fr/simulateur">
   <meta property="og:title" content="Simulateur Parcoursup Médecine 2026 : Calcule tes Chances | AFEM">
-  <meta property="og:description" content="Simulateur Parcoursup gratuit : calcule tes chances d'admission dans les 800 PASS et L.AS de France, à partir des résultats officiels Parcoursup 2025.">
+  <meta property="og:description" content="Simulateur Parcoursup gratuit : choisis tes vœux (PASS, L.AS, prépas, BUT, BTS, licences, écoles) et calcule tes chances d'admission à partir des résultats officiels Parcoursup.">
   <meta property="og:image" content="https://www.afem-edu.fr/assets/og-image.png">
   <meta property="og:site_name" content="AFEM">
   <meta property="og:locale" content="fr_FR">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Simulateur Parcoursup Médecine 2026 : Calcule tes Chances | AFEM">
-  <meta name="twitter:description" content="Simulateur Parcoursup gratuit : calcule tes chances d'admission dans les 800 PASS et L.AS de France, à partir des résultats officiels Parcoursup 2025.">
+  <meta name="twitter:description" content="Simulateur Parcoursup gratuit : choisis tes vœux (PASS, L.AS, prépas, BUT, BTS, licences, écoles) et calcule tes chances d'admission à partir des résultats officiels Parcoursup.">
   <meta name="twitter:image" content="https://www.afem-edu.fr/assets/og-image.png">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Simulateur Parcoursup Médecine — AFEM","description":"Calcule tes chances d'admission en PASS et L.AS avec le simulateur Parcoursup gratuit de l'AFEM, basé sur les données officielles Parcoursup 2025.","url":"https://www.afem-edu.fr/simulateur","applicationCategory":"EducationalApplication","provider":{"@type":"Organization","name":"AFEM","url":"https://www.afem-edu.fr"}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Simulateur Parcoursup Médecine — AFEM","description":"Calcule tes chances d'admission sur tous tes vœux Parcoursup avec le simulateur gratuit de l'AFEM, basé sur l'open data officielle Parcoursup.","url":"https://www.afem-edu.fr/simulateur","applicationCategory":"EducationalApplication","provider":{"@type":"Organization","name":"AFEM","url":"https://www.afem-edu.fr"}}</script>
   <script src="/js/meta-pixel.js"></script>
 </head>
 <body>
@@ -64,8 +65,8 @@
   <section class="sim-hero">
     <div class="container">
       <span class="section-label" style="justify-content: center;">Outil gratuit · sans inscription</span>
-      <h1>Simulateur <span class="gradient">Parcoursup</span> PASS &amp; L.AS</h1>
-      <p>Tes chances d'admission dans les <strong id="sim-total">800</strong> PASS et L.AS de France, calculées à partir des résultats officiels Parcoursup <span class="sim-session">2025</span>.</p>
+      <h1>Simulateur <span class="gradient">Parcoursup</span></h1>
+      <p>Choisis tes vœux (PASS, L.AS, prépas, BUT, BTS, licences, écoles…) et découvre tes chances d'admission, calculées en direct à partir des résultats officiels Parcoursup.</p>
     </div>
   </section>
 
@@ -74,23 +75,63 @@
       <div class="sim glass-card" id="simu">
         <ol class="sim-progress">
           <li data-step="1"><span>1</span> Mon profil</li>
-          <li data-step="2"><span>2</span> Mes critères</li>
-          <li data-step="3"><span>3</span> Mes résultats</li>
+          <li data-step="2"><span>2</span> Mes vœux</li>
+          <li data-step="3"><span>3</span> Mes chances</li>
         </ol>
 
         <!-- Étape 1 : profil -->
         <div class="sim-step" data-step="1">
           <h2>Ton profil scolaire</h2>
-          <p class="sim-help">Prends tes moyennes de terminale (ou de première si tu n'as pas encore de bulletin). C'est ce que voient les facs.</p>
+          <p class="sim-help">Prends tes moyennes de terminale (ou de première si tu n'as pas encore de bulletin). C'est ce que voient les formations.</p>
+
+          <div class="sim-row">
+            <div class="sim-field">
+              <label for="sim-classe">Ta situation</label>
+              <select id="sim-classe" class="sim-select">
+                <option value="terminale">En terminale</option>
+                <option value="premiere">En première</option>
+                <option value="reorientation">Bac obtenu, en réorientation</option>
+                <option value="autre">Autre</option>
+              </select>
+            </div>
+            <div class="sim-field">
+              <label for="sim-dept">Ton département (lycée)</label>
+              <select id="sim-dept" class="sim-select">
+                <option value="">Choisis ton département</option>
+              </select>
+            </div>
+          </div>
 
           <div class="sim-field">
-            <label for="sim-classe">Ta situation</label>
-            <select id="sim-classe" class="sim-select">
-              <option value="terminale">En terminale</option>
-              <option value="premiere">En première</option>
-              <option value="reorientation">Bac obtenu, en réorientation</option>
-              <option value="autre">Autre</option>
-            </select>
+            <span class="sim-label">Ton bac</span>
+            <div class="sim-choices" data-name="bac" role="group" aria-label="Type de bac">
+              <button type="button" data-value="gen">Général</button>
+              <button type="button" data-value="techno">Technologique</button>
+              <button type="button" data-value="pro">Professionnel</button>
+            </div>
+          </div>
+
+          <div class="sim-row" data-show-bac="gen">
+            <div class="sim-field">
+              <label for="sim-spe1">Spécialité 1</label>
+              <select id="sim-spe1" class="sim-select" data-spe></select>
+            </div>
+            <div class="sim-field">
+              <label for="sim-spe2">Spécialité 2</label>
+              <select id="sim-spe2" class="sim-select" data-spe></select>
+            </div>
+          </div>
+          <div class="sim-field" data-show-bac="gen">
+            <span class="sim-label">Option maths</span>
+            <div class="sim-choices" data-name="maths" role="group" aria-label="Option maths">
+              <button type="button" data-value="aucune">Aucune</button>
+              <button type="button" data-value="complementaires">Maths complémentaires</button>
+              <button type="button" data-value="expertes">Maths expertes</button>
+            </div>
+          </div>
+          <div class="sim-field" data-show-bac="techno" hidden>
+            <label for="sim-serie">Ta série</label>
+            <select id="sim-serie" class="sim-select"></select>
           </div>
 
           <div class="sim-row">
@@ -102,7 +143,7 @@
               </div>
             </div>
             <div class="sim-field sim-grade" data-name="spe">
-              <label for="sim-spe">Moyenne de tes 2 spécialités</label>
+              <label for="sim-spe">Moyenne de tes spécialités</label>
               <div class="sim-grade-ctl">
                 <input type="range" min="8" max="20" step="0.1" value="14" aria-label="Moyenne des spécialités (curseur)">
                 <input type="number" id="sim-spe" min="0" max="20" step="0.1" value="14.0" inputmode="decimal"><span>/20</span>
@@ -110,97 +151,56 @@
             </div>
           </div>
 
-          <div class="sim-field">
-            <span class="sim-label">Tes spécialités de terminale</span>
-            <div class="sim-choices" data-name="doublette" role="group" aria-label="Spécialités">
-              <button type="button" data-value="svt-pc">SVT + Physique-chimie</button>
-              <button type="button" data-value="maths-pc">Maths + Physique-chimie</button>
-              <button type="button" data-value="maths-svt">Maths + SVT</button>
-              <button type="button" data-value="sci-autre">Une seule scientifique</button>
-              <button type="button" data-value="non-sci">Aucune scientifique</button>
-            </div>
-          </div>
-
-          <div class="sim-field">
-            <span class="sim-label">Option maths</span>
-            <div class="sim-choices" data-name="maths" role="group" aria-label="Option maths">
-              <button type="button" data-value="aucune">Aucune</button>
-              <button type="button" data-value="complementaires">Maths complémentaires</button>
-              <button type="button" data-value="expertes">Maths expertes</button>
-            </div>
-          </div>
-
-          <div class="sim-field">
-            <label for="sim-dept">Ton département (lycée)</label>
-            <select id="sim-dept" class="sim-select">
-              <option value="">Choisis ton département</option>
-            </select>
-            <p class="sim-help">Les PASS et L.AS donnent la priorité aux lycéens de leur académie : ça pèse lourd.</p>
-          </div>
-
           <p class="sim-err" id="sim-err-1" role="alert"></p>
           <div class="sim-actions">
-            <button type="button" class="btn btn-primary" id="sim-to-2">Continuer →</button>
+            <button type="button" class="btn btn-primary" id="sim-to-2">Choisir mes vœux →</button>
           </div>
         </div>
 
-        <!-- Étape 2 : critères -->
+        <!-- Étape 2 : vœux -->
         <div class="sim-step" data-step="2" hidden>
           <button type="button" class="sim-back" data-back="1">← Modifier mon profil</button>
-          <h2>Où veux-tu candidater ?</h2>
+          <h2>Tes vœux</h2>
+          <p class="sim-help">Jusqu'à <span class="sim-max">10</span> vœux, comme sur Parcoursup. Catalogue officiel <span class="sim-catalog-year">2026</span>, mis à jour en direct.</p>
 
-          <div class="sim-field">
-            <span class="sim-label">Filière</span>
-            <div class="sim-choices" data-name="type" data-scope="filtres" role="group" aria-label="Filière">
-              <button type="button" data-value="all">PASS et L.AS</button>
-              <button type="button" data-value="PASS">PASS uniquement</button>
-              <button type="button" data-value="LAS">L.AS uniquement</button>
-            </div>
-            <p class="sim-help"><strong>PASS</strong> : une année centrée santé avec une mineure. <strong>L.AS</strong> : une licence (droit, bio, psycho…) avec une mineure santé.</p>
+          <div class="sim-mine" id="sim-mine"></div>
+
+          <div class="sim-finder">
+            <input type="search" id="sim-q" class="sim-search" placeholder="Rechercher : « PASS Lyon », « MPSI », « BUT informatique Nantes »…" aria-label="Rechercher une formation">
+            <div class="sim-choices sim-choices-sm" id="sim-fams" role="group" aria-label="Type de formation"></div>
+            <label class="sim-toggle"><input type="checkbox" id="sim-near" checked> Seulement dans mon secteur (<span id="sim-sector-label">—</span>)</label>
+            <p class="sim-summary" id="sim-found-info" aria-live="polite"></p>
+            <ul class="sim-found" id="sim-found"></ul>
           </div>
 
-          <div class="sim-field">
-            <span class="sim-label">Zone</span>
-            <div class="sim-choices" data-name="zone" data-scope="filtres" role="group" aria-label="Zone">
-              <button type="button" data-value="secteur">Mon secteur</button>
-              <button type="button" data-value="france">Toute la France</button>
-            </div>
-            <p class="sim-help">Ton secteur : <strong id="sim-aca-label">—</strong>.</p>
-          </div>
-
-          <div class="sim-actions">
+          <p class="sim-err" id="sim-err-2" role="alert"></p>
+          <div class="sim-actions sim-actions-sticky">
             <button type="button" class="btn btn-primary" id="sim-to-3">Calculer mes chances →</button>
           </div>
         </div>
 
         <!-- Étape 3 : résultats -->
         <div class="sim-step" data-step="3" hidden>
-          <button type="button" class="sim-back" data-back="2">← Modifier mes critères</button>
+          <button type="button" class="sim-back" data-back="2">← Modifier mes vœux</button>
 
-          <div class="sim-verdict" id="sim-verdict">
-            <h2 id="sim-verdict-title">Tes résultats</h2>
+          <div class="sim-loading" id="sim-loading" hidden>Calcul en cours à partir des données Parcoursup…</div>
+
+          <div class="sim-verdict" id="sim-verdict" hidden>
+            <div class="sim-global">
+              <div class="sim-gauge sim-gauge-lg" id="sim-global-gauge" style="--p:0"><span>0<small>%</small></span></div>
+              <div>
+                <p class="sim-global-label">Chance d'avoir au moins une proposition</p>
+                <h2 id="sim-verdict-title">Tes résultats</h2>
+              </div>
+            </div>
             <p id="sim-verdict-text"></p>
           </div>
 
-          <div class="sim-toolbar">
-            <div class="sim-choices sim-choices-sm" data-name="type" data-scope="filtres" role="group" aria-label="Filière">
-              <button type="button" data-value="all">Tout</button>
-              <button type="button" data-value="PASS">PASS</button>
-              <button type="button" data-value="LAS">L.AS</button>
-            </div>
-            <div class="sim-choices sim-choices-sm" data-name="zone" data-scope="filtres" role="group" aria-label="Zone">
-              <button type="button" data-value="secteur">Mon secteur</button>
-              <button type="button" data-value="france">France</button>
-            </div>
-            <input type="search" id="sim-search" class="sim-search" placeholder="Rechercher une fac, une ville, une option…" aria-label="Rechercher">
-          </div>
-
-          <p class="sim-summary" id="sim-summary" aria-live="polite"></p>
           <ul class="sim-results" id="sim-results"></ul>
 
           <div class="sim-gate" id="sim-gate" hidden>
-            <h3>Débloque les <span id="sim-gate-count">0</span> autres formations</h3>
-            <p>Ton classement complet s'affiche tout de suite. Un étudiant en médecine peut aussi te rappeler pour t'aider à construire tes vœux, si tu veux.</p>
+            <h3 id="sim-gate-title">Débloque ton analyse complète</h3>
+            <p>Le détail de tous tes vœux et des vœux de sécurité adaptés à ton profil s'affichent tout de suite. Un étudiant en médecine peut aussi te rappeler pour t'aider à construire ta liste, si tu veux.</p>
             <form id="sim-form" novalidate>
               <div class="sim-row">
                 <input name="prenom" autocomplete="given-name" placeholder="Prénom" aria-label="Prénom" required>
@@ -211,13 +211,19 @@
                 <input name="telephone" type="tel" autocomplete="tel" placeholder="Téléphone" aria-label="Téléphone" required>
               </div>
               <p class="sim-err" id="sim-form-err" role="alert"></p>
-              <button type="submit" class="btn btn-primary">Voir tout mon classement</button>
+              <button type="submit" class="btn btn-primary">Voir mon analyse complète</button>
               <p class="sim-legal">Gratuit. Tes données servent uniquement à l'AFEM pour t'accompagner. <a href="mentions-legales.html">Mentions légales</a>.</p>
             </form>
           </div>
-          <p class="sim-thanks" id="sim-thanks" hidden>C'est noté ! Ton classement complet est affiché ci-dessus.</p>
+          <p class="sim-thanks" id="sim-thanks" hidden>C'est noté ! Ton analyse complète est affichée.</p>
 
-          <p class="sim-disclaimer">Estimation statistique à partir des données publiques Parcoursup <span class="sim-session">2025</span> (places, rang du dernier appelé, mentions des admis, part de l'académie). Chaque session est différente : c'est une tendance, pas une garantie.</p>
+          <div class="sim-suggest" id="sim-suggest" hidden>
+            <h3>Vœux de sécurité à envisager</h3>
+            <p class="sim-help">Des formations du même type, dans ton secteur, où tes chances sont élevées.</p>
+            <ul class="sim-found" id="sim-suggest-list"></ul>
+          </div>
+
+          <p class="sim-disclaimer" id="sim-disclaimer">Estimation statistique à partir de l'open data Parcoursup du ministère de l'Enseignement supérieur (places, rang du dernier appelé, mentions des admis, type de bac, part du secteur), lissée sur plusieurs sessions. Chaque session est différente : c'est une tendance, pas une garantie.</p>
           <div class="sim-actions"><button type="button" class="sim-back" id="sim-restart">↺ Refaire une simulation</button></div>
         </div>
       </div>
@@ -229,8 +235,11 @@
     <div class="container">
       <div class="content-text fade-up" style="max-width: 800px; margin: 0 auto;">
         <h2>Comment fonctionne le simulateur ?</h2>
-        <p>Pour chaque PASS et chaque L.AS, Parcoursup publie en open data le nombre de places, le nombre de candidats classés, le rang du dernier candidat appelé et la mention au bac des admis. Le simulateur s'appuie sur ces chiffres officiels de la session <span class="sim-session">2025</span>. Avec le rang du dernier appelé, on sait quelle part des candidats a reçu une proposition. Les mentions des admis donnent leur niveau. On en déduit la barre à franchir dans chaque formation.</p>
-        <p>Ton profil est ensuite comparé à cette barre : moyenne générale, moyenne de spécialités, doublette de spécialités, option maths et surtout ton académie. Les facs de santé réservent la très grande majorité de leurs places aux lycéens de leur secteur : en dehors, la barre monte nettement.</p>
+        <p>Pour chaque formation, Parcoursup publie en open data le nombre de places, le nombre de candidats classés, le rang du dernier candidat appelé, la mention au bac des admis, leur type de bac et la part venant de l'académie. Le simulateur interroge ces données officielles en direct (dernière session publiée : <span class="sim-session">2025</span>) et les lisse sur les trois dernières sessions. On en déduit la barre à franchir dans chacun de tes vœux.</p>
+        <p>Ton profil est ensuite comparé à cette barre : moyennes, spécialités, option maths, type de bac et ton académie. Les licences et les facs de santé réservent la très grande majorité de leurs places aux lycéens de leur secteur : en dehors, la barre monte nettement. Le simulateur calcule aussi ta chance d'obtenir au moins une proposition sur l'ensemble de ta liste.</p>
+
+        <h2 style="margin-top: 40px;">Et la réforme des études de santé ?</h2>
+        <p>À la rentrée 2027, le PASS et la L.AS laissent la place à une voie d'accès unique. Ces nouvelles formations n'auront aucun résultat d'admission publié la première année. Le simulateur les reconnaît et estime tes chances à partir des PASS et L.AS de la même université, en l'indiquant clairement sur le résultat.</p>
 
         <h2 style="margin-top: 40px;">PASS ou L.AS : comment répartir tes vœux ?</h2>
         <p>Le PASS est souvent plus demandé, mais il propose beaucoup de places. Certaines L.AS (droit, psycho, langues…) sont bien plus accessibles et mènent aux mêmes études de médecine, maïeutique, odontologie, pharmacie et kiné. Tu peux formuler jusqu'à 10 vœux : mélange des formations où tes chances sont élevées et des choix plus ambitieux.</p>
@@ -293,7 +302,9 @@
   </div>
 
   <script defer charset="utf-8" type="text/javascript" src="https://js-eu1.hsforms.net/forms/embed/v2.js"></script>
-  <script defer src="js/simulateur-data.js"></script>
+  <script defer src="js/psup/psup-config.js"></script>
+  <script defer src="js/psup/psup-api.js"></script>
+  <script defer src="js/psup/psup-model.js"></script>
   <script defer src="js/simulateur.js"></script>
   <script defer src="js/main.min.js"></script>
 </body>

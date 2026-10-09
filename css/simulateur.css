@@ -133,3 +133,57 @@
   .sim-gauge { width: 56px; height: 56px; }
   .sim-gauge span { width: 44px; height: 44px; font-size: .95rem; }
 }
+
+/* ─── Constructeur de vœux ─── */
+.sim-mine { margin: 18px 0 8px; }
+.sim-mine-empty { padding: 14px 16px; border: 1.5px dashed var(--glass-border); border-radius: var(--radius-sm); color: var(--text-muted); font-size: .92rem; margin: 0; }
+.sim-mine-list { margin: 0; padding: 0; list-style: none; counter-reset: v; display: grid; gap: 6px; }
+.sim-mine-list li { counter-increment: v; display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: var(--radius-sm); background: rgba(101,189,125,.1); font-size: .9rem; }
+.sim-mine-list li::before { content: counter(v); flex: none; width: 22px; height: 22px; border-radius: 50%; background: var(--green); color: #fff; font-size: .75rem; font-weight: 700; display: grid; place-items: center; }
+.sim-mine-list li > span { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.sim-mine-list strong { display: block; }
+.sim-remove { flex: none; width: 30px; height: 30px; border: 0; border-radius: 50%; background: transparent; color: var(--text-muted); font-size: 1rem; cursor: pointer; }
+.sim-remove:hover { background: rgba(192,57,43,.1); color: #c0392b; }
+
+.sim-finder { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--glass-border); display: grid; gap: 12px; }
+.sim-toggle { display: flex; align-items: center; gap: 8px; font-size: .9rem; cursor: pointer; }
+.sim-toggle input { width: 18px; height: 18px; accent-color: var(--green); }
+.sim-finder .sim-summary { margin: 0; }
+.sim-found { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; max-height: 460px; overflow-y: auto; }
+.sim-found-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1.5px solid var(--glass-border); border-radius: var(--radius-sm); }
+.sim-found-item > div:not(.sim-gauge) { flex: 1; min-width: 0; }
+.sim-found-item strong { display: block; font-size: .92rem; overflow-wrap: anywhere; }
+.sim-found-item span { display: block; font-size: .82rem; color: var(--text-muted); overflow-wrap: anywhere; }
+.sim-add { flex: none; padding: 8px 12px; border: 1.5px solid var(--green); border-radius: 999px; background: var(--white); color: var(--green-dark); font: inherit; font-size: .85rem; font-weight: 600; cursor: pointer; }
+.sim-add:hover:not(:disabled) { background: var(--green); color: #fff; }
+.sim-add:disabled { border-color: var(--glass-border); color: var(--text-muted); cursor: default; }
+.sim-actions-sticky { position: sticky; bottom: 12px; z-index: 2; }
+
+/* ─── Résultats ─── */
+.sim-loading { padding: 24px; text-align: center; color: var(--text-muted); }
+.sim-global { display: flex; align-items: center; gap: 18px; margin-bottom: 10px; }
+.sim-global-label { margin: 0; font-size: .85rem; font-weight: 600; color: var(--green-dark); text-transform: uppercase; letter-spacing: .03em; }
+.sim-global h2 { margin: 2px 0 0; }
+.sim-gauge-lg { --c: var(--green-dark); width: 88px; height: 88px; }
+.sim-gauge-lg span { width: 70px; height: 70px; font-size: 1.4rem; }
+.sim-gauge-sm { --c: #2f9e5a; width: 46px; height: 46px; }
+.sim-gauge-sm span { width: 36px; height: 36px; font-size: .8rem; }
+.sim-results { margin-top: 4px; }
+.sim-card.lv-none { --c: #9aa1a9; }
+.sim-badge-ghost { background: transparent; color: var(--text-muted); border: 1px solid var(--glass-border); }
+.sim-estimated { margin: 10px 0 0; padding: 10px 12px; border-radius: var(--radius-sm); background: #fff8e6; color: #7a5a12; font-size: .85rem; line-height: 1.45; }
+.sim-hist-wrap { overflow-x: auto; margin: 0 0 12px; }
+.sim-hist { width: 100%; border-collapse: collapse; font-size: .85rem; }
+.sim-hist th { text-align: left; font-weight: 600; color: var(--text-muted); font-size: .75rem; padding: 6px 8px; border-bottom: 1px solid var(--glass-border); }
+.sim-hist td { padding: 6px 8px; border-bottom: 1px solid var(--bg-alt); font-variant-numeric: tabular-nums; }
+.sim-suggest { margin-top: 28px; }
+.sim-suggest h3 { font-size: 1.15rem; margin: 0; }
+.sim-suggest .sim-found { margin-top: 12px; max-height: none; }
+
+@media (max-width: 640px) {
+  .sim-global { gap: 14px; }
+  .sim-gauge-lg { width: 72px; height: 72px; }
+  .sim-gauge-lg span { width: 58px; height: 58px; font-size: 1.15rem; }
+  .sim-found-item { flex-wrap: wrap; }
+  .sim-found-item .sim-add { margin-left: auto; }
+}

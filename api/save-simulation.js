@@ -1,7 +1,7 @@
 // Vercel Serverless Function — /api/save-simulation
 //
 // Reçoit le lead du simulateur Parcoursup (/simulateur) : coordonnées +
-// profil scolaire + top 10 des formations simulées, et le transmet au CRM
+// profil scolaire + vœux simulés (jusqu'à 10), et le transmet au CRM
 // Diploma (même webhook que /api/save-parcoursup).
 //
 // Env vars :
@@ -45,12 +45,11 @@ function grade(v) {
   return Number.isFinite(n) && n >= 0 && n <= 20 ? Math.round(n * 10) / 10 : null;
 }
 
-// Niveau du meilleur résultat → pronostic CRM (même échelle que save-parcoursup)
-function pronostic(top) {
-  const best = top.filter((t) => t.probabilite >= 50).length;
-  if (best >= 3) return { score: 95, niveau: 'top', label: 'Profil solide' };
-  if (best >= 1) return { score: 70, niveau: 'jouable', label: 'Jouable avec une stratégie' };
-  return { score: 42, niveau: 'expert', label: 'À accompagner' };
+// Chance d'au moins une proposition → pronostic CRM (même échelle que save-parcoursup)
+function pronostic(global) {
+  if (global >= 90) return { score: 95, niveau: 'top', label: 'Liste de vœux solide' };
+  if (global >= 60) return { score: 70, niveau: 'jouable', label: 'Jouable, à sécuriser' };
+  return { score: 42, niveau: 'expert', label: 'Manque de vœux de sécurité' };
 }
 
 export default async function handler(req, res) {
@@ -93,8 +92,10 @@ export default async function handler(req, res) {
     cod_parcoursup: str(t?.cod, 20),
     probabilite: Number.isFinite(+t?.probabilite) ? Math.max(0, Math.min(100, Math.round(+t.probabilite))) : null,
     rang_dernier_admis: Number.isFinite(+t?.rang_dernier_appele) ? +t.rang_dernier_appele : null,
+    filiere: str(t?.fili, 40),
+    estimation: !!t?.estimation,
   }));
-  const pron = pronostic(top);
+  const pron = pronostic(Number(body.proba_globale) || 0);
   const classe = str(body.classe_actuelle, 40);
   const utm = body.utm && typeof body.utm === 'object' ? body.utm : {};
 
@@ -110,13 +111,14 @@ export default async function handler(req, res) {
     source_url: req.headers.referer || 'https://www.afem-edu.fr/simulateur',
     meta: {
       form_version: 'afem-simulateur-2026',
+      proba_au_moins_une_proposition: Number.isFinite(+body.proba_globale) ? Math.max(0, Math.min(100, Math.round(+body.proba_globale))) : null,
+      type_bac: str(p.bac, 10),
+      specialites: Array.isArray(p.specialites) ? p.specialites.slice(0, 2).map((x) => str(x, 20)) : null,
+      serie_techno: p.bac === 'techno' ? str(p.serie, 10) : null,
       moyenne_generale: grade(p.gen),
       moyenne_specialites: grade(p.spe),
-      doublette: str(p.doublette, 20),
       option_maths: str(p.maths, 20),
       academie: str(p.aca, 40),
-      filtre_filiere: str(body.filtres?.type, 10),
-      filtre_zone: str(body.filtres?.zone, 10),
       utm_source: str(utm.source, 120),
       utm_medium: str(utm.medium, 120),
       utm_campaign: str(utm.campaign, 120),
