@@ -6,25 +6,26 @@
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Simulateur Parcoursup Médecine 2026 : Calcule tes Chances | AFEM</title>
-  <meta name="description" content="Estimez vos chances d'admission en PASS/LAS grâce au simulateur Parcoursup de l'AFEM, basé sur les données de 2020 à 2023.">
+  <meta name="description" content="Simulateur Parcoursup gratuit : calcule tes chances d'admission dans les 800 PASS et L.AS de France, à partir des résultats officiels Parcoursup 2025.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="preload" as="style" href="css/style.min.css">
   <link rel="stylesheet" href="css/style.min.css">
+  <link rel="stylesheet" href="css/simulateur.css">
   <link rel="canonical" href="https://www.afem-edu.fr/simulateur">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://www.afem-edu.fr/simulateur">
   <meta property="og:title" content="Simulateur Parcoursup Médecine 2026 : Calcule tes Chances | AFEM">
-  <meta property="og:description" content="Estimez vos chances d'admission en PASS/LAS grâce au simulateur Parcoursup de l'AFEM, basé sur les données de 2020 à 2023.">
+  <meta property="og:description" content="Simulateur Parcoursup gratuit : calcule tes chances d'admission dans les 800 PASS et L.AS de France, à partir des résultats officiels Parcoursup 2025.">
   <meta property="og:image" content="https://www.afem-edu.fr/assets/og-image.png">
   <meta property="og:site_name" content="AFEM">
   <meta property="og:locale" content="fr_FR">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Simulateur Parcoursup Médecine 2026 : Calcule tes Chances | AFEM">
-  <meta name="twitter:description" content="Estimez vos chances d'admission en PASS/LAS grâce au simulateur Parcoursup de l'AFEM, basé sur les données de 2020 à 2023.">
+  <meta name="twitter:description" content="Simulateur Parcoursup gratuit : calcule tes chances d'admission dans les 800 PASS et L.AS de France, à partir des résultats officiels Parcoursup 2025.">
   <meta name="twitter:image" content="https://www.afem-edu.fr/assets/og-image.png">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Simulateur Parcoursup Médecine — AFEM","description":"Estimez vos chances d'admission en PASS et LAS avec notre simulateur Parcoursup gratuit.","url":"https://www.afem-edu.fr/simulateur","applicationCategory":"EducationalApplication","provider":{"@type":"Organization","name":"AFEM","url":"https://www.afem-edu.fr"}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Simulateur Parcoursup Médecine — AFEM","description":"Calcule tes chances d'admission en PASS et L.AS avec le simulateur Parcoursup gratuit de l'AFEM, basé sur les données officielles Parcoursup 2025.","url":"https://www.afem-edu.fr/simulateur","applicationCategory":"EducationalApplication","provider":{"@type":"Organization","name":"AFEM","url":"https://www.afem-edu.fr"}}</script>
   <script src="/js/meta-pixel.js"></script>
 </head>
 <body>
@@ -60,121 +61,183 @@
     </div>
   </nav>
 
-  <section class="page-header">
+  <section class="sim-hero">
     <div class="container">
-      <span class="section-label" style="justify-content: center;">Outil gratuit</span>
-      <h1>Simulateur <span class="gradient">Parcoursup</span></h1>
-      <p>Estimez vos chances d'admission en PASS et LAS grâce à nos prévisions basées sur les données réelles de 2020 à 2023.</p>
+      <span class="section-label" style="justify-content: center;">Outil gratuit · sans inscription</span>
+      <h1>Simulateur <span class="gradient">Parcoursup</span> PASS &amp; L.AS</h1>
+      <p>Tes chances d'admission dans les <strong id="sim-total">800</strong> PASS et L.AS de France, calculées à partir des résultats officiels Parcoursup <span class="sim-session">2025</span>.</p>
     </div>
   </section>
 
-  <!-- Comment ça marche -->
+  <section class="sim-wrap" id="simulateur">
+    <div class="container">
+      <div class="sim glass-card" id="simu">
+        <ol class="sim-progress">
+          <li data-step="1"><span>1</span> Mon profil</li>
+          <li data-step="2"><span>2</span> Mes critères</li>
+          <li data-step="3"><span>3</span> Mes résultats</li>
+        </ol>
+
+        <!-- Étape 1 : profil -->
+        <div class="sim-step" data-step="1">
+          <h2>Ton profil scolaire</h2>
+          <p class="sim-help">Prends tes moyennes de terminale (ou de première si tu n'as pas encore de bulletin). C'est ce que voient les facs.</p>
+
+          <div class="sim-field">
+            <label for="sim-classe">Ta situation</label>
+            <select id="sim-classe" class="sim-select">
+              <option value="terminale">En terminale</option>
+              <option value="premiere">En première</option>
+              <option value="reorientation">Bac obtenu, en réorientation</option>
+              <option value="autre">Autre</option>
+            </select>
+          </div>
+
+          <div class="sim-row">
+            <div class="sim-field sim-grade" data-name="gen">
+              <label for="sim-gen">Moyenne générale</label>
+              <div class="sim-grade-ctl">
+                <input type="range" min="8" max="20" step="0.1" value="14" aria-label="Moyenne générale (curseur)">
+                <input type="number" id="sim-gen" min="0" max="20" step="0.1" value="14.0" inputmode="decimal"><span>/20</span>
+              </div>
+            </div>
+            <div class="sim-field sim-grade" data-name="spe">
+              <label for="sim-spe">Moyenne de tes 2 spécialités</label>
+              <div class="sim-grade-ctl">
+                <input type="range" min="8" max="20" step="0.1" value="14" aria-label="Moyenne des spécialités (curseur)">
+                <input type="number" id="sim-spe" min="0" max="20" step="0.1" value="14.0" inputmode="decimal"><span>/20</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="sim-field">
+            <span class="sim-label">Tes spécialités de terminale</span>
+            <div class="sim-choices" data-name="doublette" role="group" aria-label="Spécialités">
+              <button type="button" data-value="svt-pc">SVT + Physique-chimie</button>
+              <button type="button" data-value="maths-pc">Maths + Physique-chimie</button>
+              <button type="button" data-value="maths-svt">Maths + SVT</button>
+              <button type="button" data-value="sci-autre">Une seule scientifique</button>
+              <button type="button" data-value="non-sci">Aucune scientifique</button>
+            </div>
+          </div>
+
+          <div class="sim-field">
+            <span class="sim-label">Option maths</span>
+            <div class="sim-choices" data-name="maths" role="group" aria-label="Option maths">
+              <button type="button" data-value="aucune">Aucune</button>
+              <button type="button" data-value="complementaires">Maths complémentaires</button>
+              <button type="button" data-value="expertes">Maths expertes</button>
+            </div>
+          </div>
+
+          <div class="sim-field">
+            <label for="sim-dept">Ton département (lycée)</label>
+            <select id="sim-dept" class="sim-select">
+              <option value="">Choisis ton département</option>
+            </select>
+            <p class="sim-help">Les PASS et L.AS donnent la priorité aux lycéens de leur académie : ça pèse lourd.</p>
+          </div>
+
+          <p class="sim-err" id="sim-err-1" role="alert"></p>
+          <div class="sim-actions">
+            <button type="button" class="btn btn-primary" id="sim-to-2">Continuer →</button>
+          </div>
+        </div>
+
+        <!-- Étape 2 : critères -->
+        <div class="sim-step" data-step="2" hidden>
+          <button type="button" class="sim-back" data-back="1">← Modifier mon profil</button>
+          <h2>Où veux-tu candidater ?</h2>
+
+          <div class="sim-field">
+            <span class="sim-label">Filière</span>
+            <div class="sim-choices" data-name="type" data-scope="filtres" role="group" aria-label="Filière">
+              <button type="button" data-value="all">PASS et L.AS</button>
+              <button type="button" data-value="PASS">PASS uniquement</button>
+              <button type="button" data-value="LAS">L.AS uniquement</button>
+            </div>
+            <p class="sim-help"><strong>PASS</strong> : une année centrée santé avec une mineure. <strong>L.AS</strong> : une licence (droit, bio, psycho…) avec une mineure santé.</p>
+          </div>
+
+          <div class="sim-field">
+            <span class="sim-label">Zone</span>
+            <div class="sim-choices" data-name="zone" data-scope="filtres" role="group" aria-label="Zone">
+              <button type="button" data-value="secteur">Mon secteur</button>
+              <button type="button" data-value="france">Toute la France</button>
+            </div>
+            <p class="sim-help">Ton secteur : <strong id="sim-aca-label">—</strong>.</p>
+          </div>
+
+          <div class="sim-actions">
+            <button type="button" class="btn btn-primary" id="sim-to-3">Calculer mes chances →</button>
+          </div>
+        </div>
+
+        <!-- Étape 3 : résultats -->
+        <div class="sim-step" data-step="3" hidden>
+          <button type="button" class="sim-back" data-back="2">← Modifier mes critères</button>
+
+          <div class="sim-verdict" id="sim-verdict">
+            <h2 id="sim-verdict-title">Tes résultats</h2>
+            <p id="sim-verdict-text"></p>
+          </div>
+
+          <div class="sim-toolbar">
+            <div class="sim-choices sim-choices-sm" data-name="type" data-scope="filtres" role="group" aria-label="Filière">
+              <button type="button" data-value="all">Tout</button>
+              <button type="button" data-value="PASS">PASS</button>
+              <button type="button" data-value="LAS">L.AS</button>
+            </div>
+            <div class="sim-choices sim-choices-sm" data-name="zone" data-scope="filtres" role="group" aria-label="Zone">
+              <button type="button" data-value="secteur">Mon secteur</button>
+              <button type="button" data-value="france">France</button>
+            </div>
+            <input type="search" id="sim-search" class="sim-search" placeholder="Rechercher une fac, une ville, une option…" aria-label="Rechercher">
+          </div>
+
+          <p class="sim-summary" id="sim-summary" aria-live="polite"></p>
+          <ul class="sim-results" id="sim-results"></ul>
+
+          <div class="sim-gate" id="sim-gate" hidden>
+            <h3>Débloque les <span id="sim-gate-count">0</span> autres formations</h3>
+            <p>Ton classement complet s'affiche tout de suite. Un étudiant en médecine peut aussi te rappeler pour t'aider à construire tes vœux, si tu veux.</p>
+            <form id="sim-form" novalidate>
+              <div class="sim-row">
+                <input name="prenom" autocomplete="given-name" placeholder="Prénom" aria-label="Prénom" required>
+                <input name="nom" autocomplete="family-name" placeholder="Nom" aria-label="Nom" required>
+              </div>
+              <div class="sim-row">
+                <input name="email" type="email" autocomplete="email" placeholder="Email" aria-label="Email" required>
+                <input name="telephone" type="tel" autocomplete="tel" placeholder="Téléphone" aria-label="Téléphone" required>
+              </div>
+              <p class="sim-err" id="sim-form-err" role="alert"></p>
+              <button type="submit" class="btn btn-primary">Voir tout mon classement</button>
+              <p class="sim-legal">Gratuit. Tes données servent uniquement à l'AFEM pour t'accompagner. <a href="mentions-legales.html">Mentions légales</a>.</p>
+            </form>
+          </div>
+          <p class="sim-thanks" id="sim-thanks" hidden>C'est noté ! Ton classement complet est affiché ci-dessus.</p>
+
+          <p class="sim-disclaimer">Estimation statistique à partir des données publiques Parcoursup <span class="sim-session">2025</span> (places, rang du dernier appelé, mentions des admis, part de l'académie). Chaque session est différente : c'est une tendance, pas une garantie.</p>
+          <div class="sim-actions"><button type="button" class="sim-back" id="sim-restart">↺ Refaire une simulation</button></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contenu SEO -->
   <section class="content-section">
     <div class="container">
-      <div class="content-grid">
-        <div class="content-text fade-up">
-          <h2>Comment ça <span class="gradient">marche</span> ?</h2>
-          <p>Notre simulateur analyse les données d'admission Parcoursup des quatre dernières années pour vous donner une estimation fiable de vos chances d'intégrer la faculté de votre choix.</p>
-          <p>En renseignant votre profil (notes, spécialités, localisation), vous obtenez une prévision personnalisée pour chaque faculté de médecine en France.</p>
-          <a href="https://simulateur-parcoursup.afem-edu.fr/register" class="btn btn-primary" style="margin-top: 16px;">Lancer le simulateur →</a>
-        </div>
-        <div class="content-visual fade-up">
-          <div class="about-image-card">
-            <div class="big-icon">📊</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Fonctionnalités -->
-  <section class="content-section" style="padding-top: 0;">
-    <div class="container">
-      <div style="text-align: center;" class="fade-up">
-        <span class="section-label" style="justify-content: center;">Fonctionnalités</span>
-        <h2 class="section-title">Un outil <span class="gradient">complet</span></h2>
-      </div>
-      <div class="feature-list">
-        <div class="glass-card feature-item fade-up">
-          <div class="feature-icon green" style="background: rgba(101,189,125,0.15); color: var(--green);">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
-          </div>
-          <h3>Données réelles</h3>
-          <p>Basé sur les données officielles Parcoursup de 2020 à 2023 pour des prévisions fiables.</p>
-        </div>
-        <div class="glass-card feature-item fade-up">
-          <div class="feature-icon blue" style="background: rgba(58,138,82,0.15); color: var(--green-dark);">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-          </div>
-          <h3>Profil personnalisé</h3>
-          <p>Prenez en compte vos notes, spécialités et critères géographiques pour un résultat sur mesure.</p>
-        </div>
-        <div class="glass-card feature-item fade-up">
-          <div class="feature-icon green" style="background: rgba(101,189,125,0.15); color: var(--green);">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg>
-          </div>
-          <h3>Classement des facs</h3>
-          <p>Comparez vos chances entre toutes les facultés de médecine de France en un coup d'œil.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Étapes -->
-  <section class="content-section" style="padding-top: 0;">
-    <div class="container">
-      <div style="text-align: center;" class="fade-up">
-        <span class="section-label" style="justify-content: center;">En 3 étapes</span>
-        <h2 class="section-title">Simple et <span class="gradient">rapide</span></h2>
-      </div>
-      <div class="steps-list">
-        <div class="glass-card step-item fade-up">
-          <div class="step-number">1</div>
-          <div class="step-content">
-            <h3>Renseignez votre profil</h3>
-            <p>Entrez vos notes, vos spécialités de terminale et votre académie d'origine.</p>
-          </div>
-        </div>
-        <div class="glass-card step-item fade-up">
-          <div class="step-number">2</div>
-          <div class="step-content">
-            <h3>Lancez la simulation</h3>
-            <p>Notre algorithme compare votre profil aux données historiques d'admission de chaque faculté.</p>
-          </div>
-        </div>
-        <div class="glass-card step-item fade-up">
-          <div class="step-number">3</div>
-          <div class="step-content">
-            <h3>Consultez vos résultats</h3>
-            <p>Obtenez un classement personnalisé des facultés avec vos probabilités d'admission.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Contenu SEO supplémentaire -->
-  <section class="content-section" style="padding-top: 0;">
-    <div class="container">
       <div class="content-text fade-up" style="max-width: 800px; margin: 0 auto;">
-        <h2>Comment fonctionne notre simulateur ?</h2>
-        <p>Le simulateur Parcoursup de l'AFEM s'appuie sur les données officielles publiées par le ministère de l'Enseignement supérieur. Concrètement, nous avons collecté et analysé les statistiques d'admission de chaque faculté de médecine en France sur les années 2020 à 2023 : moyennes des admis, répartition par spécialités de terminale, taux d'acceptation selon l'académie d'origine. Quand tu renseignes ton profil (ta moyenne au bac, tes spécialités, ton département), l'algorithme compare ces informations aux profils des étudiants qui ont été admis les années précédentes dans chaque fac.</p>
-        <p>Le résultat n'est pas une certitude, c'est une estimation. Mais elle te permet de hiérarchiser tes voeux avec des données concrètes plutôt qu'à l'aveugle. Tu peux voir, fac par fac, si ton profil se situe plutôt dans la fourchette haute, moyenne ou basse des admis. C'est particulièrement utile quand tu hésites entre plusieurs universités ou quand tu ne sais pas si une fac éloignée de ton académie reste accessible.</p>
+        <h2>Comment fonctionne le simulateur ?</h2>
+        <p>Pour chaque PASS et chaque L.AS, Parcoursup publie en open data le nombre de places, le nombre de candidats classés, le rang du dernier candidat appelé et la mention au bac des admis. Le simulateur s'appuie sur ces chiffres officiels de la session <span class="sim-session">2025</span>. Avec le rang du dernier appelé, on sait quelle part des candidats a reçu une proposition. Les mentions des admis donnent leur niveau. On en déduit la barre à franchir dans chaque formation.</p>
+        <p>Ton profil est ensuite comparé à cette barre : moyenne générale, moyenne de spécialités, doublette de spécialités, option maths et surtout ton académie. Les facs de santé réservent la très grande majorité de leurs places aux lycéens de leur secteur : en dehors, la barre monte nettement.</p>
+
+        <h2 style="margin-top: 40px;">PASS ou L.AS : comment répartir tes vœux ?</h2>
+        <p>Le PASS est souvent plus demandé, mais il propose beaucoup de places. Certaines L.AS (droit, psycho, langues…) sont bien plus accessibles et mènent aux mêmes études de médecine, maïeutique, odontologie, pharmacie et kiné. Tu peux formuler jusqu'à 10 vœux : mélange des formations où tes chances sont élevées et des choix plus ambitieux.</p>
 
         <h2 style="margin-top: 40px;">Fiabilité des résultats</h2>
-        <p>Les données utilisées proviennent exclusivement des jeux de données publics de Parcoursup, mis à disposition en open data. Nous ne les modifions pas et nous ne faisons pas de projections spéculatives. L'algorithme repose sur des comparaisons statistiques, et les résultats sont actualisés chaque année dès que les nouvelles données deviennent disponibles. Il faut garder en tête que chaque session Parcoursup est différente : le nombre de candidats, la répartition géographique et les capacités d'accueil évoluent. Le simulateur te donne une tendance solide, pas une garantie.</p>
-        <p>Pour affiner ton orientation, tu peux croiser les résultats du simulateur avec ceux de notre <a href="quizz.html">quizz d'orientation</a>, qui se concentre sur la compatibilité entre ton profil personnel et les caractéristiques de chaque fac. Tu peux aussi consulter directement les <a href="facultes.html">fiches détaillées des 30 facultés de médecine</a> pour comparer les chiffres par toi-même.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- CTA -->
-  <section class="cta-section">
-    <div class="container">
-      <div class="cta-box fade-up">
-        <h2>Prêt à tester vos <span class="gradient">chances</span> ?</h2>
-        <p>Lancez votre simulation gratuitement et découvrez les facultés qui correspondent le mieux à votre profil.</p>
-        <a href="https://simulateur-parcoursup.afem-edu.fr/register" class="btn btn-primary btn-lg">Lancer le simulateur →</a>
+        <p>Les données proviennent exclusivement du jeu de données public Parcoursup du ministère de l'Enseignement supérieur. Elles ne sont pas modifiées et sont mises à jour chaque année. Les facs examinent aussi des éléments que le simulateur ne voit pas (appréciations, lettre de motivation, progression). Le résultat donne une tendance solide, pas une garantie.</p>
+        <p>Pour aller plus loin, compare les <a href="facultes.html">fiches détaillées des facultés de médecine</a>, teste ta compatibilité avec le <a href="quizz.html">quizz x fac</a> ou estime tes chances de réussite en première année avec le <a href="calculateur-reussite.html">calculateur de réussite</a>.</p>
       </div>
     </div>
   </section>
@@ -230,7 +293,8 @@
   </div>
 
   <script defer charset="utf-8" type="text/javascript" src="https://js-eu1.hsforms.net/forms/embed/v2.js"></script>
+  <script defer src="js/simulateur-data.js"></script>
+  <script defer src="js/simulateur.js"></script>
   <script defer src="js/main.min.js"></script>
-  <script defer src="js/cms-live.js"></script>
 </body>
 </html>
